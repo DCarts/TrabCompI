@@ -2,7 +2,7 @@
  * main.c
  * 
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
- *                Guilherme <email@aqui>
+ *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
 
