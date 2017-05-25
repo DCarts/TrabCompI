@@ -3,7 +3,7 @@
  * 
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <email@aqui>
- *                Gabriel <email@aqui>
+ *                Gabriel <gabrielizotongo@gmail.com>
  */
 
 #ifndef SDL_MAIN_HANDLED
