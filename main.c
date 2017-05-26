@@ -51,6 +51,16 @@ typedef struct _BOLA {
 	SDL_Surface* img;
 } BOLA;
 
+typedef struct _PLATAFORMA {
+	VETOR2D pos;
+	VETOR2D step;
+	int melhorias[5];
+	int ativo;
+	int w;
+	int h;
+	SDL_Surface* img;
+} PLATAFORMA;
+
 typedef struct _BLOCO {
 	VETOR2D pos;
 	int tipo;
@@ -75,9 +85,13 @@ Mix_Chunk* gSons[10];
 int gNumBolas = 6;
 int gNumBlocos = 0;
 
-BLOCO gPad;
+PLATAFORMA* gPlataforma;
 BOLA* gBolas;
 BLOCO* gBlocos;
+
+int gLeft, gRight;
+
+int gXMouse, gYMouse;
 
 /* Funcoes da main.c */
 
@@ -98,9 +112,15 @@ int createNPCs();
 
 /* Cria uma bolinha */
 BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img);
+/*Cria um bloco*/
+BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
+/*Cria a plataforma*/
+PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface* img);
 
 /* Move uma bolinha */
 void move(BOLA* b);
+/* Move a plataforma */
+void movePlataforma(PLATAFORMA *p);
 
 /* Loop do jogo */
 int gameLoop();
@@ -110,6 +130,7 @@ int render();
 
 /* Processa eventos */
 int handleEvent(SDL_Event* e);
+void handleInput(SDL_Event* evt);
 
 /* Encerra os sistemas e sai do jogo */
 void exitGame();
@@ -122,6 +143,7 @@ void collide (BOLA* a, BOLA* b);
 /* Fim das funcoes da main.c */
 
 int main(int argc, char **argv) {
+	
 	int quit, startTime, currentTime;
 	SDL_Event evt;
 	
@@ -134,10 +156,14 @@ int main(int argc, char **argv) {
 	quit = false;
 	startTime = SDL_GetTicks();
 	
+	gLeft = false;
+	gRight = false;
+	
 	/* Timer do jogo */
 	while (!quit) {
 		while (SDL_PollEvent(&evt) != 0) {
 			quit = handleEvent(&evt);
+			handleInput(&evt);
 		}
 		currentTime = SDL_GetTicks();
 		if (startTime + 10 < currentTime) {
@@ -272,6 +298,24 @@ void move (BOLA* p) {
 	}
 }
 
+void movePlataforma (PLATAFORMA* p) {
+	
+	if (gRight)
+		p->pos.x += p->step.x;
+	if (gLeft)
+		p->pos.x -= p->step.x;
+	
+	if (p->pos.x + p->w > gScreenWidth) {
+		p->pos.x -= p->step.x;
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
+	}
+	
+	if (p->pos.x < 0) {
+		p->pos.x += p->step.x;
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
+	}
+}
+
 double dotProduct(VETOR2D a, VETOR2D b) {
 	return (a.x * b.x)+(a.y + b.y);
 }
@@ -323,6 +367,8 @@ int gameLoop() {
 		}
 	}*/
 	
+	movePlataforma(gPlataforma);
+	
 	return true;
 }
 
@@ -335,6 +381,17 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img) 
 	bola.img = img;
 	bola.ativo = true;
 	return bola;
+}
+
+PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface* img){
+	PLATAFORMA plat;
+	plat.pos = pos;
+	plat.step = step;
+	plat.w = 128;
+	plat.h = 16;
+	plat.img = img;
+	plat.ativo = true;
+	return plat;
 }
 
 int createNPCs() {
@@ -351,6 +408,11 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
+	gPlataforma = calloc(1, sizeof(PLATAFORMA));
+	if (!gPlataforma) {
+		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
+		return false;
+	}
 
 	for (i = 0; i < gNumBolas; i++) {
 		pos.x = (rand() % gScreenWidth-10);
@@ -359,6 +421,14 @@ int createNPCs() {
 		step.y = (rand() % 2? -1 : 1);
 		gBolas[i] = createBola(pos, step, 1, 10, gBallImgs[0]);
 	}
+	
+	pos.x = STD_SCREEN_WIDTH/2;
+	pos.y = STD_SCREEN_HEIGHT-32;
+	step.x = 4;
+	step.y = 4;
+	
+	gPlataforma[0] = createPlataforma(pos, step, 64, 16, gPadImgs[0]);
+	
 	return true;
 }
 
@@ -378,6 +448,32 @@ void exitGame() {
 	Mix_CloseAudio();
 	IMG_Quit();
 	SDL_Quit();
+}
+
+void handleInput(SDL_Event* evt){
+	SDL_Event e = *evt;
+	
+	switch (e.type) {
+		case SDL_KEYDOWN:
+			if (e.key.keysym.sym == SDLK_LEFT) {
+				gLeft = true;
+			}
+			if (e.key.keysym.sym == SDLK_RIGHT) {
+				gRight = true;
+			}
+			break;
+		case SDL_KEYUP:
+			if (e.key.keysym.sym == SDLK_LEFT) {
+				gLeft = false;
+			}
+			if (e.key.keysym.sym == SDLK_RIGHT) {
+				gRight = false;
+			}
+			break;
+		case SDL_MOUSEMOTION:
+			SDL_GetMouseState(&gXMouse,&gYMouse);
+			break;
+	}
 }
 
 int handleEvent(SDL_Event* evt) {
@@ -421,6 +517,18 @@ int render() {
             err = true;
 		}
 	}
+	
+	srcRect.w = gPlataforma[0].w;
+	srcRect.h = gPlataforma[0].h;
+		
+	dstRect.x = gPlataforma[0].pos.x;
+	dstRect.y = gPlataforma[0].pos.y;
+	
+	if( SDL_BlitSurface( gPlataforma[0].img, &srcRect, 
+							gScreenSurface, &dstRect ) < 0 ) {
+			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+            err = true;
+		}
             
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
