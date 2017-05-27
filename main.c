@@ -66,6 +66,7 @@ typedef struct _BLOCO {
 	int tipo;
 	int w, h;
 	int ativo;
+	SDL_Surface* img;
 } BLOCO;
 
 /* Variaveis Globais */
@@ -218,6 +219,7 @@ int loadMedia() {
 	/* CARREGANDO IBAGENS */
 	/* ColorKey eh magenta */
     uint32_t colorKey;
+    int i;
     
     /* Carrega blocos *//* @todo
     if( !(gBlockImgs[0] = loadSurface("./data/brick.png")) ) return false;
@@ -233,6 +235,18 @@ int loadMedia() {
     colorKey = SDL_MapRGB(gBallImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gBallImgs[0], SDL_TRUE, colorKey);
     /* FIM CARREGANDO IBAGENS */
+    
+    /* Carrega tijolos */
+    if ( !(gBlocoImgs[0] = loadSurface("./data/brick0.png")) ) return false;
+    if ( !(gBlocoImgs[1] = loadSurface("./data/brick1.png")) ) return false;
+    if ( !(gBlocoImgs[2] = loadSurface("./data/brick2.png")) ) return false;
+    if ( !(gBlocoImgs[3] = loadSurface("./data/brick3.png")) ) return false;
+    if ( !(gBlocoImgs[4] = loadSurface("./data/brick4.png")) ) return false;
+    
+    for (i=0; i<5; i++){
+		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
+		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
+	}
     
     /* CARREGANDO SONS */
     /* volume do som varia entre 0 e 127 */
@@ -383,6 +397,17 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img) 
 	return bola;
 }
 
+BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img){
+	BLOCO bloco;
+	bloco.pos = pos;
+	bloco.tipo = tipo;
+	bloco.w = w;
+	bloco.h = h;
+	bloco.ativo = 1;
+	bloco.img = img;
+	return bloco;
+}
+
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface* img){
 	PLATAFORMA plat;
 	plat.pos = pos;
@@ -396,7 +421,8 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface
 
 int createNPCs() {
 	VETOR2D pos, step;
-	int i;
+	int i, j;
+	int n;
 	
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
@@ -412,6 +438,21 @@ int createNPCs() {
 	if (!gPlataforma) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
+	}
+	
+	/*
+	 * Cria os blocos.
+	 * Eh codigo temporario, so
+	 * estou usando para testes
+	*/
+	n = 0 ;
+	for (j=0; j<5; j++){
+		for (i=0; i<20; i++){
+			pos.x = i*32;
+			pos.y = j*16;
+			gBlocos[n] = createBloco(pos, 1, 32, 16, gBlocoImgs[j]);
+			n++;
+		}
 	}
 
 	for (i = 0; i < gNumBolas; i++) {
@@ -501,8 +542,9 @@ int render() {
 	//Fill the surface white
 	SDL_FillRect( gScreenSurface, NULL, 
 	SDL_MapRGB( gScreenSurface->format, 
-				0xFF, 0xFF, 0xFF ) );
-
+				0, 0, 0 ) );
+	
+	/* Renderiza as bolas */
 	srcRect.x = 0; srcRect.y = 0;
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
@@ -518,6 +560,7 @@ int render() {
 		}
 	}
 	
+	/* Renderiza a plataforma */
 	srcRect.w = gPlataforma[0].w;
 	srcRect.h = gPlataforma[0].h;
 		
@@ -529,6 +572,21 @@ int render() {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
 		}
+		
+	/* Renderiza os blocos */
+	for(i = 0; i < MAX_NUM_BLOCOS; i++) {
+		srcRect.w = gBlocos[i].w;
+		srcRect.h = gBlocos[i].h;
+		
+		dstRect.x = gBlocos[i].pos.x;
+		dstRect.y = gBlocos[i].pos.y;
+		
+		if( SDL_BlitSurface( gBlocos[i].img, &srcRect, 
+							gScreenSurface, &dstRect ) < 0 ) {
+			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+            err = true;
+		}
+	}
             
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
