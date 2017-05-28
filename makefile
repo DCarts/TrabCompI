@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS=-g -Wall -D_REENTRANT
+CFLAGS=-g -Wall -D_REENTRANT -lm
 
 LINUX_FLAGS=-D_GNU_SOURCE=1
 

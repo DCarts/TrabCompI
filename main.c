@@ -1,6 +1,6 @@
 /*
  * main.c
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -140,26 +140,27 @@ void exitGame();
 double normalize (VETOR2D* a);
 double dotProduct(VETOR2D a, VETOR2D b);
 void collide (BOLA* a, BOLA* b);
+void detCollisionPlat(BOLA* a);
 
 /* Fim das funcoes da main.c */
 
 int main(int argc, char **argv) {
-	
+
 	int quit, startTime, currentTime;
 	SDL_Event evt;
-	
+
 	if (!init() || !loadMedia()) {
 		return 1;
 	}
-	
+
 	createNPCs();
-	
+
 	quit = false;
 	startTime = SDL_GetTicks();
-	
+
 	gLeft = false;
 	gRight = false;
-	
+
 	/* Timer do jogo */
 	while (!quit) {
 		while (SDL_PollEvent(&evt) != 0) {
@@ -180,38 +181,38 @@ int main(int argc, char **argv) {
 int init() {
 	int imgFlags = IMG_INIT_PNG;
 	srand(time(NULL));
-	
+
 	/* Inicializa o SDL */
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
-		fprintf(stderr, "Erro: SDL falhou ao iniciar: %s\n", 
+		fprintf(stderr, "Erro: SDL falhou ao iniciar: %s\n",
 			SDL_GetError());
 		return false;
 	}
-	
+
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096) < 0) {
 		fprintf(stderr, "Erro: SDL_mixer nao conseguiu inicializar: %s\n",
 			Mix_GetError());
 		return false;
 	}
-	
-	gWindow = SDL_CreateWindow("Breakout Work-in-Progress", 
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-		gScreenWidth, gScreenHeight, 
+
+	gWindow = SDL_CreateWindow("Breakout Work-in-Progress",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		gScreenWidth, gScreenHeight,
 		SDL_WINDOW_SHOWN);
-		
+
 	if (!gWindow) {
-		fprintf(stderr, "Erro: Janela nao pode ser criada: %s\n", 
+		fprintf(stderr, "Erro: Janela nao pode ser criada: %s\n",
 		SDL_GetError());
 		return false;
 	}
-	
+
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
 		fprintf(stderr, "Erro: SDL_image nao conseguiu inicializar: %s\n",
 			SDL_GetError());
 		return false;
 	}
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
-	
+
 	return true;
 }
 
@@ -220,34 +221,34 @@ int loadMedia() {
 	/* ColorKey eh magenta */
     uint32_t colorKey;
     int i;
-    
+
     /* Carrega blocos *//* @todo
     if( !(gBlockImgs[0] = loadSurface("./data/brick.png")) ) return false;
     SDL_SetColorKey(gBlockImgs[0], SDL_TRUE, colorKey);*/
-    
+
     /* Carrega plataformas */
-    if( !(gPadImgs[0] = loadSurface("./data/pad.png")) ) return false;
+    if( !(gPadImgs[0] = loadSurface("./bin/data/pad.png")) ) return false;
     colorKey = SDL_MapRGB(gPadImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gPadImgs[0], SDL_TRUE, colorKey);
-    
+
     /* Carrega bolas */
-    if ( !(gBallImgs[0] = loadSurface("./data/ball.png")) ) return false;
+    if ( !(gBallImgs[0] = loadSurface("./bin/data/ball.png")) ) return false;
     colorKey = SDL_MapRGB(gBallImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gBallImgs[0], SDL_TRUE, colorKey);
     /* FIM CARREGANDO IBAGENS */
-    
+
     /* Carrega tijolos */
-    if ( !(gBlocoImgs[0] = loadSurface("./data/brick0.png")) ) return false;
-    if ( !(gBlocoImgs[1] = loadSurface("./data/brick1.png")) ) return false;
-    if ( !(gBlocoImgs[2] = loadSurface("./data/brick2.png")) ) return false;
-    if ( !(gBlocoImgs[3] = loadSurface("./data/brick3.png")) ) return false;
-    if ( !(gBlocoImgs[4] = loadSurface("./data/brick4.png")) ) return false;
-    
+    if ( !(gBlocoImgs[0] = loadSurface("./bin/data/brick0.png")) ) return false;
+    if ( !(gBlocoImgs[1] = loadSurface("./bin/data/brick1.png")) ) return false;
+    if ( !(gBlocoImgs[2] = loadSurface("./bin/data/brick2.png")) ) return false;
+    if ( !(gBlocoImgs[3] = loadSurface("./bin/data/brick3.png")) ) return false;
+    if ( !(gBlocoImgs[4] = loadSurface("./bin/data/brick4.png")) ) return false;
+
     for (i=0; i<5; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
 	}
-    
+
     /* CARREGANDO SONS */
     /* volume do som varia entre 0 e 127 */
     //if ( !(gSons[0] = loadSound("./data/wall.wav")) ) return false;
@@ -260,7 +261,7 @@ Mix_Chunk* loadSound(char* path) {
 	Mix_Chunk* sound = NULL;
 	sound = Mix_LoadWAV(path);
 	if (!sound) {
-		fprintf(stderr, "Erro: incapaz de carregar som: %s\n%s\n", 
+		fprintf(stderr, "Erro: incapaz de carregar som: %s\n%s\n",
 						path, Mix_GetError() );
 	}
 	return sound;
@@ -273,14 +274,14 @@ SDL_Surface* loadSurface(char* path ) {
     /* Carrega imagem no PATH dado */
     SDL_Surface* loadedSurface = IMG_Load( path );
     if(!loadedSurface) {
-        fprintf(stderr, "Erro: incapaz de carregar imagem: %s\n%s\n", 
+        fprintf(stderr, "Erro: incapaz de carregar imagem: %s\n%s\n",
 						path, IMG_GetError() );
     }
     else {
         /* Converte a imagem ao formato da tela */
         optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, 0 );
         if(!optimizedSurface) {
-            fprintf(stderr, "Erro: incapaz de otimizar imagem: %s\n%s\n", 
+            fprintf(stderr, "Erro: incapaz de otimizar imagem: %s\n%s\n",
 							path, SDL_GetError() );
         }
 
@@ -291,10 +292,13 @@ SDL_Surface* loadSurface(char* path ) {
     return optimizedSurface;
 }
 
-void move (BOLA* p) {
+void move(BOLA* p) {
+
 	p->pos.x = p->pos.x + p->step.x;
 	p->pos.y = p->pos.y + p->step.y;
-	
+
+	detCollisionPlat(p);
+
 	if (p->pos.x + p->dim > gScreenWidth-32 || p->pos.x < 32) {
 		p->step.x = -p->step.x;
 		p->pos.x += p->step.x;
@@ -313,17 +317,17 @@ void move (BOLA* p) {
 }
 
 void movePlataforma (PLATAFORMA* p) {
-	
+
 	if (gRight)
 		p->pos.x += p->step.x;
 	if (gLeft)
 		p->pos.x -= p->step.x;
-	
+
 	if (p->pos.x + p->w > gScreenWidth-32) {
 		p->pos.x -= p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
 	}
-	
+
 	if (p->pos.x < 32) {
 		p->pos.x += p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
@@ -341,19 +345,21 @@ double normalize (VETOR2D* a) {
 	return norm;
 }
 
+
+
 /* @todo fazer funcionar direito */
 void collide(BOLA* a, BOLA* b) {
 	VETOR2D c;
 	double p;
-	
+
 	c.x = a->pos.x - b->pos.x;
 	c.y = a->pos.y - b->pos.y;
-	
+
 	normalize(&c);
-	
-	p = (a->step.x * c.x) + (a->step.y * c.y) 
+
+	p = (a->step.x * c.x) + (a->step.y * c.y)
 		- (b->step.x * c.x) - (b->step.y * c.y);
-	
+
 	a->step.x = a->step.x - p * c.x;
 	a->step.y = a->step.y - p * c.y;
 	b->step.x = a->step.x + p * c.x;
@@ -363,26 +369,26 @@ void collide(BOLA* a, BOLA* b) {
 int gameLoop() {
 	int i/*, j*/;
 	/*double dx, dy, raios;*/
-	
+
 	for (i = 0; i < gNumBolas; i++) {
 		move(gBolas+i);
 	}
 	/*    ainda WIP (colisao entre bolas)
 	for (i = 0; i < gNumBolas; i++) {
 		for (j = i+1; j < gNumBolas; j++) {
-			
+
 			dx = gBolas[i].pos.x-gBolas[j].pos.x;
 			dy = gBolas[i].pos.y-gBolas[j].pos.y;
 			raios = (gBolas[i].dim/2) + (gBolas[j].dim/2);
-			
+
 			if (raios*raios > dx*dx + dy*dy) {
 				collide(gBolas+i, gBolas+j);
 			}
 		}
 	}*/
-	
+
 	movePlataforma(gPlataforma);
-	
+
 	return true;
 }
 
@@ -422,7 +428,7 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface
 int createNPCs() {
 	VETOR2D pos, step;
 	int i, j;
-	
+
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -438,7 +444,7 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	
+
 	/*
 	 * Cria os blocos.
 	 * Eh codigo temporario, so
@@ -460,30 +466,30 @@ int createNPCs() {
 		step.y = (rand() % 2? -1 : 1);
 		gBolas[i] = createBola(pos, step, 1, 10, gBallImgs[0]);
 	}
-	
+
 	pos.x = STD_SCREEN_WIDTH/2;
 	pos.y = STD_SCREEN_HEIGHT-56;
 	step.x = 4;
 	step.y = 4;
-	
+
 	gPlataforma[0] = createPlataforma(pos, step, 64, 16, gPadImgs[0]);
-	
+
 	return true;
 }
 
 void exitGame() {
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
-	
+
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
-	
+
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
-	
+
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
-	
+
 	Mix_CloseAudio();
 	IMG_Quit();
 	SDL_Quit();
@@ -491,7 +497,7 @@ void exitGame() {
 
 void handleInput(SDL_Event* evt){
 	SDL_Event e = *evt;
-	
+
 	switch (e.type) {
 		case SDL_KEYDOWN:
 			if (e.key.keysym.sym == SDLK_LEFT) {
@@ -518,7 +524,7 @@ void handleInput(SDL_Event* evt){
 int handleEvent(SDL_Event* evt) {
 	int quit = false;
 	SDL_Event e = *evt;
-	
+
 	switch (e.type) {
 		case SDL_QUIT:
 			quit = true;
@@ -529,78 +535,94 @@ int handleEvent(SDL_Event* evt) {
 			}
 		break;
 	}
-	
+
 	return quit;
 }
 
 int render() {
 	SDL_Rect srcRect, dstRect;
 	int i, err = false;
-	
+
 	//Fill the surface white
-	SDL_FillRect( gScreenSurface, NULL, 
-	SDL_MapRGB( gScreenSurface->format, 
+	SDL_FillRect( gScreenSurface, NULL,
+	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
-				
+
 	srcRect.x = 24; srcRect.y = 24;
 	srcRect.w = 592; srcRect.h = 432;
-	SDL_FillRect( gScreenSurface, &srcRect, 
-	SDL_MapRGB( gScreenSurface->format, 
+	SDL_FillRect( gScreenSurface, &srcRect,
+	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
-				
+
 	srcRect.x = 32; srcRect.y = 32;
 	srcRect.w = 576; srcRect.h = 416;
-	SDL_FillRect( gScreenSurface, &srcRect, 
-	SDL_MapRGB( gScreenSurface->format, 
+	SDL_FillRect( gScreenSurface, &srcRect,
+	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
-	
+
 	srcRect.x = 0; srcRect.y = 0;
-	
+
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
 		srcRect.w = gBlocos[i].w;
 		srcRect.h = gBlocos[i].h;
-		
+
 		dstRect.x = gBlocos[i].pos.x;
 		dstRect.y = gBlocos[i].pos.y;
-		
-		if( SDL_BlitSurface( gBlocos[i].img, &srcRect, 
+
+		if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
 							gScreenSurface, &dstRect ) < 0 ) {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
 		}
 	}
-	
+
 	/* Renderiza as bolas */
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
-		
+
 		dstRect.x = gBolas[i].pos.x;
 		dstRect.y = gBolas[i].pos.y;
-		
-		if( SDL_BlitSurface( gBolas[i].img, &srcRect, 
+
+		if( SDL_BlitSurface( gBolas[i].img, &srcRect,
 							gScreenSurface, &dstRect ) < 0 ) {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
 		}
 	}
-	
+
 	/* Renderiza a plataforma */
 	srcRect.w = gPlataforma[0].w;
 	srcRect.h = gPlataforma[0].h;
-		
+
 	dstRect.x = gPlataforma[0].pos.x;
 	dstRect.y = gPlataforma[0].pos.y;
-	
-	if( SDL_BlitSurface( gPlataforma[0].img, &srcRect, 
+
+	if( SDL_BlitSurface( gPlataforma[0].img, &srcRect,
 							gScreenSurface, &dstRect ) < 0 ) {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
 		}
-            
+
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
-	
+
 	return err;
+}
+
+void detCollisionPlat(BOLA* a){
+	if((a->pos.y + (double)a->dim ) >= gPlataforma->pos.y){
+		if(a->pos.x + (double)a->dim >= gPlataforma->pos.x
+		 && a->pos.x + (double)a->dim <= gPlataforma->pos.x
+		 + gPlataforma->w){
+			 a->step.y = -a->step.y;
+ 			a->pos.y += a->step.y;
+		 }
+	}
+
+	/*dix = (a->posx +(IMAGE_WIDTH /2) - gPlataforma.w);
+	diy = (a->posy +(IMAGE_HEIGHT/2) - gPlataforma.h);
+	dir = sqrt((dix * dix) + (diy * diy));
+	if(dir <= ())*/
 }
