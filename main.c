@@ -295,17 +295,17 @@ void move (BOLA* p) {
 	p->pos.x = p->pos.x + p->step.x;
 	p->pos.y = p->pos.y + p->step.y;
 	
-	if (p->pos.x + p->dim > gScreenWidth || p->pos.x < 0) {
+	if (p->pos.x + p->dim > gScreenWidth-32 || p->pos.x < 32) {
 		p->step.x = -p->step.x;
 		p->pos.x += p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
 	}
-	if (p->pos.y + p->dim > gScreenHeight) {
+	if (p->pos.y + p->dim > gScreenHeight-32) {
 		p->step.y = -p->step.y;
 		p->pos.y += p->step.y;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], -1); */
 	}
-	else if (p->pos.y < 0) {
+	else if (p->pos.y < 32) {
 		p->step.y = -p->step.y;
 		p->pos.y += p->step.y;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], -1); */
@@ -319,12 +319,12 @@ void movePlataforma (PLATAFORMA* p) {
 	if (gLeft)
 		p->pos.x -= p->step.x;
 	
-	if (p->pos.x + p->w > gScreenWidth) {
+	if (p->pos.x + p->w > gScreenWidth-32) {
 		p->pos.x -= p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
 	}
 	
-	if (p->pos.x < 0) {
+	if (p->pos.x < 32) {
 		p->pos.x += p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
 	}
@@ -412,8 +412,8 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface
 	PLATAFORMA plat;
 	plat.pos = pos;
 	plat.step = step;
-	plat.w = 128;
-	plat.h = 16;
+	plat.w = 96;
+	plat.h = 12;
 	plat.img = img;
 	plat.ativo = true;
 	return plat;
@@ -422,7 +422,6 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface
 int createNPCs() {
 	VETOR2D pos, step;
 	int i, j;
-	int n;
 	
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
@@ -445,26 +444,25 @@ int createNPCs() {
 	 * Eh codigo temporario, so
 	 * estou usando para testes
 	*/
-	n = 0 ;
 	for (j=0; j<5; j++){
-		for (i=0; i<20; i++){
-			pos.x = i*32;
-			pos.y = j*16;
-			gBlocos[n] = createBloco(pos, 1, 32, 16, gBlocoImgs[j]);
-			n++;
+		for (i=0; i<18; i++){
+			pos.x = i*32+32;
+			pos.y = j*16+32;
+			gBlocos[gNumBlocos] = createBloco(pos, 1, 32, 16, gBlocoImgs[j]);
+			gNumBlocos++;
 		}
 	}
 
 	for (i = 0; i < gNumBolas; i++) {
-		pos.x = (rand() % gScreenWidth-10);
-		pos.y = (rand() % gScreenHeight-10);
+		pos.x = (rand() % (gScreenWidth-64))+32;
+		pos.y = (rand() % (gScreenHeight-64))+32;
 		step.x = (rand() % 2? -1 : 1);
 		step.y = (rand() % 2? -1 : 1);
 		gBolas[i] = createBola(pos, step, 1, 10, gBallImgs[0]);
 	}
 	
 	pos.x = STD_SCREEN_WIDTH/2;
-	pos.y = STD_SCREEN_HEIGHT-32;
+	pos.y = STD_SCREEN_HEIGHT-56;
 	step.x = 4;
 	step.y = 4;
 	
@@ -543,9 +541,37 @@ int render() {
 	SDL_FillRect( gScreenSurface, NULL, 
 	SDL_MapRGB( gScreenSurface->format, 
 				0, 0, 0 ) );
+				
+	srcRect.x = 24; srcRect.y = 24;
+	srcRect.w = 592; srcRect.h = 432;
+	SDL_FillRect( gScreenSurface, &srcRect, 
+	SDL_MapRGB( gScreenSurface->format, 
+				0xBB, 0xBB, 0xBB ) );
+				
+	srcRect.x = 32; srcRect.y = 32;
+	srcRect.w = 576; srcRect.h = 416;
+	SDL_FillRect( gScreenSurface, &srcRect, 
+	SDL_MapRGB( gScreenSurface->format, 
+				0, 0, 0 ) );
+	
+	srcRect.x = 0; srcRect.y = 0;
+	
+	/* Renderiza os blocos */
+	for(i = 0; i < gNumBlocos; i++) {
+		srcRect.w = gBlocos[i].w;
+		srcRect.h = gBlocos[i].h;
+		
+		dstRect.x = gBlocos[i].pos.x;
+		dstRect.y = gBlocos[i].pos.y;
+		
+		if( SDL_BlitSurface( gBlocos[i].img, &srcRect, 
+							gScreenSurface, &dstRect ) < 0 ) {
+			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+            err = true;
+		}
+	}
 	
 	/* Renderiza as bolas */
-	srcRect.x = 0; srcRect.y = 0;
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
@@ -572,21 +598,6 @@ int render() {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
 		}
-		
-	/* Renderiza os blocos */
-	for(i = 0; i < MAX_NUM_BLOCOS; i++) {
-		srcRect.w = gBlocos[i].w;
-		srcRect.h = gBlocos[i].h;
-		
-		dstRect.x = gBlocos[i].pos.x;
-		dstRect.y = gBlocos[i].pos.y;
-		
-		if( SDL_BlitSurface( gBlocos[i].img, &srcRect, 
-							gScreenSurface, &dstRect ) < 0 ) {
-			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
-            err = true;
-		}
-	}
             
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
