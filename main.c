@@ -24,8 +24,13 @@
 const int true = 1;
 const int false = 0;
 
+const int BLOCK_DIST = 6;
+const int BLOCKS_W = 15;
+const int BLOCKS_H = 5;
+
 const int STD_SCREEN_WIDTH = 640;
 const int STD_SCREEN_HEIGHT = 480;
+const int OFFSET = 32;
 
 const int MAX_NUM_BLOCOS = 100;
 const int MAX_NUM_BOLAS = 50;
@@ -116,7 +121,7 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img);
 /*Cria um bloco*/
 BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
 /*Cria a plataforma*/
-PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface* img);
+PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img);
 
 /* Move uma bolinha */
 void moveBall(BOLA* b);
@@ -131,7 +136,12 @@ int render();
 
 /* Processa eventos */
 int handleEvent(SDL_Event* e);
-void handleInput(SDL_Event* evt);
+int handleInput(SDL_Event* evt);
+
+/* Carrega blocos de um level *
+ * O level deve estar em ./data/level/ *
+ * Retorna true se leu de boas, false se deu m */
+int loadBlocosFromFile(char* levelName);
 
 /* Encerra os sistemas e sai do jogo */
 void exitGame();
@@ -146,17 +156,24 @@ void detCollisionPlat(BOLA* a);
 
 int main(int argc, char **argv) {
 
-	int quit, startTime, currentTime;
+	int quit, startTime, currentTime, lastTime;
 	SDL_Event evt;
 
-	if (!init() || !loadMedia()) {
+	if (!init()) {
+		return 1;
+	}
+	
+	atexit(exitGame);
+	
+	if (!loadMedia()) {
 		return 1;
 	}
 
 	createNPCs();
+	loadBlocosFromFile("level1");
 
 	quit = false;
-	startTime = SDL_GetTicks();
+	lastTime = currentTime = startTime = SDL_GetTicks();
 
 	gLeft = false;
 	gRight = false;
@@ -165,14 +182,15 @@ int main(int argc, char **argv) {
 	while (!quit) {
 		while (SDL_PollEvent(&evt) != 0) {
 			quit = handleEvent(&evt);
-			handleInput(&evt);
 		}
+		lastTime = currentTime;
+		lastTime++;
 		currentTime = SDL_GetTicks();
 		if (startTime + 10 < currentTime) {
 			startTime = currentTime;
-			if (!gameLoop()) return 1;
+			if (gameLoop()) return 1;
 		}
-		if (render()) {puts("aaa"); return 1;}
+		if (render()) return 1;
 	}
 	exitGame();
 	return 0;
@@ -297,15 +315,15 @@ void moveBall(BOLA* p) {
 
 	p->pos.x = p->pos.x + p->step.x;
 	p->pos.y = p->pos.y + p->step.y;
-
+	
 	detCollisionPlat(p);
 
-	if (p->pos.x + p->dim > gScreenWidth-32 || p->pos.x < 32) {
+	if (p->pos.x + p->dim > gScreenWidth-OFFSET || p->pos.x < OFFSET) {
 		p->step.x = -p->step.x;
 		p->pos.x += p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
-	if (p->pos.y + p->dim > gScreenHeight-32) {
+	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
 		p->step.y = -p->step.y;
 		p->pos.y += p->step.y;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
@@ -324,12 +342,12 @@ void movePlataforma (PLATAFORMA* p) {
 	if (gLeft)
 		p->pos.x -= p->step.x;
 
-	if (p->pos.x + p->w > gScreenWidth-32) {
+	if (p->pos.x + p->w > gScreenWidth-OFFSET) {
 		p->pos.x -= p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
 	}
 
-	if (p->pos.x < 32) {
+	if (p->pos.x < OFFSET) {
 		p->pos.x += p->step.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ //idem
 	}
@@ -390,7 +408,7 @@ int gameLoop() {
 
 	movePlataforma(gPlataforma);
 
-	return true;
+	return false;
 }
 
 BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img) {
@@ -415,7 +433,7 @@ BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img){
 	return bloco;
 }
 
-PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface* img){
+PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 	PLATAFORMA plat;
 	plat.pos = pos;
 	plat.step = step;
@@ -428,7 +446,7 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface
 
 int createNPCs() {
 	VETOR2D pos, step;
-	int i, j;
+	int i;
 
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
@@ -446,20 +464,6 @@ int createNPCs() {
 		return false;
 	}
 
-	/*
-	 * Cria os blocos.
-	 * Eh codigo temporario, so
-	 * estou usando para testes
-	*/
-	for (j=0; j<5; j++){
-		for (i=0; i<18; i++){
-			pos.x = i*32+32;
-			pos.y = j*16+32;
-			gBlocos[gNumBlocos] = createBloco(pos, 1, 32, 16, gBlocoImgs[j]);
-			gNumBlocos++;
-		}
-	}
-
 	for (i = 0; i < gNumBolas; i++) {
 		pos.x = (rand() % (gScreenWidth-64))+32;
 		pos.y = (rand() % (gScreenHeight-64))+32;
@@ -468,12 +472,12 @@ int createNPCs() {
 		gBolas[i] = createBola(pos, step, 1, 10, gBallImgs[0]);
 	}
 
-	pos.x = STD_SCREEN_WIDTH/2;
-	pos.y = STD_SCREEN_HEIGHT-56;
+	pos.x = gScreenWidth/2;
+	pos.y = gScreenHeight-56;
 	step.x = 4;
 	step.y = 4;
 
-	gPlataforma[0] = createPlataforma(pos, step, 64, 16, gPadImgs[0]);
+	gPlataforma[0] = createPlataforma(pos, step, gPadImgs[0]);
 
 	return true;
 }
@@ -496,9 +500,9 @@ void exitGame() {
 	SDL_Quit();
 }
 
-void handleInput(SDL_Event* evt){
+int handleInput(SDL_Event* evt){
 	SDL_Event e = *evt;
-
+	int quit = false;
 	switch (e.type) {
 		case SDL_KEYDOWN:
 			if (e.key.keysym.sym == SDLK_LEFT) {
@@ -506,6 +510,9 @@ void handleInput(SDL_Event* evt){
 			}
 			if (e.key.keysym.sym == SDLK_RIGHT) {
 				gRight = true;
+			}
+			if (e.key.keysym.sym == SDLK_ESCAPE) {
+				quit = true;
 			}
 			break;
 		case SDL_KEYUP:
@@ -520,6 +527,7 @@ void handleInput(SDL_Event* evt){
 			SDL_GetMouseState(&gXMouse,&gYMouse);
 			break;
 	}
+	return quit;
 }
 
 int handleEvent(SDL_Event* evt) {
@@ -530,11 +538,8 @@ int handleEvent(SDL_Event* evt) {
 		case SDL_QUIT:
 			quit = true;
 		break;
-		case SDL_KEYDOWN:
-			if (e.key.keysym.sym == SDLK_ESCAPE) {
-				quit = true;
-			}
-		break;
+		default:
+			quit = handleInput(evt);
 	}
 
 	return quit;
@@ -613,9 +618,9 @@ int render() {
 }
 
 void detCollisionPlat(BOLA* a){
-	if((a->pos.y + (double)a->dim ) >= gPlataforma->pos.y){
-		if(a->pos.x + (double)a->dim >= gPlataforma->pos.x
-		 && a->pos.x + (double)a->dim <= gPlataforma->pos.x
+	if((a->pos.y + a->dim ) >= gPlataforma->pos.y){
+		if(a->pos.x + a->dim >= gPlataforma->pos.x
+		 && a->pos.x + a->dim <= gPlataforma->pos.x
 		 + gPlataforma->w){
 			 a->step.y = -a->step.y;
  			a->pos.y += a->step.y;
@@ -626,4 +631,41 @@ void detCollisionPlat(BOLA* a){
 	diy = (a->posy +(IMAGE_HEIGHT/2) - gPlataforma.h);
 	dir = sqrt((dix * dix) + (diy * diy));
 	if(dir <= ())*/
+}
+
+int loadBlocosFromFile(char* levelName) {
+	FILE* arq;
+	char* path;
+	char* linha;
+	int i;
+	int lc; /*linha count*/
+	
+	path = malloc((strlen(levelName) + 17)*sizeof(char));
+	linha = calloc(BLOCKS_W+2, sizeof(char));
+	path[0] = '\0';
+	
+	strcat(path, "./data/level/");
+	strcat(path, levelName);
+	strcat(path, ".dat");
+	if (!(arq = fopen(path, "r"))) {
+		perror("Erro carregando bloco");
+		return false;
+	}
+	lc = 0;
+	while(fgets(linha, BLOCKS_W+2, arq) != NULL && lc <= BLOCKS_H) {
+		VETOR2D pos;
+		char c;
+		for (i = 0; i < BLOCKS_W; i++) {
+			c = linha[i];
+			if (c >= '0' && c < '5') {
+				pos.x = i*(BLOCK_DIST+32)+OFFSET;
+				pos.y = lc*(BLOCK_DIST+16)+OFFSET;
+				gBlocos[gNumBlocos++] = 
+					createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
+			}
+		}
+		putchar('\n');
+		lc++;
+	}
+	return true;
 }
