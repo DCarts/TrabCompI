@@ -227,22 +227,22 @@ int loadMedia() {
     SDL_SetColorKey(gBlockImgs[0], SDL_TRUE, colorKey);*/
 
     /* Carrega plataformas */
-    if( !(gPadImgs[0] = loadSurface("./bin/data/pad.png")) ) return false;
+    if( !(gPadImgs[0] = loadSurface("./data/pad.png")) ) return false;
     colorKey = SDL_MapRGB(gPadImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gPadImgs[0], SDL_TRUE, colorKey);
 
     /* Carrega bolas */
-    if ( !(gBallImgs[0] = loadSurface("./bin/data/ball.png")) ) return false;
+    if ( !(gBallImgs[0] = loadSurface("./data/ball.png")) ) return false;
     colorKey = SDL_MapRGB(gBallImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gBallImgs[0], SDL_TRUE, colorKey);
     /* FIM CARREGANDO IBAGENS */
 
     /* Carrega tijolos */
-    if ( !(gBlocoImgs[0] = loadSurface("./bin/data/brick0.png")) ) return false;
-    if ( !(gBlocoImgs[1] = loadSurface("./bin/data/brick1.png")) ) return false;
-    if ( !(gBlocoImgs[2] = loadSurface("./bin/data/brick2.png")) ) return false;
-    if ( !(gBlocoImgs[3] = loadSurface("./bin/data/brick3.png")) ) return false;
-    if ( !(gBlocoImgs[4] = loadSurface("./bin/data/brick4.png")) ) return false;
+    if ( !(gBlocoImgs[0] = loadSurface("./data/brick0.png")) ) return false;
+    if ( !(gBlocoImgs[1] = loadSurface("./data/brick1.png")) ) return false;
+    if ( !(gBlocoImgs[2] = loadSurface("./data/brick2.png")) ) return false;
+    if ( !(gBlocoImgs[3] = loadSurface("./data/brick3.png")) ) return false;
+    if ( !(gBlocoImgs[4] = loadSurface("./data/brick4.png")) ) return false;
 
     for (i=0; i<5; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
