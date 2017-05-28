@@ -194,6 +194,7 @@ int init() {
 			Mix_GetError());
 		return false;
 	}
+	Mix_AllocateChannels(8); /* Aloca 8 canais de audio pro jogo, sem contar musicas */
 
 	gWindow = SDL_CreateWindow("Breakout Work-in-Progress",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -302,17 +303,17 @@ void moveBall(BOLA* p) {
 	if (p->pos.x + p->dim > gScreenWidth-32 || p->pos.x < 32) {
 		p->step.x = -p->step.x;
 		p->pos.x += p->step.x;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
 	if (p->pos.y + p->dim > gScreenHeight-32) {
 		p->step.y = -p->step.y;
 		p->pos.y += p->step.y;
-		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], -1); */
+		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
 		p->step.y = -p->step.y;
 		p->pos.y += p->step.y;
-		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], -1); */
+		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
 	}
 }
 
@@ -325,12 +326,12 @@ void movePlataforma (PLATAFORMA* p) {
 
 	if (p->pos.x + p->w > gScreenWidth-32) {
 		p->pos.x -= p->step.x;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
 	}
 
 	if (p->pos.x < 32) {
 		p->pos.x += p->step.x;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */ //idem
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ //idem
 	}
 }
 
