@@ -119,7 +119,7 @@ BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, int w, int h, SDL_Surface* img);
 
 /* Move uma bolinha */
-void move(BOLA* b);
+void moveBall(BOLA* b);
 /* Move a plataforma */
 void movePlataforma(PLATAFORMA *p);
 
@@ -292,7 +292,7 @@ SDL_Surface* loadSurface(char* path ) {
     return optimizedSurface;
 }
 
-void move(BOLA* p) {
+void moveBall(BOLA* p) {
 
 	p->pos.x = p->pos.x + p->step.x;
 	p->pos.y = p->pos.y + p->step.y;
@@ -325,12 +325,12 @@ void movePlataforma (PLATAFORMA* p) {
 
 	if (p->pos.x + p->w > gScreenWidth-32) {
 		p->pos.x -= p->step.x;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
 	}
 
 	if (p->pos.x < 32) {
 		p->pos.x += p->step.x;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], -1); */ //idem
 	}
 }
 
@@ -371,7 +371,7 @@ int gameLoop() {
 	/*double dx, dy, raios;*/
 
 	for (i = 0; i < gNumBolas; i++) {
-		move(gBolas+i);
+		moveBall(gBolas+i);
 	}
 	/*    ainda WIP (colisao entre bolas)
 	for (i = 0; i < gNumBolas; i++) {
