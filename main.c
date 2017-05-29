@@ -63,6 +63,7 @@ typedef struct _PLATAFORMA {
 	int ativo;
 	int w;
 	int h;
+	double spd;
 	SDL_Surface* img;
 } PLATAFORMA;
 
@@ -336,19 +337,33 @@ void moveBall(BOLA* p) {
 }
 
 void movePlataforma (PLATAFORMA* p) {
-
-	if (gRight)
-		p->pos.x += p->step.x;
-	if (gLeft)
-		p->pos.x -= p->step.x;
+	
+	if (gRight){
+		p->spd += 0.5;
+		if (p->spd > p->step.x)
+			p->spd = p->step.x;
+	}
+		
+	if (gLeft){
+		p->spd -= 0.5;
+		if (p->spd < -p->step.x)
+			p->spd = -p->step.x;
+	}
+	
+	p->pos.x += p->spd;
+	
+	if (p->spd > 0) p->spd -= 0.125;
+	if (p->spd < 0) p->spd += 0.125;
 
 	if (p->pos.x + p->w > gScreenWidth-OFFSET) {
-		p->pos.x -= p->step.x;
+		p->spd = 0;
+		p->pos.x = gScreenWidth-OFFSET-p->w;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
 	}
 
 	if (p->pos.x < OFFSET) {
-		p->pos.x += p->step.x;
+		p->spd = 0;
+		p->pos.x = OFFSET;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ //idem
 	}
 }
@@ -390,7 +405,9 @@ int gameLoop() {
 	/*double dx, dy, raios;*/
 
 	for (i = 0; i < gNumBolas; i++) {
-		moveBall(gBolas+i);
+		if (gBolas[i].ativo){
+			moveBall(gBolas+i);
+		}
 	}
 	/*    ainda WIP (colisao entre bolas)
 	for (i = 0; i < gNumBolas; i++) {
@@ -440,6 +457,7 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 	plat.w = 96;
 	plat.h = 12;
 	plat.img = img;
+	plat.spd = 0;
 	plat.ativo = true;
 	return plat;
 }
@@ -503,6 +521,7 @@ void exitGame() {
 int handleInput(SDL_Event* evt){
 	SDL_Event e = *evt;
 	int quit = false;
+	int i;
 	switch (e.type) {
 		case SDL_KEYDOWN:
 			if (e.key.keysym.sym == SDLK_LEFT) {
@@ -510,6 +529,14 @@ int handleInput(SDL_Event* evt){
 			}
 			if (e.key.keysym.sym == SDLK_RIGHT) {
 				gRight = true;
+			}
+			if (e.key.keysym.sym == SDLK_UP) {
+				for (i=0; i<gNumBolas; i++)
+				gBolas[i].ativo = false;
+			}
+			if (e.key.keysym.sym == SDLK_DOWN) {
+				for (i=0; i<gNumBolas; i++)
+				gBolas[i].ativo = true;
 			}
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
@@ -570,17 +597,23 @@ int render() {
 
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
-		srcRect.w = gBlocos[i].w;
-		srcRect.h = gBlocos[i].h;
+		
+		if (gBlocos[i].ativo){
+					
+			srcRect.w = gBlocos[i].w;
+			srcRect.h = gBlocos[i].h;
 
-		dstRect.x = gBlocos[i].pos.x;
-		dstRect.y = gBlocos[i].pos.y;
+			dstRect.x = gBlocos[i].pos.x;
+			dstRect.y = gBlocos[i].pos.y;
 
-		if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
-							gScreenSurface, &dstRect ) < 0 ) {
-			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
-            err = true;
+			if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
+								gScreenSurface, &dstRect ) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				err = true;
+			}
+			
 		}
+		
 	}
 
 	/* Renderiza as bolas */
@@ -590,11 +623,13 @@ int render() {
 
 		dstRect.x = gBolas[i].pos.x;
 		dstRect.y = gBolas[i].pos.y;
-
-		if( SDL_BlitSurface( gBolas[i].img, &srcRect,
-							gScreenSurface, &dstRect ) < 0 ) {
-			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
-            err = true;
+		
+		if (gBolas[i].ativo){
+			if( SDL_BlitSurface( gBolas[i].img, &srcRect,
+								gScreenSurface, &dstRect ) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				err = true;
+			}
 		}
 	}
 
@@ -623,7 +658,7 @@ void detCollisionPlat(BOLA* a){
 		 && a->pos.x + a->dim <= gPlataforma->pos.x
 		 + gPlataforma->w){
 			 a->step.y = -a->step.y;
- 			a->pos.y += a->step.y;
+				a->pos.y = gPlataforma->pos.y-10;
 		 }
 	}
 
@@ -658,8 +693,8 @@ int loadBlocosFromFile(char* levelName) {
 		for (i = 0; i < BLOCKS_W; i++) {
 			c = linha[i];
 			if (c >= '0' && c < '5') {
-				pos.x = i*(BLOCK_DIST+32)+OFFSET;
-				pos.y = lc*(BLOCK_DIST+16)+OFFSET;
+				pos.x = i*(BLOCK_DIST+32)+OFFSET+5;
+				pos.y = lc*(BLOCK_DIST+16)+OFFSET+5;
 				gBlocos[gNumBlocos++] = 
 					createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
