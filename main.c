@@ -26,7 +26,7 @@ const int false = 0;
 
 const int BLOCK_DIST = 6;
 const int BLOCKS_W = 15;
-const int BLOCKS_H = 5;
+const int BLOCKS_H = 10;
 
 const int STD_SCREEN_WIDTH = 640;
 const int STD_SCREEN_HEIGHT = 480;
@@ -83,7 +83,7 @@ int gScreenHeight = 480;
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
-SDL_Surface* gBlocoImgs[5];
+SDL_Surface* gBlocoImgs[10];
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 
@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
 	}
 
 	createNPCs();
-	loadBlocosFromFile("level1");
+	loadBlocosFromFile("teste");
 
 	quit = false;
 	lastTime = currentTime = startTime = SDL_GetTicks();
@@ -263,8 +263,13 @@ int loadMedia() {
     if ( !(gBlocoImgs[2] = loadSurface("./data/brick2.png")) ) return false;
     if ( !(gBlocoImgs[3] = loadSurface("./data/brick3.png")) ) return false;
     if ( !(gBlocoImgs[4] = loadSurface("./data/brick4.png")) ) return false;
+    if ( !(gBlocoImgs[5] = loadSurface("./data/brick5.png")) ) return false;
+    if ( !(gBlocoImgs[6] = loadSurface("./data/brick6.png")) ) return false;
+    if ( !(gBlocoImgs[7] = loadSurface("./data/brick7.png")) ) return false;
+    if ( !(gBlocoImgs[8] = loadSurface("./data/brick8.png")) ) return false;
+    if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
 
-    for (i=0; i<5; i++){
+    for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
 	}
@@ -471,7 +476,7 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	gBlocos = calloc(MAX_NUM_BLOCOS, sizeof(BLOCO));
+	gBlocos = calloc(BLOCKS_W*BLOCKS_H, sizeof(BLOCO));
 	if (!gBlocos) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
@@ -692,11 +697,11 @@ int loadBlocosFromFile(char* levelName) {
 		char c;
 		for (i = 0; i < BLOCKS_W; i++) {
 			c = linha[i];
-			if (c >= '0' && c < '5') {
-				pos.x = i*(BLOCK_DIST+32)+OFFSET+5;
-				pos.y = lc*(BLOCK_DIST+16)+OFFSET+5;
+			if (c >= '0' && c <= '9') {
+				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
+				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] = 
-					createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
+				createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
 		}
 		putchar('\n');

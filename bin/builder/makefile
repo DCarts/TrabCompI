@@ -9,10 +9,10 @@ AUDIO_FLAGS=-lSDL2_mixer
 SFLAGS=-lSDL2
 
 SOURCES=levelBuilder.c
-BINARIES=builder
+BINARIES=lvlbuilder
 
 #all: ex0 ex1 ex2 ex3 ex4 ex5 ex6 ex7 grafico texto
 all: $(BINARIES)
 
-builder: levelBuilder.c
+lvlbuilder: levelBuilder.c
 	$(CC) -o ../$(BINARIES) $(SOURCES) $(CFLAGS) $(LINUX_FLAGS) $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS)
