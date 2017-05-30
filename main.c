@@ -695,7 +695,7 @@ int loadBlocosFromFile(char* levelName) {
 	while(fgets(linha, BLOCKS_W+2, arq) != NULL && lc <= BLOCKS_H) {
 		VETOR2D pos;
 		char c;
-		for (i = 0; i < BLOCKS_W; i++) {
+		for (i = 0; i <= BLOCKS_W; i++) {
 			c = linha[i];
 			if (c >= '0' && c <= '9') {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;

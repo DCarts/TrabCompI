@@ -94,7 +94,9 @@ int handleInput(SDL_Event* evt);
 /* Carrega blocos de um level *
  * O level deve estar em ./data/level/ *
  * Retorna true se leu de boas, false se deu m */
+char gArqAlvo[64];
 int loadBlocosFromFile(char* levelName);
+int saveBlocosOnFile(char* target);
 
 /* Encerra os sistemas e sai do jogo */
 void exitGame();
@@ -103,9 +105,12 @@ void exitGame();
 
 int main(int argc, char **argv) {
 	
-	char nomeArq[64];
-	printf("Nome do arquivo:\n");
-	scanf("%s", nomeArq);
+	char arqOrig[64];
+	
+	printf("Arquivo de origem:\n");
+	scanf("%s", arqOrig);
+	printf("Arquivo de destino:\n");
+	scanf("%s", gArqAlvo);
 
 	int quit, startTime, currentTime, lastTime;
 	SDL_Event evt;
@@ -125,7 +130,7 @@ int main(int argc, char **argv) {
 	gCursor->pos.x = OFFSET + BLOCK_DIST;
 	gCursor->pos.y = OFFSET + BLOCK_DIST;
 	
-	loadBlocosFromFile(nomeArq);
+	loadBlocosFromFile(arqOrig);
 
 	quit = false;
 	lastTime = currentTime = startTime = SDL_GetTicks();
@@ -324,6 +329,8 @@ int handleInput(SDL_Event* evt){
 				for(i = 0; i < gNumBlocos; i++){
 					if(gBlocos[i].pos.x == gCursor->pos.x
 					&& gBlocos[i].pos.y == gCursor->pos.y){
+						gBlocos[i].ativo = true;
+						gBlocos[i].tipo = gCursor->tipo;
 						gBlocos[i].img = gBlocoImgs[gCursor->tipo];
 					}
 				}				
@@ -332,12 +339,12 @@ int handleInput(SDL_Event* evt){
 				for(i = 0; i < gNumBlocos; i++){
 					if(gBlocos[i].pos.x == gCursor->pos.x
 					&& gBlocos[i].pos.y == gCursor->pos.y){
-						if (gBlocos[i].ativo)
-							gBlocos[i].ativo = false;
-						else
-							gBlocos[i].ativo = true;
+						gBlocos[i].ativo = false;
 					}
 				}	
+			}
+			if (e.key.keysym.sym == SDLK_s) {
+				saveBlocosOnFile(gArqAlvo);
 			}
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
@@ -442,6 +449,10 @@ int loadBlocosFromFile(char* levelName) {
 	linha = calloc(BLOCKS_W+2, sizeof(char));
 	path[0] = '\0';
 	
+	if (strcmp(levelName, ".")){
+		levelName = "default";
+	}
+	
 	strcat(path, "./data/level/");
 	strcat(path, levelName);
 	strcat(path, ".dat");
@@ -465,5 +476,40 @@ int loadBlocosFromFile(char* levelName) {
 		putchar('\n');
 		lc++;
 	}
+	return true;
+}
+
+int saveBlocosOnFile(char* target) {
+	FILE* arq;
+	char* path;
+	int i, lc; /*linha count*/
+	int b;
+	
+	path = malloc((strlen(target) + 17)*sizeof(char));
+	path[0] = '\0';
+	
+	strcat(path, "./data/level/");
+	strcat(path, target);
+	strcat(path, ".dat");
+	if (!(arq = fopen(path, "w"))) {
+		perror("Erro carregando bloco");
+		return false;
+	}
+	
+	for (lc = OFFSET + BLOCK_DIST; lc <= OFFSET + BLOCKS_H*(16+BLOCK_DIST); lc += 16 + BLOCK_DIST){
+		for (i = OFFSET + BLOCK_DIST; i <= OFFSET + BLOCKS_W*(32+BLOCK_DIST); i += 32 + BLOCK_DIST){
+			for (b = 0; b < gNumBlocos; b++){
+				if(gBlocos[b].pos.x == i
+				&& gBlocos[b].pos.y == lc){
+					if (gBlocos[b].ativo)
+						fprintf(arq, "%c", gBlocos[b].tipo+'0');
+					else
+						fprintf(arq, "-");
+				}
+			}
+		}
+		fprintf(arq, "\n");
+	}
+	
 	return true;
 }
