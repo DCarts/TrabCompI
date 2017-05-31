@@ -4,6 +4,9 @@
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
+ *
+ * 		AS VELOCIDADES SÃO POR SEGUNDO
+ * 		Px / Segundo
  */
 
 #ifndef SDL_MAIN_HANDLED
@@ -26,13 +29,14 @@ const int false = 0;
 
 const int BLOCK_DIST = 6;
 const int BLOCKS_W = 15;
-const int BLOCKS_H = 5;
+const int BLOCKS_H = 10;
 
 const int STD_SCREEN_WIDTH = 640;
 const int STD_SCREEN_HEIGHT = 480;
 const int OFFSET = 32;
 
-const int MAX_NUM_BLOCOS = 100;
+const int PLAT_SPD = 100;
+
 const int MAX_NUM_BOLAS = 50;
 
 const int SOUND_WALL = 0;
@@ -49,16 +53,17 @@ typedef struct _VETOR2D {
 
 typedef struct _BOLA {
 	VETOR2D pos;
-	VETOR2D step;
+	VETOR2D dir;
 	int tipo;
 	int ativo;
 	int dim;
+	double spd;
 	SDL_Surface* img;
 } BOLA;
 
 typedef struct _PLATAFORMA {
 	VETOR2D pos;
-	VETOR2D step;
+	VETOR2D dir;
 	int melhorias[5];
 	int ativo;
 	int w;
@@ -71,7 +76,7 @@ typedef struct _BLOCO {
 	VETOR2D pos;
 	int tipo;
 	int w, h;
-	int ativo;
+	int vida;
 	SDL_Surface* img;
 } BLOCO;
 
@@ -91,7 +96,7 @@ int gScreenHeight = 480;
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
-SDL_Surface* gBlocoImgs[5];
+SDL_Surface* gBlocoImgs[10];
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 
@@ -100,7 +105,7 @@ Mix_Chunk* gSons[10];
 int gNumBolas = 6;
 int gNumBlocos = 0;
 
-PLATAFORMA* gPlataforma;
+PLATAFORMA* gPad;
 BOLA* gBolas;
 BLOCO* gBlocos;
 
@@ -126,16 +131,16 @@ Mix_Chunk* loadSound(char* path);
 int createNPCs();
 
 /* Cria uma bolinha */
-BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img);
+BOLA createBola(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, SDL_Surface* img);
 /*Cria um bloco*/
 BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
 /*Cria a plataforma*/
-PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img);
+PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D dir, SDL_Surface* img);
 
 /* Move uma bolinha */
-void moveBall(BOLA* b);
+void moveBall(BOLA* b, double delta);
 /* Move a plataforma */
-void movePlataforma(PLATAFORMA *p);
+void movePlataforma(PLATAFORMA *p, double delta);
 
 /* Loop do jogo */
 int gameLoop();
@@ -158,14 +163,24 @@ void exitGame();
 /* Funcoes de math uteis */
 double normalize (VETOR2D* a);
 double dotProduct(VETOR2D a, VETOR2D b);
-void collide (BOLA* a, BOLA* b);
-void detCollisionPlat(BOLA* a);
+double sqDist (VETOR2D a, VETOR2D b);
+int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y);
+
+/* Funcoes de colisao */
+/* Algumas sao mei chatas msm e ainda estao em construcao WIP */
+void collide (BOLA* a, BOLA* b, double delta);
+void collBallPlat(BOLA* a, double delta);
+void collPlatBall(BOLA* a, double delta);
+void collBallBlock(BOLA* a, BLOCO* b, double delta);
+int collBallPoint(BOLA* a, double dx, double dy, double delta);
 
 /* Fim das funcoes da main.c */
 
 int main(int argc, char **argv) {
 
-	int quit, startTime, currentTime, lastTime;
+	int quit;
+	long startTime, currentTime, lastTime;
+	double delta;
 	SDL_Event evt;
 
 	if (!init()) {
@@ -179,10 +194,10 @@ int main(int argc, char **argv) {
 	}
 
 	createNPCs();
-	loadBlocosFromFile("level1");
+	loadBlocosFromFile("teste");
 
 	quit = false;
-	lastTime = currentTime = startTime = SDL_GetTicks();
+	currentTime = startTime = SDL_GetTicks();
 
 	gLeft = false;
 	gRight = false;
@@ -193,12 +208,9 @@ int main(int argc, char **argv) {
 			quit = handleEvent(&evt);
 		}
 		lastTime = currentTime;
-		lastTime++;
 		currentTime = SDL_GetTicks();
-		if (startTime + 10 < currentTime) {
-			startTime = currentTime;
-			if (gameLoop()) return 1;
-		}
+		delta = (currentTime-lastTime)/1000.0;
+		if (gameLoop(delta)) return 1;
 		if (render()) return 1;
 	}
 	exitGame();
@@ -271,8 +283,13 @@ int loadMedia() {
     if ( !(gBlocoImgs[2] = loadSurface("./data/brick2.png")) ) return false;
     if ( !(gBlocoImgs[3] = loadSurface("./data/brick3.png")) ) return false;
     if ( !(gBlocoImgs[4] = loadSurface("./data/brick4.png")) ) return false;
+    if ( !(gBlocoImgs[5] = loadSurface("./data/brick5.png")) ) return false;
+    if ( !(gBlocoImgs[6] = loadSurface("./data/brick6.png")) ) return false;
+    if ( !(gBlocoImgs[7] = loadSurface("./data/brick7.png")) ) return false;
+    if ( !(gBlocoImgs[8] = loadSurface("./data/brick8.png")) ) return false;
+    if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
 
-    for (i=0; i<5; i++){
+    for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
 	}
@@ -320,50 +337,50 @@ SDL_Surface* loadSurface(char* path ) {
     return optimizedSurface;
 }
 
-void moveBall(BOLA* p) {
+void moveBall(BOLA* p, double delta) {
 
-	p->pos.x = p->pos.x + p->step.x;
-	p->pos.y = p->pos.y + p->step.y;
-
-	detCollisionPlat(p);
+	p->pos.x = p->pos.x + p->dir.x*p->spd*delta;
+	p->pos.y = p->pos.y + p->dir.y*p->spd*delta;
 
 	if (p->pos.x + p->dim > gScreenWidth-OFFSET || p->pos.x < OFFSET) {
-		p->step.x = -p->step.x;
-		p->pos.x += p->step.x;
+		p->dir.x = -p->dir.x;
+		p->pos.x += p->dir.x*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
 	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
-		p->step.y = -p->step.y;
-		p->pos.y += p->step.y;
 		/*jogador perde pontos*/
 		p->ativo = false;
+		p->dir.y = -p->dir.y;
+		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
-		p->step.y = -p->step.y;
-		p->pos.y += p->step.y;
+		p->dir.y = -p->dir.y;
+		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
 	}
 }
 
-void movePlataforma (PLATAFORMA* p) {
+void movePlataforma (PLATAFORMA* p, double delta) {
 
-	if (gRight){
-		p->spd += 0.5;
-		if (p->spd > p->step.x)
-			p->spd = p->step.x;
+	if (gRight) {
+		p->spd += delta * 4;
+		if (p->spd > p->dir.x)
+			p->spd = p->dir.x;
 	}
 
-	if (gLeft){
-		p->spd -= 0.5;
-		if (p->spd < -p->step.x)
-			p->spd = -p->step.x;
+	else if (gLeft) {
+		p->spd -= delta * 4;
+		if (p->spd < -p->dir.x)
+			p->spd = -p->dir.x;
 	}
+	else if (p->spd != 0) {
+		p->spd += (p->spd < 0) ?
+			delta * 4 : delta * -4;
+	}
+	p->pos.x += p->spd*PLAT_SPD*delta;
 
-	p->pos.x += p->spd;
 
-	if (p->spd > 0) p->spd -= 0.125;
-	if (p->spd < 0) p->spd += 0.125;
 
 	if (p->pos.x + p->w > gScreenWidth-OFFSET) {
 		p->spd = 0;
@@ -379,7 +396,7 @@ void movePlataforma (PLATAFORMA* p) {
 }
 
 double dotProduct(VETOR2D a, VETOR2D b) {
-	return (a.x * b.x)+(a.y + b.y);
+	return (a.x * b.x)+(a.y * b.y);
 }
 
 double normalize (VETOR2D* a) {
@@ -389,61 +406,64 @@ double normalize (VETOR2D* a) {
 	return norm;
 }
 
-
-
 /* @todo fazer funcionar direito */
-void collide(BOLA* a, BOLA* b) {
-	VETOR2D c;
-	double p;
+void collide(BOLA* a, BOLA* b, double delta) {
+	/*VETOR2D c, mp, n, tip, ray;
+	double dot;*/
 
-	c.x = a->pos.x - b->pos.x;
-	c.y = a->pos.y - b->pos.y;
+	/* bola n precisa colidir mesmo */
 
-	normalize(&c);
 
-	p = (a->step.x * c.x) + (a->step.y * c.y)
-		- (b->step.x * c.x) - (b->step.y * c.y);
-
-	a->step.x = a->step.x - p * c.x;
-	a->step.y = a->step.y - p * c.y;
-	b->step.x = a->step.x + p * c.x;
-	b->step.y = a->step.y + p * c.y;
 }
 
-int gameLoop() {
-	int i/*, j*/;
-	/*double dx, dy, raios;*/
+int gameLoop(double delta) {
+	int i, j;
+
+	movePlataforma(gPad, delta);
 
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
-			moveBall(gBolas+i);
+			/* move cada bola e
+			 * colide com o canto da tela
+			 * e a plataforma
+			 * e os blocos */
+			collPlatBall(gBolas+i, delta);
+
+			for (j = 0; j < gNumBlocos; j++) {
+				if (gBlocos[j].vida) {
+					collBallBlock(gBolas+i, gBlocos+j, delta);
+				}
+			}
+
+			moveBall(gBolas+i, delta);
+			collBallPlat(gBolas+i, delta);
+			//detCollBlocos(alalalal
 		}
 	}
-	/*    ainda WIP (colisao entre bolas)
-	for (i = 0; i < gNumBolas; i++) {
+	/* colisao entre bolas */
+	/*for (i = 0; i < gNumBolas; i++) {
 		for (j = i+1; j < gNumBolas; j++) {
 
-			dx = gBolas[i].pos.x-gBolas[j].pos.x;
-			dy = gBolas[i].pos.y-gBolas[j].pos.y;
+			sqDistance = sqDist(gBolas[i].pos, gBolas[j].pos);
 			raios = (gBolas[i].dim/2) + (gBolas[j].dim/2);
 
-			if (raios*raios > dx*dx + dy*dy) {
-				collide(gBolas+i, gBolas+j);
+			if (raios*raios >= sqDistance) {
+				collide(gBolas+i, gBolas+j, delta);
 			}
 		}
 	}*/
 
-	movePlataforma(gPlataforma);
-
 	return false;
 }
 
-BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, SDL_Surface* img) {
+BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Surface* img) {
 	BOLA bola;
 	bola.pos = pos;
-	bola.step = step;
+	normalize(&step);
+	bola.dir = step;
 	bola.tipo = tipo;
 	bola.dim = dim;
+	bola.spd = spd;
 	bola.img = img;
 	bola.ativo = true;
 	return bola;
@@ -455,7 +475,7 @@ BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img){
 	bloco.tipo = tipo;
 	bloco.w = w;
 	bloco.h = h;
-	bloco.ativo = 1;
+	bloco.vida = 1;
 	bloco.img = img;
 	return bloco;
 }
@@ -463,7 +483,7 @@ BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img){
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 	PLATAFORMA plat;
 	plat.pos = pos;
-	plat.step = step;
+	plat.dir = step;
 	plat.w = 96;
 	plat.h = 12;
 	plat.img = img;
@@ -473,7 +493,7 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 }
 
 int createNPCs() {
-	VETOR2D pos, step;
+	VETOR2D pos, dir;
 	int i;
 
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
@@ -481,13 +501,13 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	gBlocos = calloc(MAX_NUM_BLOCOS, sizeof(BLOCO));
+	gBlocos = calloc(BLOCKS_W*BLOCKS_H, sizeof(BLOCO));
 	if (!gBlocos) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	gPlataforma = calloc(1, sizeof(PLATAFORMA));
-	if (!gPlataforma) {
+	gPad = calloc(1, sizeof(PLATAFORMA));
+	if (!gPad) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
@@ -495,17 +515,17 @@ int createNPCs() {
 	for (i = 0; i < gNumBolas; i++) {
 		pos.x = (rand() % (gScreenWidth-64))+32;
 		pos.y = (rand() % (gScreenHeight-64))+32;
-		step.x = (rand() % 2? -1 : 1);
-		step.y = (rand() % 2? -1 : 1);
-		gBolas[i] = createBola(pos, step, 1, 10, gBallImgs[0]);
+		dir.x = (rand() % 2? -1 : 1);
+		dir.y = (rand() % 2? -1 : 1);
+		gBolas[i] = createBola(pos, dir, 1, 10, gScreenHeight/5, gBallImgs[0]);
 	}
 
 	pos.x = gScreenWidth/2;
 	pos.y = gScreenHeight-56;
-	step.x = 4;
-	step.y = 4;
+	dir.x = 4;
+	dir.y = 4;
 
-	gPlataforma[0] = createPlataforma(pos, step, gPadImgs[0]);
+	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
 
 	return true;
 }
@@ -607,9 +627,7 @@ int render() {
 
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
-
-		if (gBlocos[i].ativo){
-
+		if (gBlocos[i].vida){
 			srcRect.w = gBlocos[i].w;
 			srcRect.h = gBlocos[i].h;
 
@@ -644,13 +662,13 @@ int render() {
 	}
 
 	/* Renderiza a plataforma */
-	srcRect.w = gPlataforma[0].w;
-	srcRect.h = gPlataforma[0].h;
+	srcRect.w = gPad[0].w;
+	srcRect.h = gPad[0].h;
 
-	dstRect.x = gPlataforma[0].pos.x;
-	dstRect.y = gPlataforma[0].pos.y;
+	dstRect.x = gPad[0].pos.x;
+	dstRect.y = gPad[0].pos.y;
 
-	if( SDL_BlitSurface( gPlataforma[0].img, &srcRect,
+	if( SDL_BlitSurface( gPad[0].img, &srcRect,
 							gScreenSurface, &dstRect ) < 0 ) {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
@@ -662,20 +680,161 @@ int render() {
 	return err;
 }
 
-void detCollisionPlat(BOLA* a){
-	if((a->pos.y + a->dim ) >= gPlataforma->pos.y){
-		if(a->pos.x + a->dim >= gPlataforma->pos.x
-		 && a->pos.x + a->dim <= gPlataforma->pos.x
-		 + gPlataforma->w){
-			 a->step.y = -a->step.y;
-				a->pos.y = gPlataforma->pos.y-10;
-		 }
+void collBallPlat(BOLA* a, double delta){
+	double dx, dy;
+	VETOR2D c;
+	int inv = 0;
+	c.x = a->pos.x + a->dim/2;
+	c.y = a->pos.y + a->dim/2;
+	if (!isInAABB(c, gPad->pos.x - a->dim/2,
+						  gPad->pos.y - a->dim/2,
+						  gPad->pos.x + gPad->w + a->dim/2,
+						  gPad->pos.y + gPad->h + a->dim/2)) {
+		return;
 	}
+	if (isInAABB(c, gPad->pos.x - a->dim/2,
+						 gPad->pos.y,
+						 gPad->pos.x + gPad->w + a->dim/2,
+						 gPad->pos.y + gPad->h)) {
+		a->dir.x = -a->dir.x;
+		a->pos.x += a->dir.x*a->spd*delta;
 
-	/*dix = (a->posx +(IMAGE_WIDTH /2) - gPlataforma.w);
-	diy = (a->posy +(IMAGE_HEIGHT/2) - gPlataforma.h);
+	}
+	else if (isInAABB(c, gPad->pos.x,
+							   gPad->pos.y - a->dim/2,
+							   gPad->pos.x + gPad->w,
+							   gPad->pos.y + gPad->h + a->dim/2)) {
+		a->dir.y = -a->dir.y;
+		a->pos.y += a->dir.y*a->spd*delta;
+	}
+	else {
+		dx = c.x - gPad->pos.x;
+		dy = c.y - gPad->pos.y;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		dx += gPad->w;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		dy += gPad->h;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		dx -= gPad->w;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		if (inv) {
+			a->dir.x = -a->dir.x;
+			a->dir.y = -a->dir.y;
+			a->pos.x += a->dir.x*a->spd*delta;
+			a->pos.y += a->dir.y*a->spd*delta;
+		}
+
+	}
+		/*a->dir.y = -a->dir.y;
+		a->pos.y = gPad->pos.y-10;*/
+
+	/*dix = (a->posx +(IMAGE_WIDTH /2) - gPad.w);
+	diy = (a->posy +(IMAGE_HEIGHT/2) - gPad.h);
 	dir = sqrt((dix * dix) + (diy * diy));
 	if(dir <= ())*/
+}
+
+void collPlatBall(BOLA* a, double delta) {
+
+	double dx, dy;
+	VETOR2D c;
+	int inv = 0;
+	c.x = a->pos.x + a->dim/2;
+	c.y = a->pos.y + a->dim/2;
+	if (!isInAABB(c, gPad->pos.x - a->dim/2,
+						  gPad->pos.y - a->dim/2,
+						  gPad->pos.x + gPad->w + a->dim/2,
+						  gPad->pos.y + gPad->h + a->dim/2)) {
+		return;
+	}
+	if (isInAABB(c, gPad->pos.x - a->dim/2,
+						 gPad->pos.y,
+						 gPad->pos.x + gPad->w + a->dim/2,
+						 gPad->pos.y + gPad->h)) {
+		if (gPad->dir.x > 0) {
+			a->pos.x = gPad->pos.x + gPad->w + 1;
+			a->dir.x = fabs(a->dir.x);
+		}
+		else {
+			a->pos.x = gPad->pos.x - a->dim - 1;
+			a->dir.x = -fabs(a->dir.x);
+		}
+
+	}
+	else if (isInAABB(c, gPad->pos.x,
+							   gPad->pos.y - a->dim/2,
+							   gPad->pos.x + gPad->w,
+							   gPad->pos.y + gPad->h + a->dim/2)) {
+		if (c.y > gPad->pos.y + gPad->h/2) {
+			a->pos.y = gPad->pos.y + gPad->h + 1;
+			a->dir.y = fabs(a->dir.y);
+		}
+		else {
+			a->pos.y = gPad->pos.y - a->dim - 1;
+			a->dir.y = -fabs(a->dir.y);
+		}
+	}
+	else {
+		dx = c.x - gPad->pos.x;
+		dy = c.y - gPad->pos.y;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		dx += gPad->w;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		dy += gPad->h;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		dx -= gPad->w;
+		if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+			inv = 1;
+		}
+		if (inv) {
+			if (gPad->dir.x > 0) {
+				a->pos.x = gPad->pos.x + gPad->w + 1;
+				a->dir.x = fabs(a->dir.x);
+			}
+			else {
+				a->pos.x = gPad->pos.x - a->dim - 1;
+				a->dir.x = -fabs(a->dir.x);
+			}
+			if (c.y > gPad->pos.y + gPad->h/2) {
+				a->pos.y = gPad->pos.y + gPad->h + 1;
+				a->dir.y = fabs(a->dir.y);
+			}
+			else {
+				a->pos.y = gPad->pos.y - a->dim - 1;
+				a->dir.y = -fabs(a->dir.y);
+			}
+		}
+	}
+
+	/*if ( a->pos.y + a->dim/2 >= gPad->pos.y &&
+			a->pos.y + a->dim/2 >= gPad->pos.y + gPad->h &&
+			a->pos.x + a->dim/2 >= gPad->pos.x &&
+			a->pos.x + a->dim/2 <= gPad->pos.x + gPad->w) {
+
+		if (gPad->dir.x > 0) {
+			a->pos.x = gPad->pos.x + gPad->w + 1;
+			a->dir.x = fabs(a->dir.x);
+		}
+		else {
+			a->pos.x = gPad->pos.x - a->dim - 1;
+			a->dir.x = -fabs(a->dir.x);
+		}
+
+	}*/
 }
 
 int loadBlocosFromFile(char* levelName) {
@@ -700,17 +859,97 @@ int loadBlocosFromFile(char* levelName) {
 	while(fgets(linha, BLOCKS_W+2, arq) != NULL && lc <= BLOCKS_H) {
 		VETOR2D pos;
 		char c;
-		for (i = 0; i < BLOCKS_W; i++) {
+		for (i = 0; i <= BLOCKS_W; i++) {
 			c = linha[i];
-			if (c >= '0' && c < '5') {
+			if (c >= '0' && c <= '9') {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] =
-					createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
+				createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
 		}
-		putchar('\n');
 		lc++;
 	}
 	return true;
+}
+
+void collBallBlock(BOLA* a, BLOCO* b, double delta) {
+	double dx, dy;
+	VETOR2D c;
+	int inv;
+	c.x = a->pos.x + a->dim/2;
+	c.y = a->pos.y + a->dim/2;
+	if (!isInAABB(c, b->pos.x - a->dim/2,
+						  b->pos.y - a->dim/2,
+						  b->pos.x + b->w + a->dim/2,
+						  b->pos.y + b->h + a->dim/2)) {
+		return;
+	}
+	if (isInAABB(c, b->pos.x - a->dim/2,
+						 b->pos.y,
+						 b->pos.x + b->w + a->dim/2,
+						 b->pos.y + b->h)) {
+		a->dir.x = -a->dir.x;
+		a->pos.x += a->dir.x*a->spd*delta;
+
+	}
+	else if (isInAABB(c, b->pos.x,
+							   b->pos.y - a->dim/2,
+							   b->pos.x + b->w,
+							   b->pos.y + b->h + a->dim/2)) {
+		a->dir.y = -a->dir.y;
+		a->pos.y += a->dir.y*a->spd*delta;
+	}
+	else {
+		dx = c.x - b->pos.x;
+		dy = c.y - b->pos.y;
+		inv = collBallPoint(a, dx, dy, delta);
+		dx += b->w;
+		if (!inv) {
+			inv = collBallPoint(a, dx, dy, delta);
+		}
+		dy += b->h;
+		if (!inv) {
+			inv = collBallPoint(a, dx, dy, delta);
+		}
+		dx -= b->w;
+		if (!inv) {
+			inv = collBallPoint(a, dx, dy, delta);
+		}
+		if (!inv) return;
+	}
+	b->vida--;
+}
+
+int collBallPoint(BOLA* a, double dx, double dy, double delta) {
+	if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+		if (dx < dy) {
+			a->dir.x = -a->dir.x;
+			a->pos.x += a->dir.x*a->spd*delta;
+		}
+		else if (dx > dy) {
+			a->dir.y = -a->dir.y;
+			a->pos.y += a->dir.y*a->spd*delta;
+		}
+		else {
+			a->dir.x = -a->dir.x;
+			a->dir.y = -a->dir.y;
+			a->pos.x += a->dir.x*a->spd*delta;
+			a->pos.y += a->dir.y*a->spd*delta;
+		}
+		return true;
+	}
+	return false;
+}
+
+double sqDist(VETOR2D a, VETOR2D b) {
+	double dx, dy;
+	dx = a.x - b.x;
+	dy = a.y - b.y;
+	return (dx*dx)+(dy*dy);
+}
+
+int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
+	return  t.x <= p4x && t.x >= p1x &&
+			t.y <= p4y && t.y >= p1y;
 }
