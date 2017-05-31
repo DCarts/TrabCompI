@@ -449,10 +449,6 @@ int loadBlocosFromFile(char* levelName) {
 	linha = calloc(BLOCKS_W+2, sizeof(char));
 	path[0] = '\0';
 	
-	if (strcmp(levelName, ".")){
-		levelName = "default";
-	}
-	
 	strcat(path, "./data/level/");
 	strcat(path, levelName);
 	strcat(path, ".dat");
