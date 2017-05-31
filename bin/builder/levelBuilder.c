@@ -109,18 +109,18 @@ int main(int argc, char **argv) {
 	if (!init()) {
 		return 1;
 	}
-	
+
 	atexit(exitGame);
-	
+
 	if (!loadMedia()) {
 		return 1;
 	}
 
 	createNPCs();
-	
+
 	gCursor->pos.x = OFFSET+5;
 	gCursor->pos.y = OFFSET+5;
-	
+
 	loadBlocosFromFile("level1");
 
 	quit = false;
@@ -255,7 +255,7 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	
+
 	gBlocos = calloc(MAX_NUM_BLOCOS, sizeof(BLOCO));
 	if (!gBlocos) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -348,9 +348,9 @@ int render() {
 
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
-		
+
 		if (gBlocos[i].ativo){
-					
+
 			srcRect.w = gBlocos[i].w;
 			srcRect.h = gBlocos[i].h;
 
@@ -362,14 +362,14 @@ int render() {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	srcRect.x = gCursor->pos.x;  srcRect.y = gCursor->pos.y+8;
 	srcRect.w = 32;    srcRect.h = 8;
-	
+
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xFF, 0xFF, 0xFF ) );
@@ -386,11 +386,11 @@ int loadBlocosFromFile(char* levelName) {
 	char* linha;
 	int i;
 	int lc; /*linha count*/
-	
+
 	path = malloc((strlen(levelName) + 17)*sizeof(char));
 	linha = calloc(BLOCKS_W+2, sizeof(char));
 	path[0] = '\0';
-	
+
 	strcat(path, "./data/level/");
 	strcat(path, levelName);
 	strcat(path, ".dat");
@@ -407,7 +407,7 @@ int loadBlocosFromFile(char* levelName) {
 			if (c >= '0' && c < '5') {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+5;
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+5;
-				gBlocos[gNumBlocos++] = 
+				gBlocos[gNumBlocos++] =
 					createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
 		}

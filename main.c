@@ -75,6 +75,14 @@ typedef struct _BLOCO {
 	SDL_Surface* img;
 } BLOCO;
 
+/*
+typedef struct _PLAYER{
+	int health;
+	int points;
+	char nome[80];
+}
+*/
+
 /* Variaveis Globais */
 
 int gScreenWidth = 640;
@@ -163,9 +171,9 @@ int main(int argc, char **argv) {
 	if (!init()) {
 		return 1;
 	}
-	
+
 	atexit(exitGame);
-	
+
 	if (!loadMedia()) {
 		return 1;
 	}
@@ -316,7 +324,7 @@ void moveBall(BOLA* p) {
 
 	p->pos.x = p->pos.x + p->step.x;
 	p->pos.y = p->pos.y + p->step.y;
-	
+
 	detCollisionPlat(p);
 
 	if (p->pos.x + p->dim > gScreenWidth-OFFSET || p->pos.x < OFFSET) {
@@ -327,6 +335,8 @@ void moveBall(BOLA* p) {
 	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
 		p->step.y = -p->step.y;
 		p->pos.y += p->step.y;
+		/*jogador perde pontos*/
+		p->ativo = false;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
@@ -337,21 +347,21 @@ void moveBall(BOLA* p) {
 }
 
 void movePlataforma (PLATAFORMA* p) {
-	
+
 	if (gRight){
 		p->spd += 0.5;
 		if (p->spd > p->step.x)
 			p->spd = p->step.x;
 	}
-		
+
 	if (gLeft){
 		p->spd -= 0.5;
 		if (p->spd < -p->step.x)
 			p->spd = -p->step.x;
 	}
-	
+
 	p->pos.x += p->spd;
-	
+
 	if (p->spd > 0) p->spd -= 0.125;
 	if (p->spd < 0) p->spd += 0.125;
 
@@ -597,9 +607,9 @@ int render() {
 
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
-		
+
 		if (gBlocos[i].ativo){
-					
+
 			srcRect.w = gBlocos[i].w;
 			srcRect.h = gBlocos[i].h;
 
@@ -611,9 +621,9 @@ int render() {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
-			
+
 		}
-		
+
 	}
 
 	/* Renderiza as bolas */
@@ -623,7 +633,7 @@ int render() {
 
 		dstRect.x = gBolas[i].pos.x;
 		dstRect.y = gBolas[i].pos.y;
-		
+
 		if (gBolas[i].ativo){
 			if( SDL_BlitSurface( gBolas[i].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
@@ -674,11 +684,11 @@ int loadBlocosFromFile(char* levelName) {
 	char* linha;
 	int i;
 	int lc; /*linha count*/
-	
+
 	path = malloc((strlen(levelName) + 17)*sizeof(char));
 	linha = calloc(BLOCKS_W+2, sizeof(char));
 	path[0] = '\0';
-	
+
 	strcat(path, "./data/level/");
 	strcat(path, levelName);
 	strcat(path, ".dat");
@@ -693,9 +703,9 @@ int loadBlocosFromFile(char* levelName) {
 		for (i = 0; i < BLOCKS_W; i++) {
 			c = linha[i];
 			if (c >= '0' && c < '5') {
-				pos.x = i*(BLOCK_DIST+32)+OFFSET+5;
-				pos.y = lc*(BLOCK_DIST+16)+OFFSET+5;
-				gBlocos[gNumBlocos++] = 
+				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
+				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
+				gBlocos[gNumBlocos++] =
 					createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
 		}
