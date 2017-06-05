@@ -16,8 +16,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <string.h>
 #include <math.h>
@@ -80,16 +82,17 @@ typedef struct _BLOCO {
 	SDL_Surface* img;
 } BLOCO;
 
-/*
+
 typedef struct _PLAYER{
-	int health;
-	int points;
-	char nome[80];
-}
-*/
+	int vidas;
+	int pontos;
+	char nome[21];
+	int ativo;
+}PLAYER;
+
 
 /* Variaveis Globais */
-
+int gScoreBoardHeight = 25;
 int gScreenWidth = 640;
 int gScreenHeight = 480;
 
@@ -99,8 +102,14 @@ SDL_Surface* gScreenSurface = NULL;
 SDL_Surface* gBlocoImgs[10];
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
+SDL_Surface* gTexto = NULL;
+
+SDL_Color white = {255,255,255};
 
 Mix_Chunk* gSons[10];
+
+TTF_Font* gFonte;
+
 
 int gNumBolas = 6;
 int gNumBlocos = 0;
@@ -108,6 +117,7 @@ int gNumBlocos = 0;
 PLATAFORMA* gPad;
 BOLA* gBolas;
 BLOCO* gBlocos;
+PLAYER gPlayer;
 
 int gLeft, gRight;
 
@@ -136,6 +146,8 @@ BOLA createBola(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, SDL_Sur
 BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
 /*Cria a plataforma*/
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D dir, SDL_Surface* img);
+/*Cria o player atual*/
+void createPlayer();
 
 /* Move uma bolinha */
 void moveBall(BOLA* b, double delta);
@@ -154,7 +166,7 @@ int handleInput(SDL_Event* evt);
 
 /* Carrega blocos de um level *
  * O level deve estar em ./data/level/ *
- * Retorna true se leu de boas, false se deu m */
+ * Retorna true se leu de boas, false se deu merda */
 int loadBlocosFromFile(char* levelName);
 
 /* Encerra os sistemas e sai do jogo */
@@ -177,11 +189,12 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta);
 /* Fim das funcoes da main.c */
 
 int main(int argc, char **argv) {
-
 	int quit;
 	long startTime, currentTime, lastTime;
 	double delta;
 	SDL_Event evt;
+
+	gScreenHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
 
 	if (!init()) {
 		return 1;
@@ -192,6 +205,7 @@ int main(int argc, char **argv) {
 	if (!loadMedia()) {
 		return 1;
 	}
+
 
 	createNPCs();
 	loadBlocosFromFile("teste");
@@ -233,6 +247,13 @@ int init() {
 			Mix_GetError());
 		return false;
 	}
+
+	if(TTF_Init() < 0){
+		fprintf(stderr,"Erro: SDL_ttf nao conseguiu inicializar: %s\n",
+		TTF_GetError());
+		return false;
+	}
+
 	Mix_AllocateChannels(8); /* Aloca 8 canais de audio pro jogo, sem contar musicas */
 
 	gWindow = SDL_CreateWindow("Breakout Work-in-Progress",
@@ -261,7 +282,10 @@ int loadMedia() {
 	/* ColorKey eh magenta */
     uint32_t colorKey;
     int i;
-
+		if(!(gFonte = TTF_OpenFontIndex("./data/Scoreboard-LED.ttf",48,0))){
+			fprintf(stderr,"Impossivel abrir fonte! %s\n",TTF_GetError() );
+			return false;
+		}
     /* Carrega blocos *//* @todo
     if( !(gBlockImgs[0] = loadSurface("./data/brick.png")) ) return false;
     SDL_SetColorKey(gBlockImgs[0], SDL_TRUE, colorKey);*/
@@ -354,7 +378,7 @@ void moveBall(BOLA* p, double delta) {
 		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
-	else if (p->pos.y < 32) {
+	else if (p->pos.y < 32 + gScoreBoardHeight) {
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
@@ -496,6 +520,12 @@ int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
 
+
+	gPlayer.ativo = false;
+	while(gPlayer.ativo == false){
+		createPlayer();
+	}
+
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -533,6 +563,7 @@ int createNPCs() {
 void exitGame() {
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
+	/*SDL_FreeSurface(gTexto);*/
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
@@ -542,8 +573,9 @@ void exitGame() {
 
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
-
+	TTF_CloseFont(gFonte);/*encerra a utilização da fonte do ttf*/
 	Mix_CloseAudio();
+	TTF_Quit();/*fecha o SDL_ttf*/
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -611,13 +643,13 @@ int render() {
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-	srcRect.x = 24; srcRect.y = 24;
+	srcRect.x = 24; srcRect.y = 24+gScoreBoardHeight;
 	srcRect.w = 592; srcRect.h = 432;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
 
-	srcRect.x = 32; srcRect.y = 32;
+	srcRect.x = 32; srcRect.y = 32+gScoreBoardHeight;
 	srcRect.w = 576; srcRect.h = 416;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
@@ -673,6 +705,18 @@ int render() {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
             err = true;
 		}
+
+		if(!(gTexto = TTF_RenderText_Solid(gFonte,gPlayer.nome,white))){
+			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
+			err = true;
+		}
+		else{printf("Criei uma nova suferìcie gTexto\n");}
+
+
+
+		SDL_BlitSurface(gTexto,NULL,gScreenSurface,NULL);
+
+		SDL_FreeSurface(gTexto);
 
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
@@ -882,7 +926,7 @@ void collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	if (!isInAABB(c, b->pos.x - a->dim/2,
 						  b->pos.y - a->dim/2,
 						  b->pos.x + b->w + a->dim/2,
-						  b->pos.y + b->h + a->dim/2)) {
+						  b->pos.y + b->h + a->dim/2)) { //que caralhos "isInAABB" faz?
 		return;
 	}
 	if (isInAABB(c, b->pos.x - a->dim/2,
@@ -952,4 +996,18 @@ double sqDist(VETOR2D a, VETOR2D b) {
 int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
 	return  t.x <= p4x && t.x >= p1x &&
 			t.y <= p4y && t.y >= p1y;
+}
+
+
+void createPlayer(){
+	printf("Qual o nome do jogador? \n");
+	fgets(gPlayer.nome,21,stdin);
+	gPlayer.nome[strlen(gPlayer.nome)] ='\0';
+
+	gPlayer.vidas = 5;
+	gPlayer.pontos = 0;
+	if(gPlayer.nome[0] != '\n'){
+		gPlayer.ativo = true;
+	}
+	else{return;}/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 }
