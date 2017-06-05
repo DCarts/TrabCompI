@@ -710,7 +710,7 @@ int render() {
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
 			err = true;
 		}
-		else{printf("Criei uma nova suferìcie gTexto\n");}
+		/*else{printf("Criei uma nova suferìcie gTexto\n");}*/
 
 
 
