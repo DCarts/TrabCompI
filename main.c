@@ -104,7 +104,8 @@ SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 SDL_Surface* gTexto = NULL;
 
-SDL_Color white = {255,255,255};
+SDL_Color corDaFonte = {255,255,255};
+SDL_Color backgroundColor = {0,0,0};
 
 Mix_Chunk* gSons[10];
 
@@ -710,20 +711,20 @@ int render() {
             err = true;
 		}
 
-		if(!(gTexto = TTF_RenderText_Solid(gFonte,gPlayer.nome,white))){
+		if(!(gTexto = TTF_RenderText_Shaded(gFonte,gPlayer.nome,corDaFonte,backgroundColor))){
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
 			err = true;
 		}
 		/*else{printf("Criei uma nova suferìcie gTexto\n");}*/
 
-
-
-		SDL_BlitSurface(gTexto,NULL,gScreenSurface,NULL);
-
-		SDL_FreeSurface(gTexto);
+		if(SDL_BlitSurface(gTexto,NULL,gScreenSurface,NULL) < 0){
+			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
+		}
 
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
+
+		SDL_FreeSurface(gTexto);
 
 	return err;
 }
@@ -1004,14 +1005,16 @@ int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
 
 
 void createPlayer(){
+	int i;
 	printf("Qual o nome do jogador? \n");
 	fgets(gPlayer.nome,21,stdin);
 	gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
 
 	gPlayer.vidas = 5;
 	gPlayer.pontos = 0;
+
 	if(gPlayer.nome[0] != '\n'){
 		gPlayer.ativo = true;
 	}
-	else{return;}/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
+	else{return;}		/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 }
