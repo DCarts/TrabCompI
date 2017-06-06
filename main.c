@@ -146,11 +146,13 @@ BOLA createBola(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, SDL_Sur
 BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
 /*Cria a plataforma*/
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D dir, SDL_Surface* img);
+
 /*Cria o player atual*/
 void createPlayer();
 
 /* Move uma bolinha */
 void moveBall(BOLA* b, double delta);
+
 /* Move a plataforma */
 void movePlataforma(PLATAFORMA *p, double delta);
 
@@ -224,6 +226,7 @@ int main(int argc, char **argv) {
 		lastTime = currentTime;
 		currentTime = SDL_GetTicks();
 		delta = (currentTime-lastTime)/1000.0;
+		printf("%.1f\n",currentTime/1000.0);
 		if (gameLoop(delta)) return 1;
 		if (render()) return 1;
 	}
@@ -561,9 +564,11 @@ int createNPCs() {
 }
 
 void exitGame() {
+	TTF_CloseFont(gFonte);/*encerra a utilização da fonte do ttf*/
+
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
-	/*SDL_FreeSurface(gTexto);*/
+	SDL_FreeSurface(gTexto);
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
@@ -573,7 +578,6 @@ void exitGame() {
 
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
-	TTF_CloseFont(gFonte);/*encerra a utilização da fonte do ttf*/
 	Mix_CloseAudio();
 	TTF_Quit();/*fecha o SDL_ttf*/
 	IMG_Quit();
@@ -1002,7 +1006,7 @@ int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
 void createPlayer(){
 	printf("Qual o nome do jogador? \n");
 	fgets(gPlayer.nome,21,stdin);
-	gPlayer.nome[strlen(gPlayer.nome)] ='\0';
+	gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
 
 	gPlayer.vidas = 5;
 	gPlayer.pontos = 0;
