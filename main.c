@@ -83,12 +83,12 @@ typedef struct _BLOCO {
 } BLOCO;
 
 
-typedef struct _PLAYER{
+typedef struct _PLAYER {
 	int vidas;
 	int pontos;
 	char nome[21];
 	int ativo;
-}PLAYER;
+} PLAYER;
 
 
 /* Variaveis Globais */
@@ -163,6 +163,9 @@ int gameLoop();
 /* Renderiza a tela */
 int render();
 
+/* Renderiza o scoreboard na tela */
+int renderScore();
+
 /* Processa eventos */
 int handleEvent(SDL_Event* e);
 int handleInput(SDL_Event* evt);
@@ -186,7 +189,7 @@ int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y);
 void collide (BOLA* a, BOLA* b, double delta);
 void collBallPlat(BOLA* a, double delta);
 void collPlatBall(BOLA* a, double delta);
-void collBallBlock(BOLA* a, BLOCO* b, double delta);
+int collBallBlock(BOLA* a, BLOCO* b, double delta);
 int collBallPoint(BOLA* a, double dx, double dy, double delta);
 
 /* Fim das funcoes da main.c */
@@ -227,7 +230,7 @@ int main(int argc, char **argv) {
 		lastTime = currentTime;
 		currentTime = SDL_GetTicks();
 		delta = (currentTime-lastTime)/1000.0;
-		printf("%.1f\n",currentTime/1000.0);
+		//printf("%.1f\n",currentTime/1000.0);
 		if (gameLoop(delta)) return 1;
 		if (render()) return 1;
 	}
@@ -459,7 +462,9 @@ int gameLoop(double delta) {
 
 			for (j = 0; j < gNumBlocos; j++) {
 				if (gBlocos[j].vida) {
-					collBallBlock(gBolas+i, gBlocos+j, delta);
+					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
+						gPlayer.pontos += 100;
+					}
 				}
 			}
 
@@ -711,13 +716,13 @@ int render() {
             err = true;
 		}
 
-		if(!(gTexto = TTF_RenderText_Shaded(gFonte,gPlayer.nome,corDaFonte,backgroundColor))){
+		if(!(gTexto = TTF_RenderText_Shaded(gFonte, gPlayer.nome, corDaFonte, backgroundColor))){
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
 			err = true;
 		}
 		/*else{printf("Criei uma nova suferìcie gTexto\n");}*/
 
-		if(SDL_BlitSurface(gTexto,NULL,gScreenSurface,NULL) < 0){
+		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, NULL) < 0) {
 			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
 		}
 
@@ -922,7 +927,7 @@ int loadBlocosFromFile(char* levelName) {
 	return true;
 }
 
-void collBallBlock(BOLA* a, BLOCO* b, double delta) {
+int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	double dx, dy;
 	VETOR2D c;
 	int inv;
@@ -931,8 +936,8 @@ void collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	if (!isInAABB(c, b->pos.x - a->dim/2,
 						  b->pos.y - a->dim/2,
 						  b->pos.x + b->w + a->dim/2,
-						  b->pos.y + b->h + a->dim/2)) { //que caralhos "isInAABB" faz?
-		return;
+						  b->pos.y + b->h + a->dim/2)) {
+		return false;
 	}
 	if (isInAABB(c, b->pos.x - a->dim/2,
 						 b->pos.y,
@@ -965,9 +970,11 @@ void collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		if (!inv) {
 			inv = collBallPoint(a, dx, dy, delta);
 		}
-		if (!inv) return;
+		if (!inv) return false;
 	}
 	b->vida--;
+
+	return true;
 }
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
@@ -1005,16 +1012,21 @@ int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
 
 
 void createPlayer(){
-	int i;
-	printf("Qual o nome do jogador? \n");
-	fgets(gPlayer.nome,21,stdin);
-	gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
+	char buffer[22];
 
-	gPlayer.vidas = 5;
-	gPlayer.pontos = 0;
-
-	if(gPlayer.nome[0] != '\n'){
-		gPlayer.ativo = true;
+	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
+		printf("Qual o nome do jogador? \n");
+		fgets(buffer,22,stdin);
+		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
+			strcpy(gPlayer.nome, buffer);
+			break;
+		}
 	}
-	else{return;}		/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
+		int i;
+		gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
+
+		gPlayer.vidas = 5;
+		gPlayer.pontos = 0;
+
+		gPlayer.ativo = true;
 }
