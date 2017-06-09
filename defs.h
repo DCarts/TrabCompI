@@ -52,7 +52,6 @@ typedef struct {
 	int vidas;
 	int pontos;
 	char nome[4];
-	int ativo;
 } PLAYER;
 
 #endif

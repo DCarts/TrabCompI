@@ -76,19 +76,19 @@ void moveBall(BOLA* p, double delta) {
 	p->pos.x = p->pos.x + p->dir.x*p->spd*delta;
 	p->pos.y = p->pos.y + p->dir.y*p->spd*delta;
 
-	if (p->pos.x + p->dim > gScreenWidth-OFFSET || p->pos.x < OFFSET) {
+	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x += p->dir.x*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
-	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
+	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
 		/*jogador perde pontos*/
 		p->ativo = false;
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
-	else if (p->pos.y < 32 + gScoreBoardHeight) {
+	else if (p->pos.y < 32) {
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
@@ -112,20 +112,21 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->spd += (p->spd < 0) ?
 			delta * 9 : delta * -9;
 	}
+	
+	
 	p->pos.x += p->spd*PLAT_SPD*delta;
+	
 
-
-
-	if (p->pos.x + p->w > gScreenWidth-OFFSET) {
+	if (p->pos.x + p->w > gGameWidth-OFFSET) {
 		p->spd = 0;
-		p->pos.x = gScreenWidth-OFFSET-p->w;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
+		p->pos.x = gGameWidth-OFFSET-p->w;
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ /* nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma */
 	}
 
 	if (p->pos.x < OFFSET) {
 		p->spd = 0;
 		p->pos.x = OFFSET;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ //idem
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ /*idem*/
 	}
 }
 
@@ -157,7 +158,7 @@ int gameLoop(double delta) {
 
 			moveBall(gBolas+i, delta);
 			collBallPlat(gBolas+i, delta);
-			//detCollBlocos(alalalal
+			/*detCollBlocos(alalalal*/
 		}
 	}
 	/* colisao entre bolas */
@@ -217,11 +218,7 @@ int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
 
-
-	gPlayer.ativo = false;
-	while(gPlayer.ativo == false){
-		createPlayer();
-	}
+	createPlayer();
 
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
@@ -240,15 +237,15 @@ int createNPCs() {
 	}
 
 	for (i = 0; i < gNumBolas; i++) {
-		pos.x = (rand() % (gScreenWidth-64))+32;
-		pos.y = (rand() % (gScreenHeight-64))+32;
+		pos.x = (rand() % (gGameWidth-64))+32;
+		pos.y = (rand() % (gGameHeight-64))+32;
 		dir.x = (rand() % 2? -1 : 1);
 		dir.y = (rand() % 2? -1 : 1);
-		gBolas[i] = createBola(pos, dir, 1, 10, gScreenHeight/5, gBallImgs[0]);
+		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/5, gBallImgs[0]);
 	}
 
-	pos.x = gScreenWidth/2;
-	pos.y = gScreenHeight-56;
+	pos.x = gGameWidth/2;
+	pos.y = gGameHeight-56;
 	dir.x = 4;
 	dir.y = 4;
 
@@ -258,11 +255,12 @@ int createNPCs() {
 }
 
 void exitGame() {
-	TTF_CloseFont(gFonte);/*encerra a utilização da fonte do ttf*/
+
+	SDL_FreeSurface(gScoreSurface);
 
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
-	SDL_FreeSurface(gTexto);
+	SDL_FreeSurface(gScoreSurface);
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
@@ -273,6 +271,9 @@ void exitGame() {
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
 	Mix_CloseAudio();
+	
+	TTF_CloseFont(gScoreFonte);/*encerra a utilização da fonte do ttf*/
+	
 	TTF_Quit();/*fecha o SDL_ttf*/
 	IMG_Quit();
 	SDL_Quit();
@@ -387,24 +388,15 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		return false;
 	}
 
-	if (isInAABB(c, b->pos.x,
-					 b->pos.y,
-					 b->pos.x + b->w,
-					 b->pos.y + b->h)) {
-
-		a->dir.x = -a->dir.x;
-		a->dir.y = -a->dir.y;
-		a->pos.x += a->dir.x*a->spd*delta;
-		a->pos.y += a->dir.y*a->spd*delta;
-
-		return false;
-	}
-	else if (isInAABB(c, b->pos.x - a->dim/2,
+	if (isInAABB(c, b->pos.x - a->dim/2,
 					b->pos.y,
 					b->pos.x + b->w + a->dim/2,
 					b->pos.y + b->h)) {
 		a->dir.x = -a->dir.x;
 		a->pos.x += a->dir.x*a->spd*delta;
+		
+		puts("Primeiro if");
+		a->spd = 0;
 
 	}
 	else if (isInAABB(c, b->pos.x,
@@ -413,6 +405,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 						 b->pos.y + b->h + a->dim/2)) {
 		a->dir.y = -a->dir.y;
 		a->pos.y += a->dir.y*a->spd*delta;
+		
 	}
 	else {
 		dx = c.x - b->pos.x;
@@ -431,9 +424,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 			inv = collBallPoint(a, dx, dy, delta);
 		}
 		if (!inv) return false;
-		
 	}
-	printf("Vida --: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
+	printf("Vida --: dx=%.2lf dy=%.2lf\n", a->dir.x, a->dir.y);
 	b->vida--;
 
 	return true;
@@ -445,9 +437,11 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 		if (dx < dy) {
 			a->dir.x = -a->dir.x;
 			a->pos.x += a->dir.x*a->spd*delta;
+			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else if (dx > dy) {
 			a->dir.y = -a->dir.y;
+			a->pos.x += a->dir.x*a->spd*delta;
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else {
@@ -469,18 +463,15 @@ void createPlayer(){
 
 	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 		printf("Qual o nome do jogador? \n");
-		fgets(buffer,22,stdin);
-		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
-			strcpy(gPlayer.nome, buffer);
+		//fgets(buffer,22,stdin);
+		//if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
+			strcpy(gPlayer.nome, /*buffer*/"as");
 			break;
-		}
+		//}
 	}
-		int i;
 		gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
 
 		gPlayer.vidas = 5;
 		gPlayer.pontos = 0;
-
-		gPlayer.ativo = true;
 }
 

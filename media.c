@@ -28,10 +28,7 @@ int loadMedia() {
 	
 	/* CARREGANDO FONTES */
 	
-	if(!(gFonte = TTF_OpenFontIndex("./data/Scoreboard-LED.ttf",48,0))){
-		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
-		return false;
-	}
+	if (!(gScoreFonte = loadFont("./data/Scoreboard-LED.ttf"))) return false;
 	
 	/* FIM CARREGANDO FONTES */
 	
@@ -95,6 +92,15 @@ Mix_Chunk* loadSound(char* path) {
 	return sound;
 }
 
+TTF_Font* loadFont(char* path) {
+	TTF_Font* fonte;
+	fonte = TTF_OpenFont(path, 48);
+	if (!fonte) {
+		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
+	}
+	return fonte;
+}
+
 SDL_Surface* loadSurface(char* path ) {
     /* A imagem otimizada final */
     SDL_Surface* optimizedSurface = NULL;
@@ -136,7 +142,7 @@ int loadBlocosFromFile(char* levelName) {
 	strcat(path, ".dat");
 	
 	if (!(arq = fopen(path, "r"))) {
-		perror("Erro carregando bloco");
+		perror("Erro carregando bloco: ");
 		return false;
 	}
 	lc = 0;

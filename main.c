@@ -37,7 +37,11 @@ int main(int argc, char **argv) {
 	double delta;
 	SDL_Event evt;
 
-	gScreenHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
+	//gGameHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
+	gScoreOffset += gGameWidth;
+	
+	gScreenWidth = gScoreOffset+gScoreWidth;
+	gScreenHeight = gGameHeight;
 
 	if (!init()) {
 		return 1;
@@ -73,10 +77,10 @@ int main(int argc, char **argv) {
 			count = 0;
 			countTime = currentTime + 1000;
 		}
-		if (gameLoop(delta)) return 1;
-		if (render()) return 1;
+		if (gameLoop(delta)) break;
+		if (render()) break;
 		count++;
 	}
 	exitGame();
-	return 0;
+	return !quit;
 }

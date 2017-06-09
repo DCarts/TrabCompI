@@ -20,8 +20,12 @@
 #include "global.h"
 #include "render.h"
 
+static SDL_Rect srcRect, dstRect;
+
+static SDL_Color scoreFontColor = {255,255,255};
+static SDL_Color bgColor = {0,0,0};
+
 int render() {
-	SDL_Rect srcRect, dstRect;
 	int i, err = false;
 
 	//Fill the surface white
@@ -29,13 +33,13 @@ int render() {
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-	srcRect.x = 24; srcRect.y = 24+gScoreBoardHeight;
+	srcRect.x = 24; srcRect.y = 24;
 	srcRect.w = 592; srcRect.h = 432;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
 
-	srcRect.x = 32; srcRect.y = 32+gScoreBoardHeight;
+	srcRect.x = 32; srcRect.y = 32;
 	srcRect.w = 576; srcRect.h = 416;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
@@ -105,21 +109,39 @@ int render() {
             err = true;
 		}
 
-		if(!(gTexto = TTF_RenderText_Shaded(gFonte, gPlayer.nome, corDaFonte, backgroundColor))){
-			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
-			err = true;
-		}
-		/*else{printf("Criei uma nova suferìcie gTexto\n");}*/
-
-		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, NULL) < 0) {
-			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
-		}
+	err = renderScoreboard();
 
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
 
-		SDL_FreeSurface(gTexto);
-
 	return err;
 }
 
+int renderScoreboard() {
+	int err = false;
+	static int lastScore = -1;
+	static char scoreText[8];
+	
+	if (gPlayer.pontos != lastScore) {
+		lastScore = gPlayer.pontos;
+		sprintf(scoreText, "%d", lastScore);
+		SDL_FreeSurface(gScoreSurface);
+		free(gScoreSurface);
+		gScoreSurface = NULL;
+		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, scoreText, scoreFontColor, bgColor))) {
+			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
+			err = true;
+		}
+	}
+
+	dstRect.x = gScoreOffset;
+	dstRect.y = 16;
+	dstRect.w = 128;
+	dstRect.h = 48;
+
+	if (SDL_BlitSurface(gScoreSurface, NULL, gScreenSurface, &dstRect) < 0) {
+		fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
+		err = true;
+	}
+	return err;
+}

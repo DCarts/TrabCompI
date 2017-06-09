@@ -13,6 +13,6 @@
 int render();
 
 /* Renderiza o scoreboard na tela */
-/*int renderScore();*/
+int renderScoreboard();
 
 #endif

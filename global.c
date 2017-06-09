@@ -33,9 +33,13 @@ const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
 
-int gScoreBoardHeight = 25;
-int gScreenWidth = 640;
-int gScreenHeight = 480;
+int gScoreOffset = 16;
+int gScoreWidth = 128;
+int gGameWidth = 640;
+int gGameHeight = 480;
+
+int gScreenWidth = 0;
+int gScreenHeight = 0;
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
@@ -44,14 +48,13 @@ SDL_Surface* gBlocoImgs[10];
 SDL_Surface* gBlocoBreak;
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
-SDL_Surface* gTexto = NULL;
-
-SDL_Color corDaFonte = {255,255,255};
-SDL_Color backgroundColor = {0,0,0};
 
 Mix_Chunk* gSons[10];
 
-TTF_Font* gFonte = NULL;
+SDL_Renderer* gRenderer = NULL;
+SDL_Texture* gScoreTexture = NULL;
+SDL_Surface* gScoreSurface = NULL;
+TTF_Font* gScoreFonte = NULL;
 
 int gNumBolas = 6;
 int gNumBlocos = 0;

@@ -39,7 +39,11 @@ extern const int SOUND_FLOOR;
 
 /* Variaveis */
 
-extern int gScoreBoardHeight;
+extern int gScoreOffset;
+extern int gScoreWidth;
+extern int gGameWidth;
+extern int gGameHeight;
+
 extern int gScreenWidth;
 extern int gScreenHeight;
 
@@ -50,14 +54,13 @@ extern SDL_Surface* gBlocoImgs[10];
 extern SDL_Surface* gBlocoBreak;
 extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
-extern SDL_Surface* gTexto;
 
-extern SDL_Color corDaFonte;
-extern SDL_Color backgroundColor;
+extern SDL_Renderer* gRenderer;
+extern SDL_Texture* gScoreTexture;
+extern SDL_Surface* gScoreSurface;
+extern TTF_Font* gScoreFonte;
 
 extern Mix_Chunk* gSons[10];
-
-extern TTF_Font* gFonte;
 
 extern int gNumBolas;
 extern int gNumBlocos;
