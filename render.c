@@ -41,7 +41,6 @@ int render() {
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-	srcRect.x = 0; srcRect.y = 0;
 
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
@@ -51,11 +50,23 @@ int render() {
 
 			dstRect.x = gBlocos[i].pos.x;
 			dstRect.y = gBlocos[i].pos.y;
+			
+			srcRect.x = 0; srcRect.y = 0;
 
 			if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
+			}
+			
+			if (gBlocos[i].vida < gBlocos[i].maxVida){
+				srcRect.x = 32 * (4 - gBlocos[i].vida); srcRect.y = 0;
+				
+				if( SDL_BlitSurface( gBlocoBreak, &srcRect,
+									gScreenSurface, &dstRect ) < 0 ) {
+					fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+					err = true;
+				}
 			}
 
 		}
@@ -63,6 +74,8 @@ int render() {
 	}
 
 	/* Renderiza as bolas */
+	srcRect.x = 0; srcRect.y = 0;
+	
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
