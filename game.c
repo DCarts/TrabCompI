@@ -98,19 +98,19 @@ void moveBall(BOLA* p, double delta) {
 void movePlataforma (PLATAFORMA* p, double delta) {
 
 	if (gRight) {
-		p->spd += delta * 4;
+		p->spd += delta * 9;
 		if (p->spd > p->dir.x)
 			p->spd = p->dir.x;
 	}
 
 	else if (gLeft) {
-		p->spd -= delta * 4;
+		p->spd -= delta * 9;
 		if (p->spd < -p->dir.x)
 			p->spd = -p->dir.x;
 	}
 	else if (p->spd != 0) {
 		p->spd += (p->spd < 0) ?
-			delta * 4 : delta * -4;
+			delta * 9 : delta * -9;
 	}
 	p->pos.x += p->spd*PLAT_SPD*delta;
 
@@ -189,13 +189,14 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Su
 	return bola;
 }
 
-BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img){
+BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int vida, SDL_Surface* img){
 	BLOCO bloco;
 	bloco.pos = pos;
 	bloco.tipo = tipo;
 	bloco.w = w;
 	bloco.h = h;
-	bloco.vida = 1;
+	bloco.maxVida = vida;
+	bloco.vida = bloco.maxVida;
 	bloco.img = img;
 	return bloco;
 }
@@ -380,23 +381,36 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	c.x = a->pos.x + a->dim/2;
 	c.y = a->pos.y + a->dim/2;
 	if (!isInAABB(c, b->pos.x - a->dim/2,
-						  b->pos.y - a->dim/2,
-						  b->pos.x + b->w + a->dim/2,
-						  b->pos.y + b->h + a->dim/2)) {
+					 b->pos.y - a->dim/2,
+					 b->pos.x + b->w + a->dim/2,
+					 b->pos.y + b->h + a->dim/2)) {
 		return false;
 	}
-	if (isInAABB(c, b->pos.x - a->dim/2,
-						 b->pos.y,
-						 b->pos.x + b->w + a->dim/2,
-						 b->pos.y + b->h)) {
+
+	if (isInAABB(c, b->pos.x,
+					 b->pos.y,
+					 b->pos.x + b->w,
+					 b->pos.y + b->h)) {
+
+		a->dir.x = -a->dir.x;
+		a->dir.y = -a->dir.y;
+		a->pos.x += a->dir.x*a->spd*delta;
+		a->pos.y += a->dir.y*a->spd*delta;
+
+		return false;
+	}
+	else if (isInAABB(c, b->pos.x - a->dim/2,
+					b->pos.y,
+					b->pos.x + b->w + a->dim/2,
+					b->pos.y + b->h)) {
 		a->dir.x = -a->dir.x;
 		a->pos.x += a->dir.x*a->spd*delta;
 
 	}
 	else if (isInAABB(c, b->pos.x,
-							   b->pos.y - a->dim/2,
-							   b->pos.x + b->w,
-							   b->pos.y + b->h + a->dim/2)) {
+						 b->pos.y - a->dim/2,
+						 b->pos.x + b->w,
+						 b->pos.y + b->h + a->dim/2)) {
 		a->dir.y = -a->dir.y;
 		a->pos.y += a->dir.y*a->spd*delta;
 	}
@@ -417,14 +431,17 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 			inv = collBallPoint(a, dx, dy, delta);
 		}
 		if (!inv) return false;
+		
 	}
+	printf("Vida --: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 	b->vida--;
 
 	return true;
 }
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
-	if (a->dim*a->dim < (dx*dx)+(dy*dy)) {
+	if ( (a->dim /2 )* (a->dim / 2) > (dx*dx)+(dy*dy)) {
+		printf("1: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		if (dx < dy) {
 			a->dir.x = -a->dir.x;
 			a->pos.x += a->dir.x*a->spd*delta;
@@ -434,11 +451,13 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else {
+			
 			a->dir.x = -a->dir.x;
 			a->dir.y = -a->dir.y;
 			a->pos.x += a->dir.x*a->spd*delta;
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
+		printf("2: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		return true;
 	}
 	return false;

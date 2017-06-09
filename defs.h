@@ -43,6 +43,7 @@ typedef struct {
 	VETOR2D pos;
 	int tipo;
 	int w, h;
+	int maxVida;
 	int vida;
 	SDL_Surface* img;
 } BLOCO;

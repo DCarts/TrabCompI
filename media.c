@@ -62,11 +62,16 @@ int loadMedia() {
     if ( !(gBlocoImgs[7] = loadSurface("./data/brick7.png")) ) return false;
     if ( !(gBlocoImgs[8] = loadSurface("./data/brick8.png")) ) return false;
     if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
+    
+    if ( !(gBlocoBreak = loadSurface("./data/brickBreakingTexture.png")) ) return false;
 
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
 	}
+	
+	colorKey = SDL_MapRGB(gBlocoBreak->format, 0xFF, 0xFF, 0xFF );
+	SDL_SetColorKey(gBlocoBreak, SDL_TRUE, colorKey);
 
     /* FIM CARREGANDO IBAGENS */
 
@@ -144,7 +149,7 @@ int loadBlocosFromFile(char* levelName) {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] =
-				createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
+				createBloco(pos, c-'0', 32, 16, 4, gBlocoImgs[c-'0']);
 			}
 		}
 		lc++;
