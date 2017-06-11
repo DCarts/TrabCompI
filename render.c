@@ -22,20 +22,28 @@
 
 int render() {
 	SDL_Rect srcRect, dstRect;
+	SDL_Rect ttfRect; /*	Retangulo para o texto TTF */
 	int i, err = false;
+
+	/* Dimensoes do texto TTF */
+	ttfRect.x = gScreenWidth - gScoreBoardWidth;
+	ttfRect.y = OFFSET;
+	ttfRect.w = gScoreBoardWidth;
+	ttfRect.h = gScoreBoardHeight;
+
 
 	//Fill the surface white
 	SDL_FillRect( gScreenSurface, NULL,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-	srcRect.x = 24; srcRect.y = 24+gScoreBoardHeight;
+	srcRect.x = 24; srcRect.y = 24 + gScoreBoardHeight;
 	srcRect.w = 592; srcRect.h = 432;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
 
-	srcRect.x = 32; srcRect.y = 32+gScoreBoardHeight;
+	srcRect.x = 32; srcRect.y = 32 + gScoreBoardHeight;
 	srcRect.w = 576; srcRect.h = 416;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
@@ -85,7 +93,7 @@ int render() {
 
 		if (gBolas[i].ativo){
 			if( SDL_BlitSurface( gBolas[i].img, &srcRect,
-								gScreenSurface, &dstRect ) < 0 ) {
+								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
@@ -110,13 +118,12 @@ int render() {
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
 			err = true;
 		}
-		/*else{printf("Criei uma nova suferìcie gTexto\n");}*/
 
-		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, NULL) < 0) {
+		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, &ttfRect) < 0) {
 			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
 		}
 
-    //Update the surface
+    /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );
 
 		SDL_FreeSurface(gTexto);

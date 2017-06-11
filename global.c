@@ -33,10 +33,10 @@ const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
 
-int gScoreBoardHeight = 25;
-int gScoreBoardWidth;
-int gScreenWidth = 640;
-int gScreenHeight = 480;
+int gScoreBoardHeight = 30;
+int gScoreBoardWidth = 110;
+int gScreenWidth = 750; /*640*/
+int gScreenHeight = 480; /*480*/
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;

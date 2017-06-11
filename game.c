@@ -76,13 +76,14 @@ void moveBall(BOLA* p, double delta) {
 	p->pos.x = p->pos.x + p->dir.x*p->spd*delta;
 	p->pos.y = p->pos.y + p->dir.y*p->spd*delta;
 
-	if (p->pos.x + p->dim > gScreenWidth-OFFSET || p->pos.x < OFFSET) {
+	if (p->pos.x + p->dim > gScreenWidth-OFFSET - gScoreBoardWidth || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x += p->dir.x*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
 	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
 		/*jogador perde pontos*/
+		gPlayer.pontos -= 200;
 		p->ativo = false;
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
@@ -116,9 +117,9 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 
 
 
-	if (p->pos.x + p->w > gScreenWidth-OFFSET) {
+	if (p->pos.x + p->w > gScreenWidth-OFFSET - gScoreBoardWidth) {
 		p->spd = 0;
-		p->pos.x = gScreenWidth-OFFSET-p->w;
+		p->pos.x = gScreenWidth-OFFSET-p->w - gScoreBoardWidth;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
 	}
 
