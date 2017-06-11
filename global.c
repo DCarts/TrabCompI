@@ -46,6 +46,7 @@ SDL_Surface* gBlocoBreak;
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 SDL_Surface* gTexto = NULL;
+SDL_Surface* gPontos = NULL;
 
 SDL_Color corDaFonte = {255,255,255};
 SDL_Color backgroundColor = {0,0,0};

@@ -24,6 +24,7 @@ int render() {
 	SDL_Rect srcRect, dstRect;
 	SDL_Rect ttfRect; /*	Retangulo para o texto TTF */
 	int i, err = false;
+	char pontuacao[11];
 
 	/* Dimensoes do texto TTF */
 	ttfRect.x = gScreenWidth - gScoreBoardWidth;
@@ -121,11 +122,31 @@ int render() {
 
 		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, &ttfRect) < 0) {
 			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
+			err = true;
 		}
+
+		ttfRect.x = gScreenWidth - gScoreBoardWidth;
+		ttfRect.y = OFFSET + gScoreBoardHeight + 15;
+		ttfRect.w = gScoreBoardWidth;
+		ttfRect.h = gScoreBoardHeight;
+
+		sprintf(pontuacao,"%d",gPlayer.pontos);
+
+		if(!(gPontos = TTF_RenderText_Shaded(gFonte,pontuacao,corDaFonte,backgroundColor))){
+			fprintf(stderr,"Impossivel renderizar pontuação na tela! %s\n",TTF_GetError());
+			err = true;
+		}
+
+		if (SDL_BlitSurface(gPontos, NULL, gScreenSurface, &ttfRect) < 0) {
+			fprintf(stderr,"Impossivel blitar pontuação na tela! %s\n",SDL_GetError());
+			err = true;
+		}
+
 
     /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );
 
+		SDL_FreeSurface(gPontos);
 		SDL_FreeSurface(gTexto);
 
 	return err;

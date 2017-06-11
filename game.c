@@ -470,8 +470,8 @@ void createPlayer(){
 
 	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 		printf("Qual o nome do jogador? \n");
-		fgets(buffer,22,stdin);
-		//buffer[strlen(buffer) - 1] = '\0';
+		gets(buffer);
+
 		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
 			strcpy(gPlayer.nome, buffer);
 			break;
