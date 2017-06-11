@@ -83,7 +83,9 @@ void moveBall(BOLA* p, double delta) {
 	}
 	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
 		/*jogador perde pontos*/
-		gPlayer.pontos -= 200;
+		gPlayer.pontos -= 1000;
+		if(gPlayer.pontos < 0){	gPlayer.pontos = 0;}
+		
 		p->ativo = false;
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
@@ -263,7 +265,7 @@ void exitGame() {
 
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
-	SDL_FreeSurface(gTexto);
+	/*SDL_FreeSurface(gTexto);*/
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
