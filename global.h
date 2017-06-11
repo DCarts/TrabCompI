@@ -1,6 +1,6 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -40,6 +40,7 @@ extern const int SOUND_FLOOR;
 /* Variaveis */
 
 extern int gScoreBoardHeight;
+extern int gScoreBoardWidth;
 extern int gScreenWidth;
 extern int gScreenHeight;
 

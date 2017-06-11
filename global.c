@@ -1,11 +1,11 @@
 /*
  * global.c
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
- 
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -34,6 +34,7 @@ const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
 
 int gScoreBoardHeight = 25;
+int gScoreBoardWidth;
 int gScreenWidth = 640;
 int gScreenHeight = 480;
 
@@ -63,5 +64,3 @@ PLAYER gPlayer;
 
 int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;
-
-

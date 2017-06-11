@@ -1,6 +1,6 @@
 /*
  * global.c
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -258,7 +258,7 @@ int createNPCs() {
 }
 
 void exitGame() {
-	TTF_CloseFont(gFonte);/*encerra a utilização da fonte do ttf*/
+	TTF_CloseFont(gFonte);/*	encerra a utilização da fonte ttf	*/
 
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
@@ -273,7 +273,7 @@ void exitGame() {
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
 	Mix_CloseAudio();
-	TTF_Quit();/*fecha o SDL_ttf*/
+	TTF_Quit();/*	fecha o SDL_ttf	*/
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -431,7 +431,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 			inv = collBallPoint(a, dx, dy, delta);
 		}
 		if (!inv) return false;
-		
+
 	}
 	printf("Vida --: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 	b->vida--;
@@ -451,7 +451,7 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else {
-			
+
 			a->dir.x = -a->dir.x;
 			a->dir.y = -a->dir.y;
 			a->pos.x += a->dir.x*a->spd*delta;
@@ -470,17 +470,29 @@ void createPlayer(){
 	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 		printf("Qual o nome do jogador? \n");
 		fgets(buffer,22,stdin);
+		//buffer[strlen(buffer) - 1] = '\0';
 		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
 			strcpy(gPlayer.nome, buffer);
 			break;
 		}
 	}
-		int i;
-		gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
+
+		/*gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';*/
+
+		/*	Captura a altura e a largura do texto TTF
+		if (TTF_SizeText(gFonte,gPlayer.nome,&gScoreBoardWidth,
+											&gScoreBoardHeight) == -1){
+												fprintf(stderr,
+												"Erro capturando as dimensões da fonte! %s\n",
+												TTF_GetError());
+											}
+		else{
+			printf("width = %d \t height = %d\n",gScoreBoardWidth,gScoreBoardHeight);
+		}
+		*/
 
 		gPlayer.vidas = 5;
 		gPlayer.pontos = 0;
 
 		gPlayer.ativo = true;
 }
-
