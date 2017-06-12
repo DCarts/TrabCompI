@@ -256,7 +256,7 @@ int createNPCs() {
 
 void exitGame() {
 
-	static hasRan = false;
+	static hasRan = 0;
 	if (hasRan) return;
 
 	SDL_FreeSurface(gScoreSurface);
