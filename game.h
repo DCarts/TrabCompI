@@ -24,7 +24,7 @@ int createNPCs();
 /* Cria uma bolinha */
 BOLA createBola(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, SDL_Surface* img);
 /*Cria um bloco*/
-BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img);
+BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int v, SDL_Surface* img);
 /*Cria a plataforma*/
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D dir, SDL_Surface* img);
 /*Cria o player atual*/

@@ -41,28 +41,44 @@ int render() {
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-	srcRect.x = 0; srcRect.y = 0;
-
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
 		if (gBlocos[i].vida){
+			
+			srcRect.y = 0;
 			srcRect.w = gBlocos[i].w;
 			srcRect.h = gBlocos[i].h;
-
+			
+			srcRect.x = 0; srcRect.y = 0;
+			
 			dstRect.x = gBlocos[i].pos.x;
 			dstRect.y = gBlocos[i].pos.y;
-
+			
 			if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
+			
+			if (gBlocos[i].vida != 4){
 
+				srcRect.x = 32 * (( int )( 3 * ( gBlocos[i].maxVida - gBlocos[i].vida ) / gBlocos[i].maxVida ) - 1 );
+				
+				if( SDL_BlitSurface( gBlocoCracks, &srcRect,
+								gScreenSurface, &dstRect ) < 0 ) {
+					fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+					err = true;
+				}
+				
+			}
+			
 		}
 
 	}
 
 	/* Renderiza as bolas */
+	srcRect.x = 0; srcRect.y = 0;
+	
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
@@ -105,8 +121,7 @@ int render() {
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
 
-		SDL_FreeSurface(gTexto);
+	SDL_FreeSurface(gTexto);
 
 	return err;
 }
-

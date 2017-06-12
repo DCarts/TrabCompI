@@ -98,19 +98,19 @@ void moveBall(BOLA* p, double delta) {
 void movePlataforma (PLATAFORMA* p, double delta) {
 
 	if (gRight) {
-		p->spd += delta * 4;
+		p->spd += delta * 9;
 		if (p->spd > p->dir.x)
 			p->spd = p->dir.x;
 	}
 
 	else if (gLeft) {
-		p->spd -= delta * 4;
+		p->spd -= delta * 9;
 		if (p->spd < -p->dir.x)
 			p->spd = -p->dir.x;
 	}
 	else if (p->spd != 0) {
 		p->spd += (p->spd < 0) ?
-			delta * 4 : delta * -4;
+			delta * 9 : delta * -9;
 	}
 	p->pos.x += p->spd*PLAT_SPD*delta;
 
@@ -189,13 +189,14 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Su
 	return bola;
 }
 
-BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, SDL_Surface* img){
+BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int v, SDL_Surface* img){
 	BLOCO bloco;
 	bloco.pos = pos;
 	bloco.tipo = tipo;
 	bloco.w = w;
 	bloco.h = h;
-	bloco.vida = 1;
+	bloco.maxVida = v;
+	bloco.vida = bloco.maxVida;
 	bloco.img = img;
 	return bloco;
 }
@@ -260,6 +261,7 @@ void exitGame() {
 	TTF_CloseFont(gFonte);/*encerra a utilização da fonte do ttf*/
 
 	SDL_FreeSurface(gBallImgs[0]);
+	SDL_FreeSurface(gBlocoCracks);
 	SDL_FreeSurface(gPadImgs[0]);
 	SDL_FreeSurface(gTexto);
 
@@ -456,7 +458,7 @@ void createPlayer(){
 			break;
 		}
 	}
-		int i;
+		/* int i; */
 		gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
 
 		gPlayer.vidas = 5;

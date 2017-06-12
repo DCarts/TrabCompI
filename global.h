@@ -47,6 +47,7 @@ extern SDL_Window* gWindow;
 extern SDL_Surface* gScreenSurface;
 
 extern SDL_Surface* gBlocoImgs[10];
+extern SDL_Surface* gBlocoCracks;
 extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
 extern SDL_Surface* gTexto;
