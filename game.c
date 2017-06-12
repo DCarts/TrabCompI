@@ -1,6 +1,6 @@
 /*
  * global.c
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -112,10 +112,10 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->spd += (p->spd < 0) ?
 			delta * 9 : delta * -9;
 	}
-	
-	
+
+
 	p->pos.x += p->spd*PLAT_SPD*delta;
-	
+
 
 	if (p->pos.x + p->w > gGameWidth-OFFSET) {
 		p->spd = 0;
@@ -256,6 +256,9 @@ int createNPCs() {
 
 void exitGame() {
 
+	static hasRan = false;
+	if (hasRan) return;
+
 	SDL_FreeSurface(gScoreSurface);
 
 	SDL_FreeSurface(gBallImgs[0]);
@@ -271,12 +274,14 @@ void exitGame() {
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
 	Mix_CloseAudio();
-	
+
 	TTF_CloseFont(gScoreFonte);/*encerra a utilização da fonte do ttf*/
-	
+
 	TTF_Quit();/*fecha o SDL_ttf*/
 	IMG_Quit();
 	SDL_Quit();
+
+	hasRan = true;
 }
 
 int handleInput(SDL_Event* evt){
@@ -394,7 +399,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 					b->pos.y + b->h)) {
 		a->dir.x = -a->dir.x;
 		a->pos.x += a->dir.x*a->spd*delta;
-		
+
 		puts("Primeiro if");
 		a->spd = 0;
 
@@ -405,7 +410,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 						 b->pos.y + b->h + a->dim/2)) {
 		a->dir.y = -a->dir.y;
 		a->pos.y += a->dir.y*a->spd*delta;
-		
+
 	}
 	else {
 		dx = c.x - b->pos.x;
@@ -445,7 +450,7 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else {
-			
+
 			a->dir.x = -a->dir.x;
 			a->dir.y = -a->dir.y;
 			a->pos.x += a->dir.x*a->spd*delta;
@@ -474,4 +479,3 @@ void createPlayer(){
 		gPlayer.vidas = 5;
 		gPlayer.pontos = 0;
 }
-
