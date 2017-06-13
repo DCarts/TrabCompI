@@ -125,8 +125,9 @@ int renderScoreboard() {
 	if (gPlayer.pontos != lastScore) {
 		lastScore = gPlayer.pontos;
 		sprintf(scoreText, "%d", lastScore);
+        
 		SDL_FreeSurface(gScoreSurface);
-		free(gScoreSurface);
+        
 		gScoreSurface = NULL;
 		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, scoreText, scoreFontColor, bgColor))) {
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());

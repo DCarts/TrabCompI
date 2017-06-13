@@ -148,6 +148,9 @@ int gameLoop(double delta) {
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
 
+            moveBall(gBolas+i, delta);
+			collBallPlat(gBolas+i, delta);
+
 			for (j = 0; j < gNumBlocos; j++) {
 				if (gBlocos[j].vida) {
 					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
@@ -155,9 +158,6 @@ int gameLoop(double delta) {
 					}
 				}
 			}
-
-			moveBall(gBolas+i, delta);
-			collBallPlat(gBolas+i, delta);
 			/*detCollBlocos(alalalal*/
 		}
 	}
@@ -401,7 +401,6 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		a->pos.x += a->dir.x*a->spd*delta;
 
 		puts("Primeiro if");
-		a->spd = 0;
 
 	}
 	else if (isInAABB(c, b->pos.x,
@@ -431,7 +430,9 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		if (!inv) return false;
 	}
 	printf("Vida --: dx=%.2lf dy=%.2lf\n", a->dir.x, a->dir.y);
-	b->vida--;
+	if (b->vida-- == 1) {
+        puts("E morreu. o que houve?");
+    }
 
 	return true;
 }
