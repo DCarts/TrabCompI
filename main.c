@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 
 	//gGameHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
 	gScoreOffset += gGameWidth;
-	
+
 	gScreenWidth = gScoreOffset+gScoreWidth;
 	gScreenHeight = gGameHeight;
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 	quit = false;
 	currentTime = countTime = SDL_GetTicks();
 	countTime++;
-	
+
 	gLeft = false;
 	gRight = false;
 
@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
 		if (render()) break;
 		count++;
 	}
+	createPlayer();
 	exitGame();
 	return !quit;
 }

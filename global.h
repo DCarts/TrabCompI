@@ -1,6 +1,6 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -72,5 +72,8 @@ extern PLAYER gPlayer;
 
 extern int gLeft, gRight;
 extern int gXMouse, gYMouse;
+
+extern FILE *gRank;
+extern char gScoreText[8];
 
 #endif

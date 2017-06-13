@@ -1,6 +1,6 @@
 /*
  * global.c
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -54,7 +54,7 @@ int render() {
 
 			dstRect.x = gBlocos[i].pos.x;
 			dstRect.y = gBlocos[i].pos.y;
-			
+
 			srcRect.x = 0; srcRect.y = 0;
 
 			if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
@@ -62,10 +62,10 @@ int render() {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
-			
+
 			if (gBlocos[i].vida < gBlocos[i].maxVida){
 				srcRect.x = 32 * (4 - gBlocos[i].vida); srcRect.y = 0;
-				
+
 				if( SDL_BlitSurface( gBlocoBreak, &srcRect,
 									gScreenSurface, &dstRect ) < 0 ) {
 					fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
@@ -79,7 +79,7 @@ int render() {
 
 	/* Renderiza as bolas */
 	srcRect.x = 0; srcRect.y = 0;
-	
+
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
@@ -120,16 +120,16 @@ int render() {
 int renderScoreboard() {
 	int err = false;
 	static int lastScore = -1;
-	static char scoreText[8];
-	
+	/*	static char scoreText[8];	*/
+
 	if (gPlayer.pontos != lastScore) {
 		lastScore = gPlayer.pontos;
-		sprintf(scoreText, "%d", lastScore);
-        
+		sprintf(gScoreText, "%d pts", lastScore);
+
 		SDL_FreeSurface(gScoreSurface);
-        
+
 		gScoreSurface = NULL;
-		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, scoreText, scoreFontColor, bgColor))) {
+		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, gScoreText, scoreFontColor, bgColor))) {
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
 			err = true;
 		}

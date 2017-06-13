@@ -224,8 +224,6 @@ int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
 
-	createPlayer();
-
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -471,18 +469,32 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 
 
 void createPlayer(){
-	char buffer[22];
+	char buffer[22] = "abba";
 
 	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 		printf("Qual o nome do jogador? \n");
 		//fgets(buffer,22,stdin);
-		//if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
+		if (/*sscanf(buffer, "%s",gPlayer.nome)*/1 != EOF) {
 			strcpy(gPlayer.nome, /*buffer*/"as");
 			break;
-		//}
+		}
 	}
-		gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
 
+		gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';
+		strcat(buffer/*gPlayer.nome*/,"  ");	/* append dois espaços	*/
+		strcat(buffer/*gPlayer.nome*/,gScoreText);	/* append pontuação do jogador */
+		strcat(buffer,"\n"); /*	append '\n'	*/
+
+		gRank = fopen("./bin/data/rank/rank.txt","a+");
+		if(!gRank){
+			puts("Impossível abrir arquivo do rank!");
+			exit(666);
+		}
+
+		fputs(buffer,gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
+
+
+		fclose(gRank);
 		gPlayer.vidas = 5;
 		gPlayer.pontos = 0;
 }
