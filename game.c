@@ -83,6 +83,12 @@ void moveBall(BOLA* p, double delta) {
 	}
 	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
 		/*jogador perde pontos*/
+
+		gPlayer.pontos -= 1000;
+		if(gPlayer.pontos < 0){
+			gPlayer.pontos = 0;
+		}
+
 		p->ativo = false;
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
@@ -135,7 +141,7 @@ void collide(BOLA* a, BOLA* b, double delta) {
 	/*VETOR2D c, mp, n, tip, ray;
 	double dot;*/
 
-	/* bola n precisa colidir mesmo */
+	/* bola n precisa colidir mesmo	:) */
 
 
 }
