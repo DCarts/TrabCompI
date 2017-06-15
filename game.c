@@ -264,7 +264,7 @@ void exitGame() {
 	TTF_CloseFont(gFonte);/*	encerra a utilização da fonte ttf	*/
 
 	SDL_FreeSurface(gBallImgs[0]);
-	SDL_FreeSurface(gBlocoCracks);
+	SDL_FreeSurface(gBlocoBreak);
 	SDL_FreeSurface(gPadImgs[0]);
 	/*SDL_FreeSurface(gTexto);*/
 
