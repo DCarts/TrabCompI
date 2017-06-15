@@ -50,10 +50,6 @@ int render() {
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
 		if (gBlocos[i].vida){
@@ -66,33 +62,16 @@ int render() {
 			
 			dstRect.x = gBlocos[i].pos.x;
 			dstRect.y = gBlocos[i].pos.y;
-<<<<<<< HEAD
-			
-=======
 
 			srcRect.x = 0; srcRect.y = 0;
 
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 			if( SDL_BlitSurface( gBlocos[i].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
 			
-			if (gBlocos[i].vida != 4){
 
-<<<<<<< HEAD
-				srcRect.x = 32 * (( int )( 3 * ( gBlocos[i].maxVida - gBlocos[i].vida ) / gBlocos[i].maxVida ) - 1 );
-				
-				if( SDL_BlitSurface( gBlocoCracks, &srcRect,
-								gScreenSurface, &dstRect ) < 0 ) {
-					fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
-					err = true;
-				}
-				
-			}
-			
-=======
 			if (gBlocos[i].vida < gBlocos[i].maxVida){
 				srcRect.x = 32 * (4 - gBlocos[i].vida); srcRect.y = 0;
 
@@ -102,19 +81,12 @@ int render() {
 					err = true;
 				}
 			}
-
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 		}
-
 	}
 
 	/* Renderiza as bolas */
 	srcRect.x = 0; srcRect.y = 0;
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
@@ -153,6 +125,7 @@ int render() {
 		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, &ttfRect) < 0) {
 			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
 			err = true;
+
 		}
 
 		ttfRect.x = gScreenWidth - gScoreBoardWidth;
@@ -167,6 +140,7 @@ int render() {
 			err = true;
 		}
 
+
 		if (SDL_BlitSurface(gPontos, NULL, gScreenSurface, &ttfRect) < 0) {
 			fprintf(stderr,"Impossivel blitar pontuação na tela! %s\n",SDL_GetError());
 			err = true;
@@ -176,12 +150,8 @@ int render() {
     /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );
 
-<<<<<<< HEAD
+	SDL_FreeSurface(gPontos);
 	SDL_FreeSurface(gTexto);
-=======
-		SDL_FreeSurface(gPontos);
-		SDL_FreeSurface(gTexto);
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 
 	return err;
 }

@@ -192,21 +192,13 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Su
 	return bola;
 }
 
-<<<<<<< HEAD
-BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int v, SDL_Surface* img){
-=======
 BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int vida, SDL_Surface* img){
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 	BLOCO bloco;
 	bloco.pos = pos;
 	bloco.tipo = tipo;
 	bloco.w = w;
 	bloco.h = h;
-<<<<<<< HEAD
-	bloco.maxVida = v;
-=======
 	bloco.maxVida = vida;
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 	bloco.vida = bloco.maxVida;
 	bloco.img = img;
 	return bloco;
@@ -488,10 +480,6 @@ void createPlayer(){
 			break;
 		}
 	}
-<<<<<<< HEAD
-		/* int i; */
-		gPlayer.nome[strlen(gPlayer.nome) - 1] ='\0';
-=======
 
 		/*gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';*/
 
@@ -506,7 +494,7 @@ void createPlayer(){
 			printf("width = %d \t height = %d\n",gScoreBoardWidth,gScoreBoardHeight);
 		}
 		*/
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
+
 
 		gPlayer.vidas = 5;
 		gPlayer.pontos = 0;

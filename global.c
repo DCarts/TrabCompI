@@ -42,11 +42,7 @@ SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
 SDL_Surface* gBlocoImgs[10];
-<<<<<<< HEAD
-SDL_Surface* gBlocoCracks;
-=======
 SDL_Surface* gBlocoBreak;
->>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 SDL_Surface* gTexto = NULL;
