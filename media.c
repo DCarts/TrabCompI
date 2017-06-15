@@ -1,6 +1,6 @@
 /*
  * global.c
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -25,19 +25,20 @@
 int loadMedia() {
 	uint32_t colorKey;
     int i;
-	
+
 	/* CARREGANDO FONTES */
-	
+
 	if(!(gFonte = TTF_OpenFontIndex("./data/Scoreboard-LED.ttf",48,0))){
 		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
 		return false;
 	}
-	
+
+
 	/* FIM CARREGANDO FONTES */
-	
+
 	/* CARREGANDO IBAGENS */
-	
-	/* 
+
+	/*
 	 * ColorKey eh magenta
 	 */
 
@@ -62,9 +63,15 @@ int loadMedia() {
     if ( !(gBlocoImgs[7] = loadSurface("./data/brick7.png")) ) return false;
     if ( !(gBlocoImgs[8] = loadSurface("./data/brick8.png")) ) return false;
     if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
+<<<<<<< HEAD
     
     if ( !(gBlocoCracks = loadSurface("./data/brickBreakingTexture.png")) ) return false;
 	
+=======
+
+    if ( !(gBlocoBreak = loadSurface("./data/brickBreakingTexture.png")) ) return false;
+
+>>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
@@ -73,14 +80,17 @@ int loadMedia() {
 	colorKey = SDL_MapRGB(gBlocoCracks->format, 0xFF, 0x00, 0xFF );
 	SDL_SetColorKey(gBlocoCracks, SDL_TRUE, colorKey);
 
+	colorKey = SDL_MapRGB(gBlocoBreak->format, 0xFF, 0xFF, 0xFF );
+	SDL_SetColorKey(gBlocoBreak, SDL_TRUE, colorKey);
+
     /* FIM CARREGANDO IBAGENS */
 
     /* CARREGANDO SONS */
-    
+
     /* volume do som varia entre 0 e 127 */
     //if ( !(gSons[0] = loadSound("./data/wall.wav")) ) return false;
     //Mix_VolumeChunk(gSons[0], 64);
-    
+
     /* FIM CARREGANDO SONS */
     return true;
 }
@@ -134,7 +144,7 @@ int loadBlocosFromFile(char* levelName) {
 	strcat(path, "./data/level/");
 	strcat(path, levelName);
 	strcat(path, ".dat");
-	
+
 	if (!(arq = fopen(path, "r"))) {
 		perror("Erro carregando bloco");
 		return false;
@@ -149,11 +159,14 @@ int loadBlocosFromFile(char* levelName) {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] =
+<<<<<<< HEAD
 				createBloco(pos, c-'0', 32, 16, 2, gBlocoImgs[c-'0']);
+=======
+				createBloco(pos, c-'0', 32, 16, 4, gBlocoImgs[c-'0']);
+>>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 			}
 		}
 		lc++;
 	}
 	return true;
 }
-

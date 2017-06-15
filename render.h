@@ -1,11 +1,11 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
- 
+
 #ifndef GAMERENDER_H
 #define GAMERENDER_H
 
@@ -13,6 +13,6 @@
 int render();
 
 /* Renderiza o scoreboard na tela */
-/*int renderScore();*/
+/*int renderScoreBoard();*/
 
 #endif

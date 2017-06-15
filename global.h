@@ -1,6 +1,6 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -40,6 +40,7 @@ extern const int SOUND_FLOOR;
 /* Variaveis */
 
 extern int gScoreBoardHeight;
+extern int gScoreBoardWidth;
 extern int gScreenWidth;
 extern int gScreenHeight;
 
@@ -47,10 +48,15 @@ extern SDL_Window* gWindow;
 extern SDL_Surface* gScreenSurface;
 
 extern SDL_Surface* gBlocoImgs[10];
+<<<<<<< HEAD
 extern SDL_Surface* gBlocoCracks;
+=======
+extern SDL_Surface* gBlocoBreak;
+>>>>>>> 4a8ae2a9403c86a40fc51a73062e08b4d75e84bc
 extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
 extern SDL_Surface* gTexto;
+extern SDL_Surface* gPontos;
 
 extern SDL_Color corDaFonte;
 extern SDL_Color backgroundColor;
