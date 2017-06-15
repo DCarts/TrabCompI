@@ -77,6 +77,5 @@ int main(int argc, char **argv) {
 		if (render()) return 1;
 		count++;
 	}
-	exitGame();
 	return 0;
 }
