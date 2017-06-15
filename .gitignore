@@ -54,4 +54,3 @@ dkms.conf
 #executaveis linux
 bin/breakout
 bin/lvlbuilder
-bin/data/brickBreakingTexture.png
