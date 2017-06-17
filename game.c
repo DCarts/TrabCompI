@@ -91,7 +91,7 @@ void moveBall(BOLA* p, double delta) {
 		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
-	else if (p->pos.y < 32 + gScoreBoardHeight) {
+	else if (p->pos.y < 32) {
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
@@ -496,7 +496,7 @@ void createPlayer(){
 		*/
 
 
-		gPlayer.vidas = 5;
+		gPlayer.vidas = 2;
 		gPlayer.pontos = 0;
 
 		gPlayer.ativo = true;

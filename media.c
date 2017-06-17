@@ -65,6 +65,10 @@ int loadMedia() {
     if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
 
     if ( !(gBlocoBreak = loadSurface("./data/brickBreakingTexture.png")) ) return false;
+    
+    /* Carrega Leds */
+    if ( !(gLed[0] = loadSurface("./data/ledOn.png")) ) return false;
+    if ( !(gLed[1] = loadSurface("./data/ledOff.png")) ) return false;
 
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );

@@ -53,6 +53,7 @@ extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
 extern SDL_Surface* gTexto;
 extern SDL_Surface* gPontos;
+extern SDL_Surface* gLed[2];
 
 extern SDL_Color corDaFonte;
 extern SDL_Color backgroundColor;
@@ -61,6 +62,7 @@ extern Mix_Chunk* gSons[10];
 
 extern TTF_Font* gFonte;
 
+extern int gMaxVidas;
 extern int gNumBolas;
 extern int gNumBlocos;
 

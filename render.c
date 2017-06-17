@@ -33,19 +33,19 @@ int render() {
 	ttfRect.h = gScoreBoardHeight;
 
 
-	//Fill the surface white
+	/* Desenha area de jogo */
 	SDL_FillRect( gScreenSurface, NULL,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-	srcRect.x = 24; srcRect.y = 24 + gScoreBoardHeight;
-	srcRect.w = 592; srcRect.h = 432;
+	srcRect.x = 24; srcRect.y = 24;
+	srcRect.w = 592; srcRect.h = 456;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
 
-	srcRect.x = 32; srcRect.y = 32 + gScoreBoardHeight;
-	srcRect.w = 576; srcRect.h = 416;
+	srcRect.x = 32; srcRect.y = 32;
+	srcRect.w = 576; srcRect.h = 440;
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
@@ -84,9 +84,33 @@ int render() {
 		}
 	}
 
-	/* Renderiza as bolas */
+	/* Renderiza os leds */
 	srcRect.x = 0; srcRect.y = 0;
 
+	for(i = 0; i < gMaxVidas; i++) {
+		srcRect.w = 24;
+		srcRect.h = 8;
+
+		dstRect.x = 624 + i*32;
+		dstRect.y = gScreenHeight - 2*OFFSET;
+
+		if (i+1 <= gPlayer.vidas){
+			if( SDL_BlitSurface( gLed[0], &srcRect,
+								gScreenSurface, &dstRect) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				err = true;
+			}
+		}else{
+			if( SDL_BlitSurface( gLed[1], &srcRect,
+								gScreenSurface, &dstRect) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				err = true;
+			}
+		}
+	}
+	
+	
+	/* Renderiza as bolas */
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;

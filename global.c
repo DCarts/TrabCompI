@@ -47,6 +47,7 @@ SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 SDL_Surface* gTexto = NULL;
 SDL_Surface* gPontos = NULL;
+SDL_Surface* gLed[2];
 
 SDL_Color corDaFonte = {255,255,255};
 SDL_Color backgroundColor = {0,0,0};
@@ -55,6 +56,7 @@ Mix_Chunk* gSons[10];
 
 TTF_Font* gFonte = NULL;
 
+int gMaxVidas = 4;
 int gNumBolas = 6;
 int gNumBlocos = 0;
 
