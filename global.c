@@ -62,6 +62,7 @@ PLATAFORMA* gPad = NULL;
 BOLA* gBolas = NULL;
 BLOCO* gBlocos = NULL;
 PLAYER gPlayer;
+PWP* gPowerUp = NULL;
 
 int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;

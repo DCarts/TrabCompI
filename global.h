@@ -68,6 +68,7 @@ extern PLATAFORMA* gPad;
 extern BOLA* gBolas;
 extern BLOCO* gBlocos;
 extern PLAYER gPlayer;
+extern PWP* gPowerUp;
 
 extern int gLeft, gRight;
 extern int gXMouse, gYMouse;
