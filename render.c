@@ -22,9 +22,6 @@
 
 static SDL_Rect srcRect, dstRect;
 
-static SDL_Color scoreFontColor = {255,255,255};
-static SDL_Color bgColor = {0,0,0};
-
 int render() {
 	int i, err = false;
 
@@ -129,7 +126,7 @@ int renderScoreboard() {
 		SDL_FreeSurface(gScoreSurface);
 
 		gScoreSurface = NULL;
-		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, gScoreText, scoreFontColor, bgColor))) {
+		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, gScoreText, gScoreFontColor, gBgColor))) {
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
 			err = true;
 		}

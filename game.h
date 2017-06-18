@@ -1,16 +1,16 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
- 
+
 #ifndef BREAKOUTDEFS_H
 #define BREAKOUTDEFS_H
- 
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h> 
+#include <SDL2/SDL_image.h>
 
 #include "defs.h"
 #include "global.h"
@@ -50,5 +50,7 @@ void collide (BOLA* a, BOLA* b, double delta);
 int collBallPlat(BOLA* a, double delta);
 int collBallBlock(BOLA* a, BLOCO* b, double delta);
 int collBallPoint(BOLA* a, double dx, double dy, double delta);
+
+void setClipboard(void); /* after game player name input */
 
 #endif

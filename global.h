@@ -76,4 +76,7 @@ extern int gXMouse, gYMouse;
 extern FILE *gRank;
 extern char gScoreText[8];
 
+extern SDL_Color gScoreFontColor;
+extern SDL_Color gBgColor;
+
 #endif

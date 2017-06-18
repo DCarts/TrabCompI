@@ -260,17 +260,19 @@ int createNPCs() {
 
 void exitGame() {
 
-	static hasRan = 0;
+	static int hasRan = 0;
 	if (hasRan) return;
 
 	SDL_FreeSurface(gScoreSurface);
 
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gPadImgs[0]);
-	SDL_FreeSurface(gScoreSurface);
+	//SDL_FreeSurface(gScoreSurface);
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
+
+	setClipboard();
 
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
@@ -279,9 +281,9 @@ void exitGame() {
 	gSons[0] = NULL;*/
 	Mix_CloseAudio();
 
-	TTF_CloseFont(gScoreFonte);/*encerra a utilização da fonte do ttf*/
+	TTF_CloseFont(gScoreFonte);/*	encerra a utilização da fonte do ttf	*/
 
-	TTF_Quit();/*fecha o SDL_ttf*/
+	TTF_Quit();/*	fecha o SDL_ttf	*/
 	IMG_Quit();
 	SDL_Quit();
 
@@ -472,7 +474,7 @@ void createPlayer(){
 	char buffer[22] = "abba";
 
 	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
-		printf("Qual o nome do jogador? \n");
+		//printf("Qual o nome do jogador? \n");
 		//fgets(buffer,22,stdin);
 		if (/*sscanf(buffer, "%s",gPlayer.nome)*/1 != EOF) {
 			strcpy(gPlayer.nome, /*buffer*/"as");
@@ -497,4 +499,61 @@ void createPlayer(){
 		fclose(gRank);
 		gPlayer.vidas = 5;
 		gPlayer.pontos = 0;
+}
+
+
+void setClipboard(){	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
+	char standardMessage[22] = "Enter your name:";
+	int err = false, cont = strlen(standardMessage);
+	char namae[22] = "ze sa";
+	SDL_Surface* standardMSurface = NULL;
+	SDL_Surface* clipboardSurface = NULL;
+	SDL_Event ev;
+	SDL_Rect dstRect;
+
+	/* Tornando a superfície escura novamente */
+	SDL_FillRect( gScreenSurface, NULL,
+	SDL_MapRGB( gScreenSurface->format,
+				0, 0, 0 ) );
+
+	/*	renderizando a mensagem padrão na superfície	*/
+	if(!(standardMSurface = TTF_RenderText_Shaded(gScoreFonte,standardMessage,gScoreFontColor,gBgColor))){
+		fprintf(stderr,"Impossivel renderizar texto standardMessage na tela!%s\n",TTF_GetError());
+		err = true;
+	}
+	else{	printf("Renderizei ok\n");}
+
+	dstRect.x = 250; dstRect.y = 0;
+
+	/*	blitando a superfície na tela	*/
+	if (SDL_BlitSurface(standardMSurface, NULL, gScreenSurface,&dstRect) < 0) {
+		fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
+		err = true;
+	}
+	else{	printf("Blitei ok\n");}
+
+	/*	Renderizando o texto de entrada na superfície	*/
+	if(!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,namae,gScoreFontColor,gBgColor))){
+		fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
+		err = true;
+	}
+	else{	printf("Renderizei ok\n");}
+
+	dstRect.x = 330; dstRect.y = 200;
+
+	/*	blitando a superfície na tela	*/
+	if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface,&dstRect) < 0) {
+		fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
+		err = true;
+	}
+	else{	printf("Blitei ok\n");}
+
+	SDL_UpdateWindowSurface(gWindow);
+
+	SDL_Delay(5000);/* teste para ver se blitou,será removido na versão final.	*/
+
+	if(err){
+		printf("Erro ao renderizar clipboard\n");
+		exit(666);
+	}
 }

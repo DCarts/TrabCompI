@@ -67,5 +67,8 @@ PLAYER gPlayer;
 int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;
 
-FILE *gRank;
+FILE *gRank;/* arquivo que armazena a pontuação do jogador */
 char gScoreText[8];
+
+SDL_Color gScoreFontColor = {255,255,255};
+SDL_Color gBgColor = {0,0,0};

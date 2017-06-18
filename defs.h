@@ -1,6 +1,6 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
@@ -51,7 +51,7 @@ typedef struct {
 typedef struct {
 	int vidas;
 	int pontos;
-	char nome[4];
+	char nome[22];
 } PLAYER;
 
 #endif
