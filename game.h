@@ -27,6 +27,8 @@ BOLA createBola(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, SDL_Sur
 BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int v, SDL_Surface* img);
 /*Cria a plataforma*/
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D dir, SDL_Surface* img);
+/*Cria o player atual*/
+void createPlayer();
 
 /* Move uma bolinha */
 void moveBall(BOLA* b, double delta);
@@ -48,5 +50,7 @@ void collide (BOLA* a, BOLA* b, double delta);
 int collBallPlat(BOLA* a, double delta);
 int collBallBlock(BOLA* a, BLOCO* b, double delta);
 int collBallPoint(BOLA* a, double dx, double dy, double delta);
+
+void setClipboard(void); /* after game player name input */
 
 #endif
