@@ -6,13 +6,12 @@
  *                Gabriel <gabrielizotongo@gmail.com>
  */
 
-#ifndef GAMERENDER_H
-#define GAMERENDER_H
 
-/* Renderiza a tela */
-int render();
+ #ifndef AFTERALL_H
+ #define AFTERALL_H
 
-/* Renderiza o scoreboard na tela */
-int renderScoreboard();
+void setClipboard(void); /* blita dinamicamente o nome do player na tela  */
+
+void createPlayer(void);/*  Cria o player atual */
 
 #endif
