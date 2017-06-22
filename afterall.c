@@ -23,12 +23,12 @@
  #include "render.h"
  #include "afterall.h"
 
-char standardMessage[22] = "Enter your name:";
-char namae[22] = "ze sa";
-SDL_Surface* standardMSurface = NULL;
-SDL_Surface* clipboardSurface = NULL;
-SDL_Event ev;
-SDL_Rect dstRect;
+static char standardMessage[22] = "Enter your name:";
+static char namae[22] = "ze sa";
+static SDL_Surface* standardMSurface = NULL;
+static SDL_Surface* clipboardSurface = NULL;
+static SDL_Event ev;
+static SDL_Rect dstRect;
 
 
 int setClipboard(){	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
