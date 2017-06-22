@@ -1,6 +1,6 @@
 /*
- * afterall.c
- Neste arquivo se encontram as funções que deverão ser executadas após o loop principal do jogo.
+ *afterall.c
+ *Neste arquivo se encontram as funções que deverão ser executadas após o loop principal do jogo.
  *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
@@ -23,15 +23,18 @@
  #include "render.h"
  #include "afterall.h"
 
+char standardMessage[22] = "Enter your name:";
+char namae[22] = "ze sa";
+SDL_Surface* standardMSurface = NULL;
+SDL_Surface* clipboardSurface = NULL;
+SDL_Event ev;
+SDL_Rect dstRect;
 
-void setClipboard(){	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
-	char standardMessage[22] = "Enter your name:";
-	char namae[22] = "ze sa";
-	int err = false, cont = strlen(namae);
-	SDL_Surface* standardMSurface = NULL;
-	SDL_Surface* clipboardSurface = NULL;
-	SDL_Event ev;
-	SDL_Rect dstRect;
+
+int setClipboard(){	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
+	int exit = false;
+  int err = false, cont = strlen(namae);
+
 
 	/* Tornando a superfície escura novamente */
 	SDL_FillRect( gScreenSurface, NULL,
@@ -54,67 +57,72 @@ void setClipboard(){	/* função para capturar a entrada do nome do player e bli
 	}
 	else{	printf("Blitei ok\n");}
 
-	SDL_StartTextInput(); /* habilitando a entrada de texto pelo usuário	*/
+	SDL_StartTextInput();	/* habilitando a entrada de texto pelo usuário	*/
 
-	dstRect.x = 330; dstRect.y = 200;/*	definindo a posição do retangulo do nome do jogador	*/
-
-	while(SDL_PollEvent(&ev) != 0){
-
-		printf("Entrei\n");
+	dstRect.x = 330; dstRect.y = 200;	/*	definindo a posição do retangulo do nome do jogador	*/
+	while(!exit){
 		int ableRender = true;
 
-		if(ev.type == SDL_KEYDOWN){
-			/*if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0){
+    while(SDL_PollEvent(&ev) != 0){
 
-				namae[cont--] = ' ';
-				ableRender = true;
+  		/*printf("Entrei\n");*/
 
-			}
-			else if(!( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) &&
-								( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) &&
-								SDL_GetModState() & KMOD_CTRL )){
 
-				namae[cont++] = ev.text.text[0];
-				ableRender = true;
-			}*/
-			if(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_RETURN2){
-				printf("p\n");
-				break;
-			}
+  		if(ev.type == SDL_KEYDOWN){
+  			/*if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0){
 
-		}
-		else if(ev.type == SDL_TEXTINPUT){
+  				namae[cont--] = ' ';
+  				ableRender = true;
 
-			if( !( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) && ( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) && SDL_GetModState() & KMOD_CTRL ) ){
-							/*	adiciona o caracter ao fim da string	*/
-							namae[++cont] = ev.text.text[0];
-							ableRender = true;
+  			}
+  			else if(!( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) &&
+  								( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) &&
+  								SDL_GetModState() & KMOD_CTRL )){
 
-						}
-		}
+  				namae[cont++] = ev.text.text[0];
+  				ableRender = true;
+  			}*/
+  			if(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_RETURN2){
+  				printf("p\n");
+  				break;
+  			}
 
-		if(ableRender){/* literalmente a pegunta "posso renderizar o texto?"*/
+  		}
+  		else if(ev.type == SDL_TEXTINPUT){
 
-			/*	Renderizando o texto de entrada na superfície	*/
-			if(!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,namae,gScoreFontColor,gBgColor))){
-				fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
-				err = true;
-				break;
-			}
-			/*else{	printf("Renderizei ok\n");}*/
-		}
+  			if( !( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) && ( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) && 						SDL_GetModState() & KMOD_CTRL ) ){
+  							/*	adiciona o caracter ao fim da string	*/
+  							namae[++cont] = ev.text.text[0];
+  							ableRender = true;
 
-		/*	blitando a superfície na tela	*/
-		if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface, &dstRect) < 0) {
-			fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
-			err = true;
-			break;
-		}
-		/*else{	printf("Blitei ok\n");}*/
+  						}
+  		}
 
-		SDL_UpdateWindowSurface(gWindow);
-		/*printf("%s\n",namae);*/
+  		if(ableRender){/* literalmente a pegunta "posso renderizar o texto?"*/
+
+  			/*	Renderizando o texto de entrada na superfície	*/
+  			if(!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,namae,gScoreFontColor,gBgColor))){
+  				fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
+  				err = true;
+  				break;
+  			}
+  			/*else{	printf("Renderizei ok\n");}*/
+  		}
+
+  		/*	blitando a superfície na tela	*/
+  		if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface, &dstRect) < 0) {
+  			fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
+  			err = true;
+  			break;
+  		}
+  		/*else{	printf("Blitei ok\n");}*/
+
+  		SDL_UpdateWindowSurface(gWindow);
+  		/*printf("%s\n",namae);*/
+  	}
+
 	}
+
 
 	SDL_StopTextInput(); /*	encerrando a entrada de texto	*/
 
@@ -122,8 +130,10 @@ void setClipboard(){	/* função para capturar a entrada do nome do player e bli
 
 	if(err){
 		printf("Erro ao renderizar clipboard\n");
-		exit(666);
+		return 0;
 	}
+
+  return 1;
 }
 
 

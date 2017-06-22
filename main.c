@@ -30,6 +30,7 @@
 #include "game.h"
 #include "media.h"
 #include "render.h"
+#include "afterall.h"
 
 int main(int argc, char **argv) {
 	int quit, count;
@@ -84,6 +85,6 @@ int main(int argc, char **argv) {
 
 	exitGame();
 	createPlayer();
-	
+
 	return !quit;
 }

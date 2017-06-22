@@ -273,7 +273,9 @@ void exitGame() {
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
 
-	setClipboard();
+	if(!setClipboard()){
+		printf("Erro ao renderizar clipboard.Verificar função setClipboard.\n");
+	}
 
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;

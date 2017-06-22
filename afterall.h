@@ -10,7 +10,8 @@
  #ifndef AFTERALL_H
  #define AFTERALL_H
 
-void setClipboard(void); /* blita dinamicamente o nome do player na tela  */
+ /*retorna 0 se tiver erro,retorna 1 se for tudo ok*/
+int setClipboard(void); /* blita dinamicamente o nome do player na tela  */
 
 void createPlayer(void);/*  Cria o player atual */
 
