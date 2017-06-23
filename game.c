@@ -267,8 +267,9 @@ void exitGame() {
 	SDL_FreeSurface(gScoreSurface);
 
 	SDL_FreeSurface(gBallImgs[0]);
+	SDL_FreeSurface(gBlocoBreak);
 	SDL_FreeSurface(gPadImgs[0]);
-	//SDL_FreeSurface(gScoreSurface);
+	/*SDL_FreeSurface(gScoreSurface);*/
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
@@ -471,3 +472,40 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 	}
 	return false;
 }
+/*
+
+
+void createPlayer(){
+	char buffer[22];
+
+	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/ /*
+		printf("Qual o nome do jogador? \n");
+		gets(buffer);
+
+		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
+			strcpy(gPlayer.nome, buffer);
+			break;
+		}
+	}
+ */
+		/*gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';*/
+
+		/*	Captura a altura e a largura do texto TTF
+		if (TTF_SizeText(gFonte,gPlayer.nome,&gScoreBoardWidth,
+											&gScoreBoardHeight) == -1){
+												fprintf(stderr,
+												"Erro capturando as dimensões da fonte! %s\n",
+												TTF_GetError());
+											}
+		else{
+			printf("width = %d \t height = %d\n",gScoreBoardWidth,gScoreBoardHeight);
+		}
+		*/ /*
+
+
+		gPlayer.vidas = 2;
+		gPlayer.pontos = 0;
+
+		gPlayer.ativo = true;
+}
+*/

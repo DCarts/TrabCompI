@@ -34,9 +34,9 @@ int loadMedia() {
 
 	/* CARREGANDO IBAGENS */
 
-	/*
-	 * ColorKey eh magenta
-	 */
+		/*
+		 * ColorKey eh magenta
+		 */
 
     /* Carrega plataformas */
     if( !(gPadImgs[0] = loadSurface("./data/pad.png")) ) return false;
@@ -61,6 +61,10 @@ int loadMedia() {
     if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
 
     if ( !(gBlocoBreak = loadSurface("./data/brickBreakingTexture.png")) ) return false;
+    
+    /* Carrega Leds */
+    if ( !(gLed[0] = loadSurface("./data/ledOn.png")) ) return false;
+    if ( !(gLed[1] = loadSurface("./data/ledOff.png")) ) return false;
 
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
@@ -155,7 +159,9 @@ int loadBlocosFromFile(char* levelName) {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] =
+
 				createBloco(pos, c-'0', 32, 16, 4, gBlocoImgs[c-'0']);
+
 			}
 		}
 		lc++;

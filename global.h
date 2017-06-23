@@ -9,6 +9,8 @@
 #ifndef GLOBALDEFS_H
 #define GLOBALDEFS_H
 
+#include <stdio.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -55,12 +57,17 @@ extern SDL_Surface* gBlocoBreak;
 extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
 
+extern SDL_Surface* gLed[2];
+
 extern SDL_Renderer* gRenderer;
 extern SDL_Texture* gScoreTexture;
 extern SDL_Surface* gScoreSurface;
 extern TTF_Font* gScoreFonte;
 
 extern Mix_Chunk* gSons[10];
+
+
+extern int gMaxVidas;
 
 extern int gNumBolas;
 extern int gNumBlocos;
@@ -69,6 +76,7 @@ extern PLATAFORMA* gPad;
 extern BOLA* gBolas;
 extern BLOCO* gBlocos;
 extern PLAYER gPlayer;
+extern PWP* gPowerUp;
 
 extern int gLeft, gRight;
 extern int gXMouse, gYMouse;

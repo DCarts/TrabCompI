@@ -54,4 +54,14 @@ typedef struct {
 	char nome[22];
 } PLAYER;
 
+typedef struct {
+	VETOR2D pos;
+	VETOR2D dir;
+	int tipo;
+	int ativo;
+	int dim;
+	double spd;
+	SDL_Surface* img;
+} PWP;
+
 #endif

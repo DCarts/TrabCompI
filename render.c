@@ -25,30 +25,35 @@ static SDL_Rect srcRect, dstRect;
 int render() {
 	int i, err = false;
 
-	//Fill the surface white
+	/* Desenha area de jogo */
 	SDL_FillRect( gScreenSurface, NULL,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
 	srcRect.x = 24; srcRect.y = 24;
 	srcRect.w = 592; srcRect.h = 432;
+
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
 
 	srcRect.x = 32; srcRect.y = 32;
 	srcRect.w = 576; srcRect.h = 416;
+	
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
 
-
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
 		if (gBlocos[i].vida){
+			
+			srcRect.y = 0;
 			srcRect.w = gBlocos[i].w;
 			srcRect.h = gBlocos[i].h;
-
+			
+			srcRect.x = 0; srcRect.y = 0;
+			
 			dstRect.x = gBlocos[i].pos.x;
 			dstRect.y = gBlocos[i].pos.y;
 
@@ -69,14 +74,36 @@ int render() {
 					err = true;
 				}
 			}
-
 		}
-
 	}
 
-	/* Renderiza as bolas */
+	/* Renderiza os leds */
 	srcRect.x = 0; srcRect.y = 0;
 
+	for(i = 0; i < gMaxVidas; i++) {
+		srcRect.w = 24;
+		srcRect.h = 8;
+
+		dstRect.x = 624 + i*32;
+		dstRect.y = gScreenHeight - 2*OFFSET;
+
+		if (i+1 <= gPlayer.vidas){
+			if( SDL_BlitSurface( gLed[0], &srcRect,
+								gScreenSurface, &dstRect) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				err = true;
+			}
+		}else{
+			if( SDL_BlitSurface( gLed[1], &srcRect,
+								gScreenSurface, &dstRect) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				err = true;
+			}
+		}
+	}
+	
+	
+	/* Renderiza as bolas */
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
 		srcRect.h = gBolas[i].dim;
@@ -86,7 +113,7 @@ int render() {
 
 		if (gBolas[i].ativo){
 			if( SDL_BlitSurface( gBolas[i].img, &srcRect,
-								gScreenSurface, &dstRect ) < 0 ) {
+								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
@@ -108,7 +135,7 @@ int render() {
 
 	err = renderScoreboard();
 
-    //Update the surface
+    /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );
 
 	return err;

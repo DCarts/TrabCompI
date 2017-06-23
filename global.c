@@ -5,6 +5,8 @@
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
+ 
+#include <stdio.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -48,6 +50,7 @@ SDL_Surface* gBlocoImgs[10];
 SDL_Surface* gBlocoBreak;
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
+SDL_Surface* gLed[2];
 
 Mix_Chunk* gSons[10];
 
@@ -56,6 +59,7 @@ SDL_Texture* gScoreTexture = NULL;
 SDL_Surface* gScoreSurface = NULL;
 TTF_Font* gScoreFonte = NULL;
 
+int gMaxVidas = 4;
 int gNumBolas = 6;
 int gNumBlocos = 0;
 
@@ -63,6 +67,7 @@ PLATAFORMA* gPad = NULL;
 BOLA* gBolas = NULL;
 BLOCO* gBlocos = NULL;
 PLAYER gPlayer;
+PWP* gPowerUp = NULL;
 
 int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;
