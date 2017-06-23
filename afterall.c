@@ -23,8 +23,11 @@
  #include "render.h"
  #include "afterall.h"
 
+ #define MAXLEN 11
+
 static char standardMessage[22] = "Enter your name:";
-static char namae[22] = "ze sa";
+static char namae[MAXLEN] = "ze sa";
+/*static char blank[MAXLEN] = "  ";*/
 static SDL_Surface* standardMSurface = NULL;
 static SDL_Surface* clipboardSurface = NULL;
 static SDL_Event ev;
@@ -32,9 +35,8 @@ static SDL_Rect dstRect;
 
 
 int setClipboard(){	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
-	int exit = false;
+  int exit = false;
   int err = false, cont = strlen(namae);
-
 
 	/* Tornando a superfície escura novamente */
 	SDL_FillRect( gScreenSurface, NULL,
@@ -60,52 +62,53 @@ int setClipboard(){	/* função para capturar a entrada do nome do player e blit
 	SDL_StartTextInput();	/* habilitando a entrada de texto pelo usuário	*/
 
 	dstRect.x = 330; dstRect.y = 200;	/*	definindo a posição do retangulo do nome do jogador	*/
-	while(!exit){
-		int ableRender = true;
 
-    while(SDL_PollEvent(&ev) != 0){
+  while(!exit){
+		int ableRender = false;
 
+    while(SDL_PollEvent(&ev) != 0)
+    {
   		/*printf("Entrei\n");*/
-
-
-  		if(ev.type == SDL_KEYDOWN){
-  			/*if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0){
-
-  				namae[cont--] = ' ';
+  		if(ev.type == SDL_KEYDOWN)
+      {
+  			if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0 && cont <= MAXLEN)
+        {
+  				namae[cont] = '\0';
+          namae[--cont] = ' ';
   				ableRender = true;
-
   			}
-  			else if(!( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) &&
-  								( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) &&
-  								SDL_GetModState() & KMOD_CTRL )){
-
-  				namae[cont++] = ev.text.text[0];
-  				ableRender = true;
-  			}*/
-  			if(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_RETURN2){
+  			else if(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_RETURN2)
+        {
   				printf("p\n");
-  				break;
+  				exit = true;
   			}
-
   		}
-  		else if(ev.type == SDL_TEXTINPUT){
-
-  			if( !( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) && ( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) && 						SDL_GetModState() & KMOD_CTRL ) ){
-  							/*	adiciona o caracter ao fim da string	*/
-  							namae[++cont] = ev.text.text[0];
-  							ableRender = true;
-
-  						}
-  		}
-
-  		if(ableRender){/* literalmente a pegunta "posso renderizar o texto?"*/
-
-  			/*	Renderizando o texto de entrada na superfície	*/
-  			if(!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,namae,gScoreFontColor,gBgColor))){
-  				fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
-  				err = true;
-  				break;
+      else if(ev.type == SDL_TEXTINPUT)
+      {
+  			if(!( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' ) &&
+  								( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' ) &&
+  								SDL_GetModState() & KMOD_CTRL ))
+        {
+  				namae[cont++] = ev.text.text[0];
+          namae[cont] = '\0';
+  				ableRender = true;
   			}
+      }
+
+      if(strlen(namae) > 0)
+      {
+        ableRender = true;
+      }
+
+  		if(ableRender)  /* literalmente a pegunta "posso renderizar o texto?"*/
+      {
+        /*	Renderizando o texto de entrada na superfície	*/
+        if(!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,namae,gScoreFontColor,gBgColor)))
+        {
+          fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
+          err = true;
+          break;
+        }
   			/*else{	printf("Renderizei ok\n");}*/
   		}
 
@@ -127,7 +130,7 @@ int setClipboard(){	/* função para capturar a entrada do nome do player e blit
 	SDL_StopTextInput(); /*	encerrando a entrada de texto	*/
 
 	/*SDL_Delay(5000); teste para ver se blitou,será removido na versão final.	*/
-
+  createPlayer(namae);
 	if(err){
 		printf("Erro ao renderizar clipboard\n");
 		return 0;
@@ -137,8 +140,8 @@ int setClipboard(){	/* função para capturar a entrada do nome do player e blit
 }
 
 
-void createPlayer(){
-	char buffer[22] = "abba";
+void createPlayer(char* namae){
+	/*char buffer[10] = "abba";*/
 
 	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
 		//printf("Qual o nome do jogador? \n");
@@ -150,9 +153,9 @@ void createPlayer(){
 	}
 
 		gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';
-		strcat(buffer/*gPlayer.nome*/,"  ");	/* append dois espaços	*/
-		strcat(buffer/*gPlayer.nome*/,gScoreText);	/* append pontuação do jogador */
-		strcat(buffer,"\n"); /*	append '\n'	*/
+		strcat(namae/*gPlayer.nome*/,"  ");	/* append dois espaços	*/
+		strcat(namae/*gPlayer.nome*/,gScoreText);	/* append pontuação do jogador */
+		strcat(namae,"\n"); /*	append '\n'	*/
 
 		gRank = fopen("./bin/data/rank/rank.txt","a+");
 		if(!gRank){
@@ -160,7 +163,7 @@ void createPlayer(){
 			exit(666);
 		}
 
-		fputs(buffer,gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
+		fputs(namae,gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 
 		fclose(gRank);

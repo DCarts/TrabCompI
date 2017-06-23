@@ -84,7 +84,6 @@ int main(int argc, char **argv) {
 	}
 
 	exitGame();
-	createPlayer();
 
 	return !quit;
 }
