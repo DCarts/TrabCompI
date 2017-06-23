@@ -84,7 +84,7 @@ int render() {
 		srcRect.w = 24;
 		srcRect.h = 8;
 
-		dstRect.x = 624 + i*32;
+		dstRect.x = gGameWidth + i*32;
 		dstRect.y = gScreenHeight - 2*OFFSET;
 
 		if (i+1 <= gPlayer.vidas){
@@ -93,7 +93,8 @@ int render() {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
-		}else{
+		} 
+		else {
 			if( SDL_BlitSurface( gLed[1], &srcRect,
 								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );

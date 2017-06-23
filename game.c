@@ -449,7 +449,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 	if ( (a->dim /2 )* (a->dim / 2) > (dx*dx)+(dy*dy)) {
-		printf("1: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
+		printf("COLL 1: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		if (dx < dy) {
 			a->dir.x = -a->dir.x;
 			a->pos.x += a->dir.x*a->spd*delta;
@@ -467,45 +467,8 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 			a->pos.x += a->dir.x*a->spd*delta;
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
-		printf("2: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
+		printf("COLL 2: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		return true;
 	}
 	return false;
 }
-/*
-
-
-void createPlayer(){
-	char buffer[22];
-
-	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/ /*
-		printf("Qual o nome do jogador? \n");
-		gets(buffer);
-
-		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
-			strcpy(gPlayer.nome, buffer);
-			break;
-		}
-	}
- */
-		/*gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';*/
-
-		/*	Captura a altura e a largura do texto TTF
-		if (TTF_SizeText(gFonte,gPlayer.nome,&gScoreBoardWidth,
-											&gScoreBoardHeight) == -1){
-												fprintf(stderr,
-												"Erro capturando as dimensões da fonte! %s\n",
-												TTF_GetError());
-											}
-		else{
-			printf("width = %d \t height = %d\n",gScoreBoardWidth,gScoreBoardHeight);
-		}
-		*/ /*
-
-
-		gPlayer.vidas = 2;
-		gPlayer.pontos = 0;
-
-		gPlayer.ativo = true;
-}
-*/

@@ -158,7 +158,7 @@ void createPlayer(char* namae){
 		strcat(namae/*gPlayer.nome*/,gScoreText);	/* append pontuação do jogador */
 		strcat(namae,"\n"); /*	append '\n'	*/
 
-		gRank = fopen("./bin/data/rank/rank.txt","a+");
+		gRank = fopen("./data/rank/rank.txt","a+");
 		if(!gRank){
 			puts("Impossível abrir arquivo do rank!");
 			exit(666);

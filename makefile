@@ -14,16 +14,20 @@ SFLAGS=-lSDL2
 GAME_FLAGS= $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS) $(TTF_FLAGS) $(MATH_FLAGS)
 
 OBJS=main.o global.o game.o media.o render.o util.o afterall.o
-BINARIES=breakout lvlbuilder
+BINARIES=bin/breakout bin/lvlbuilder
 
 #all: ex0 ex1 ex2 ex3 ex4 ex5 ex6 ex7 grafico texto
 # $(SOURCES) $(CFLAGS) $(LINUX_FLAGS) $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS) $(TTF_FLAGS)
 all: $(BINARIES)
 
-breakout: $(OBJS)
+breakout: bin/breakout
+
+lvlbuilder: bin/lvlbuilder
+
+bin/breakout: $(OBJS)
 	$(CC) -o ./bin/breakout $(OBJS) $(GAME_FLAGS)
 
-lvlbuilder: levelBuilder.c
+bin/lvlbuilder: levelBuilder.c
 	$(CC) -o ./bin/lvlbuilder levelBuilder.c $(CFLAGS) $(LINUX_FLAGS) $(SFLAGS) $(IMAGE_FLAGS) $(MATH_FLAGS)
 
 main.o: main.c
@@ -51,4 +55,4 @@ clean:
 	rm -rf *.o *.exe *.bak *.c~ $(BINARIES) core a.out
 
 limpa:
-	del *.o *.exe *.bak *.c~ $(BINARIES) core a.out
+	del *.o *.bak *.c~ $(BINARIES) core a.out

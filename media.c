@@ -71,7 +71,7 @@ int loadMedia() {
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
 	}
 
-	colorKey = SDL_MapRGB(gBlocoBreak->format, 0xFF, 0xFF, 0xFF );
+	colorKey = SDL_MapRGB(gBlocoBreak->format, 0xFF, 0x00, 0xFF );
 	SDL_SetColorKey(gBlocoBreak, SDL_TRUE, colorKey);
 
     /* FIM CARREGANDO IBAGENS */
