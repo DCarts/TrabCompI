@@ -13,7 +13,6 @@ SFLAGS=-lSDL2
 
 GAME_FLAGS= $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS) $(TTF_FLAGS) $(MATH_FLAGS)
 
-SOURCES=main.c global.c game.c
 OBJS=main.o global.o game.o media.o render.o util.o afterall.o
 BINARIES=breakout lvlbuilder
 
