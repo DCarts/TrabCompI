@@ -59,9 +59,8 @@ typedef struct {
 	VETOR2D pos;
 	VETOR2D dir;
 	int tipo;
-	int ativo;
-	int dim;
 	double spd;
+	int ativo;
 	SDL_Surface* img;
 } PWP;
 

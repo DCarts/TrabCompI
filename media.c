@@ -69,6 +69,12 @@ int loadMedia() {
     /* Carrega Leds */
     if ( !(gLed[0] = loadSurface("./data/ledOn.png")) ) return false;
     if ( !(gLed[1] = loadSurface("./data/ledOff.png")) ) return false;
+    
+    /* Carrega PowerUps */
+    if ( !(gPwpImg[0] = loadSurface("./data/pwpDeath.png")) ) return false;
+    if ( !(gPwpImg[1] = loadSurface("./data/pwpPad.png")) ) return false;
+    if ( !(gPwpImg[2] = loadSurface("./data/pwpBallDup.png")) ) return false;
+    if ( !(gPwpImg[3] = loadSurface("./data/pwpSpdUp.png")) ) return false;
 
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );

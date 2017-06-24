@@ -154,6 +154,8 @@ int gameLoop(double delta) {
 				if (gBlocos[j].vida) {
 					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
 						gPlayer.pontos += 100;
+						//if (gBlocos[j].vida == 1 && !(rand() % 5))
+						//	createPwp();
 					}
 				}
 			}
@@ -216,6 +218,17 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 	return plat;
 }
 
+PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, double spd, int ativo, SDL_Surface* img){
+	PWP pwp;
+	pwp.pos = pos;
+	pwp.dir = dir;
+	pwp.tipo = tipo;
+	plat.img = img;
+	plat.spd = 0;
+	plat.ativo = ativo;
+	return pwp;
+}
+
 int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
@@ -241,6 +254,16 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
+	gPowerUp = calloc(1, sizeof(PWP));
+	if (!gPad) {
+		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
+		return false;
+	}
+	
+	pos.x = 300;
+	pos.y = 300;
+	
+	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPwpImg[tipo]);
 
 	for (i = 0; i < gNumBolas; i++) {
 		pos.x = (rand() % (gScreenWidth-64))+32;
