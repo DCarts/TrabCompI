@@ -28,19 +28,15 @@ int loadMedia() {
 
 	/* CARREGANDO FONTES */
 
-	if(!(gFonte = TTF_OpenFontIndex("./data/Scoreboard-LED.ttf",48,0))){
-		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
-		return false;
-	}
-
+	if (!(gScoreFonte = loadFont("./data/DS-DIGI.TTF"))) return false;
 
 	/* FIM CARREGANDO FONTES */
 
 	/* CARREGANDO IBAGENS */
 
-	/*
-	 * ColorKey eh magenta
-	 */
+		/*
+		 * ColorKey eh magenta
+		 */
 
     /* Carrega plataformas */
     if( !(gPadImgs[0] = loadSurface("./data/pad.png")) ) return false;
@@ -84,7 +80,6 @@ int loadMedia() {
 	colorKey = SDL_MapRGB(gBlocoBreak->format, 0xFF, 0x00, 0xFF );
 	SDL_SetColorKey(gBlocoBreak, SDL_TRUE, colorKey);
 
-
     /* FIM CARREGANDO IBAGENS */
 
     /* CARREGANDO SONS */
@@ -105,6 +100,15 @@ Mix_Chunk* loadSound(char* path) {
 						path, Mix_GetError() );
 	}
 	return sound;
+}
+
+TTF_Font* loadFont(char* path) {
+	TTF_Font* fonte;
+	fonte = TTF_OpenFont(path, 36);
+	if (!fonte) {
+		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
+	}
+	return fonte;
 }
 
 SDL_Surface* loadSurface(char* path ) {
@@ -148,7 +152,7 @@ int loadBlocosFromFile(char* levelName) {
 	strcat(path, ".dat");
 
 	if (!(arq = fopen(path, "r"))) {
-		perror("Erro carregando bloco");
+		perror("Erro carregando bloco: ");
 		return false;
 	}
 	lc = 0;

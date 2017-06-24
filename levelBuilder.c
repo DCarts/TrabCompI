@@ -55,8 +55,8 @@ typedef struct _BLOCO {
 
 /* Variaveis Globais */
 
-int gScreenWidth = 640;
-int gScreenHeight = 480;
+int gGameWidth = 640;
+int gGameHeight = 480;
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
@@ -165,7 +165,7 @@ int init() {
 
 	gWindow = SDL_CreateWindow("Breakout Work-in-Progress",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		gScreenWidth, gScreenHeight,
+		gGameWidth, gGameHeight,
 		SDL_WINDOW_SHOWN|SDL_WINDOW_INPUT_FOCUS);
 
 	if (!gWindow) {

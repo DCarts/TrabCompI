@@ -1,16 +1,16 @@
 /*
  * defs.h
- * 
+ *
  * Copyright 2017 Daniel <dcsouza@dcc.ufrj.br>
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
- 
+
 #ifndef BREAKOUTDEFS_H
 #define BREAKOUTDEFS_H
- 
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h> 
+#include <SDL2/SDL_image.h>
 
 #include "defs.h"
 #include "global.h"
@@ -35,7 +35,6 @@ PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, double spd, int ativo, SDL_Sur
 
 /* Cria o player atual */
 void createPlayer();
-
 
 /* Move uma bolinha */
 void moveBall(BOLA* b, double delta);

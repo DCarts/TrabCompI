@@ -5,6 +5,8 @@
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
+ 
+#include <stdio.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -33,10 +35,15 @@ const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
 
-int gScoreBoardHeight = 30;
-int gScoreBoardWidth = 110;
-int gScreenWidth = 750; /*640*/
-int gScreenHeight = 480; /*480*/
+int flip;
+
+int gScoreOffset = 16;
+int gScoreWidth = 128;
+int gGameWidth = 640;
+int gGameHeight = 480;
+
+int gScreenWidth = 0;
+int gScreenHeight = 0;
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
@@ -45,16 +52,14 @@ SDL_Surface* gBlocoImgs[10];
 SDL_Surface* gBlocoBreak;
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
-SDL_Surface* gTexto = NULL;
-SDL_Surface* gPontos = NULL;
 SDL_Surface* gLed[2];
-
-SDL_Color corDaFonte = {255,255,255};
-SDL_Color backgroundColor = {0,0,0};
 
 Mix_Chunk* gSons[10];
 
-TTF_Font* gFonte = NULL;
+SDL_Renderer* gRenderer = NULL;
+SDL_Texture* gScoreTexture = NULL;
+SDL_Surface* gScoreSurface = NULL;
+TTF_Font* gScoreFonte = NULL;
 
 int gMaxVidas = 4;
 int gNumBolas = 6;
@@ -68,3 +73,9 @@ PWP* gPowerUp = NULL;
 
 int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;
+
+FILE *gRank;/* arquivo que armazena a pontuação do jogador */
+char gScoreText[8];
+
+SDL_Color gScoreFontColor = {255,255,255};
+SDL_Color gBgColor = {0,0,0};

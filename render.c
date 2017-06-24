@@ -20,18 +20,10 @@
 #include "global.h"
 #include "render.h"
 
+static SDL_Rect srcRect, dstRect;
+
 int render() {
-	SDL_Rect srcRect, dstRect;
-	SDL_Rect ttfRect; /*	Retangulo para o texto TTF */
 	int i, err = false;
-	char pontuacao[11];
-
-	/* Dimensoes do texto TTF */
-	ttfRect.x = gScreenWidth - gScoreBoardWidth;
-	ttfRect.y = OFFSET;
-	ttfRect.w = gScoreBoardWidth;
-	ttfRect.h = gScoreBoardHeight;
-
 
 	/* Desenha area de jogo */
 	SDL_FillRect( gScreenSurface, NULL,
@@ -39,13 +31,15 @@ int render() {
 				0, 0, 0 ) );
 
 	srcRect.x = 24; srcRect.y = 24;
-	srcRect.w = 592; srcRect.h = 456;
+	srcRect.w = 592; srcRect.h = 432;
+
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xBB, 0xBB, 0xBB ) );
 
 	srcRect.x = 32; srcRect.y = 32;
-	srcRect.w = 576; srcRect.h = 440;
+	srcRect.w = 576; srcRect.h = 416;
+	
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
@@ -70,7 +64,6 @@ int render() {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
-			
 
 			if (gBlocos[i].vida < gBlocos[i].maxVida){
 				srcRect.x = 32 * (4 - gBlocos[i].vida); srcRect.y = 0;
@@ -91,7 +84,7 @@ int render() {
 		srcRect.w = 24;
 		srcRect.h = 8;
 
-		dstRect.x = 624 + i*32;
+		dstRect.x = gGameWidth + i*32;
 		dstRect.y = gScreenHeight - 2*OFFSET;
 
 		if (i+1 <= gPlayer.vidas){
@@ -100,7 +93,8 @@ int render() {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
 			}
-		}else{
+		} 
+		else {
 			if( SDL_BlitSurface( gLed[1], &srcRect,
 								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
@@ -140,42 +134,40 @@ int render() {
             err = true;
 		}
 
-		/*	Renderiza o texto TTF	*/
-		if(!(gTexto = TTF_RenderText_Shaded(gFonte, gPlayer.nome, corDaFonte, backgroundColor))){
-			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
-			err = true;
-		}
-
-		if (SDL_BlitSurface(gTexto, NULL, gScreenSurface, &ttfRect) < 0) {
-			fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
-			err = true;
-
-		}
-
-		ttfRect.x = gScreenWidth - gScoreBoardWidth;
-		ttfRect.y = OFFSET + gScoreBoardHeight + 15;
-		ttfRect.w = gScoreBoardWidth;
-		ttfRect.h = gScoreBoardHeight;
-
-		sprintf(pontuacao,"%d",gPlayer.pontos);
-
-		if(!(gPontos = TTF_RenderText_Shaded(gFonte,pontuacao,corDaFonte,backgroundColor))){
-			fprintf(stderr,"Impossivel renderizar pontuação na tela! %s\n",TTF_GetError());
-			err = true;
-		}
-
-
-		if (SDL_BlitSurface(gPontos, NULL, gScreenSurface, &ttfRect) < 0) {
-			fprintf(stderr,"Impossivel blitar pontuação na tela! %s\n",SDL_GetError());
-			err = true;
-		}
-
+	err = renderScoreboard();
 
     /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );
 
-	SDL_FreeSurface(gPontos);
-	SDL_FreeSurface(gTexto);
+	return err;
+}
 
+int renderScoreboard() {
+	int err = false;
+	static int lastScore = -1;
+	/*	static char scoreText[8];	*/
+
+	if (gPlayer.pontos != lastScore) {
+		lastScore = gPlayer.pontos;
+		sprintf(gScoreText, "%d pts", lastScore);
+
+		SDL_FreeSurface(gScoreSurface);
+
+		gScoreSurface = NULL;
+		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, gScoreText, gScoreFontColor, gBgColor))) {
+			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
+			err = true;
+		}
+	}
+
+	dstRect.x = gScoreOffset;
+	dstRect.y = 16;
+	dstRect.w = 128;
+	dstRect.h = 48;
+
+	if (SDL_BlitSurface(gScoreSurface, NULL, gScreenSurface, &dstRect) < 0) {
+		fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
+		err = true;
+	}
 	return err;
 }

@@ -21,6 +21,9 @@ SDL_Surface* loadSurface (char* path);
 /* Carrega um som */
 Mix_Chunk* loadSound(char* path);
 
+/* Carrega uma fonte */
+TTF_Font* loadFont(char* path);
+
 /* Carrega blocos de um level *
  * O level deve estar em ./data/level/ *
  * Retorna true se leu de boas, false se deu merda */

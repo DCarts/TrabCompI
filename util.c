@@ -29,6 +29,6 @@ double sqDist(VETOR2D a, VETOR2D b) {
 }
 
 int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
-	return  t.x <= p4x && t.x >= p1x &&
-			t.y <= p4y && t.y >= p1y;
+	return  t.x < p4x && t.x > p1x &&
+			t.y < p4y && t.y > p1y;
 }

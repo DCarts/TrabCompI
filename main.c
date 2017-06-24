@@ -30,6 +30,7 @@
 #include "game.h"
 #include "media.h"
 #include "render.h"
+#include "afterall.h"
 
 int main(int argc, char **argv) {
 	int quit, count;
@@ -37,7 +38,11 @@ int main(int argc, char **argv) {
 	double delta;
 	SDL_Event evt;
 
-	gScreenHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
+	//gGameHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
+	gScoreOffset += gGameWidth;
+
+	gScreenWidth = gScoreOffset+gScoreWidth;
+	gScreenHeight = gGameHeight;
 
 	if (!init()) {
 		return 1;
@@ -55,7 +60,9 @@ int main(int argc, char **argv) {
 	quit = false;
 	currentTime = countTime = SDL_GetTicks();
 	countTime++;
-	
+
+	flip = 0;
+
 	gLeft = false;
 	gRight = false;
 
@@ -70,12 +77,16 @@ int main(int argc, char **argv) {
 		//printf("%.1f\n",currentTime/1000.0);
 		if (countTime < currentTime) {
 			printf("FPS=%d\n", count);
+			flip = 1 - flip;
 			count = 0;
 			countTime = currentTime + 1000;
 		}
-		if (gameLoop(delta)) return 1;
-		if (render()) return 1;
+		if (gameLoop(delta)) break;
+		if (render()) break;
 		count++;
 	}
-	return 0;
+
+	exitGame();
+
+	return !quit;
 }

@@ -24,6 +24,7 @@
 #include "render.h"
 #include "util.h"
 #include "media.h"
+#include "afterall.h"
 
 int init() {
 	int imgFlags = IMG_INIT_PNG;
@@ -77,15 +78,19 @@ void moveBall(BOLA* p, double delta) {
 	p->pos.y = p->pos.y + p->dir.y*p->spd*delta;
 
 	if (p->pos.x + p->dim > gScreenWidth-OFFSET - gScoreBoardWidth || p->pos.x < OFFSET) {
+	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x += p->dir.x*p->spd*delta;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
-	if (p->pos.y + p->dim > gScreenHeight-OFFSET) {
+	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
 		/*jogador perde pontos*/
+
 		gPlayer.pontos -= 1000;
-		if(gPlayer.pontos < 0){	gPlayer.pontos = 0;}
-		
+		if(gPlayer.pontos < 0){
+			gPlayer.pontos = 0;
+		}
+
 		p->ativo = false;
 		p->dir.y = -p->dir.y;
 		p->pos.y += p->dir.y*p->spd*delta;
@@ -115,20 +120,21 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->spd += (p->spd < 0) ?
 			delta * 9 : delta * -9;
 	}
+
+
 	p->pos.x += p->spd*PLAT_SPD*delta;
 
 
-
-	if (p->pos.x + p->w > gScreenWidth-OFFSET - gScoreBoardWidth) {
+	if (p->pos.x + p->w > gGameWidth-OFFSET) {
 		p->spd = 0;
-		p->pos.x = gScreenWidth-OFFSET-p->w - gScoreBoardWidth;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ // nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma
+		p->pos.x = gGameWidth-OFFSET-p->w;
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ /* nao seria uma boa ideia colocar o som de colisao da bolinha pra plataforma */
 	}
 
 	if (p->pos.x < OFFSET) {
 		p->spd = 0;
 		p->pos.x = OFFSET;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ //idem
+		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ /*idem*/
 	}
 }
 
@@ -137,7 +143,7 @@ void collide(BOLA* a, BOLA* b, double delta) {
 	/*VETOR2D c, mp, n, tip, ray;
 	double dot;*/
 
-	/* bola n precisa colidir mesmo */
+	/* bola n precisa colidir mesmo	:) */
 
 
 }
@@ -150,6 +156,9 @@ int gameLoop(double delta) {
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
 
+            moveBall(gBolas+i, delta);
+			collBallPlat(gBolas+i, delta);
+
 			for (j = 0; j < gNumBlocos; j++) {
 				if (gBlocos[j].vida) {
 					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
@@ -159,10 +168,7 @@ int gameLoop(double delta) {
 					}
 				}
 			}
-
-			moveBall(gBolas+i, delta);
-			collBallPlat(gBolas+i, delta);
-			//detCollBlocos(alalalal
+			/*detCollBlocos(alalalal*/
 		}
 	}
 	/* colisao entre bolas */
@@ -233,11 +239,8 @@ int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
 
-
-	gPlayer.ativo = false;
-	while(gPlayer.ativo == false){
-		createPlayer();
-	}
+	gPlayer.pontos = 0;
+	gPlayer.vidas = 3;
 
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
@@ -266,15 +269,15 @@ int createNPCs() {
 	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPwpImg[tipo]);
 
 	for (i = 0; i < gNumBolas; i++) {
-		pos.x = (rand() % (gScreenWidth-64))+32;
-		pos.y = (rand() % (gScreenHeight-64))+32;
+		pos.x = (rand() % (gGameWidth-64))+32;
+		pos.y = (rand() % (gGameHeight-64))+32;
 		dir.x = (rand() % 2? -1 : 1);
 		dir.y = (rand() % 2? -1 : 1);
-		gBolas[i] = createBola(pos, dir, 1, 10, gScreenHeight/5, gBallImgs[0]);
+		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/5, gBallImgs[0]);
 	}
 
-	pos.x = gScreenWidth/2;
-	pos.y = gScreenHeight-56;
+	pos.x = gGameWidth/2;
+	pos.y = gGameHeight-56;
 	dir.x = 4;
 	dir.y = 4;
 
@@ -284,15 +287,23 @@ int createNPCs() {
 }
 
 void exitGame() {
-	TTF_CloseFont(gFonte);/*	encerra a utilização da fonte ttf	*/
+
+	static int hasRan = 0;
+	if (hasRan) return;
+
+	SDL_FreeSurface(gScoreSurface);
 
 	SDL_FreeSurface(gBallImgs[0]);
 	SDL_FreeSurface(gBlocoBreak);
 	SDL_FreeSurface(gPadImgs[0]);
-	/*SDL_FreeSurface(gTexto);*/
+	/*SDL_FreeSurface(gScoreSurface);*/
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
+
+	if(!setClipboard()){
+		printf("Erro ao renderizar clipboard.Verificar função setClipboard.\n");
+	}
 
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
@@ -300,9 +311,14 @@ void exitGame() {
 	/*Mix_FreeChunk(gSons[0]);
 	gSons[0] = NULL;*/
 	Mix_CloseAudio();
+
+	TTF_CloseFont(gScoreFonte);/*	encerra a utilização da fonte do ttf	*/
+
 	TTF_Quit();/*	fecha o SDL_ttf	*/
 	IMG_Quit();
 	SDL_Quit();
+
+	hasRan = true;
 }
 
 int handleInput(SDL_Event* evt){
@@ -414,24 +430,14 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		return false;
 	}
 
-	if (isInAABB(c, b->pos.x,
-					 b->pos.y,
-					 b->pos.x + b->w,
-					 b->pos.y + b->h)) {
-
-		a->dir.x = -a->dir.x;
-		a->dir.y = -a->dir.y;
-		a->pos.x += a->dir.x*a->spd*delta;
-		a->pos.y += a->dir.y*a->spd*delta;
-
-		return false;
-	}
-	else if (isInAABB(c, b->pos.x - a->dim/2,
+	if (isInAABB(c, b->pos.x - a->dim/2,
 					b->pos.y,
 					b->pos.x + b->w + a->dim/2,
 					b->pos.y + b->h)) {
 		a->dir.x = -a->dir.x;
 		a->pos.x += a->dir.x*a->spd*delta;
+
+		puts("Primeiro if");
 
 	}
 	else if (isInAABB(c, b->pos.x,
@@ -440,6 +446,9 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 						 b->pos.y + b->h + a->dim/2)) {
 		a->dir.y = -a->dir.y;
 		a->pos.y += a->dir.y*a->spd*delta;
+
+		puts("Segundo if");
+
 	}
 	else {
 		dx = c.x - b->pos.x;
@@ -458,23 +467,26 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 			inv = collBallPoint(a, dx, dy, delta);
 		}
 		if (!inv) return false;
-
 	}
-	printf("Vida --: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
-	b->vida--;
+	printf("Vida --: dx=%.2lf dy=%.2lf\n", a->dir.x, a->dir.y);
+	if (b->vida-- == 1) {
+        puts("E morreu. o que houve?");
+    }
 
 	return true;
 }
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 	if ( (a->dim /2 )* (a->dim / 2) > (dx*dx)+(dy*dy)) {
-		printf("1: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
+		printf("COLL 1: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		if (dx < dy) {
 			a->dir.x = -a->dir.x;
 			a->pos.x += a->dir.x*a->spd*delta;
+			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else if (dx > dy) {
 			a->dir.y = -a->dir.y;
+			a->pos.x += a->dir.x*a->spd*delta;
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
 		else {
@@ -484,43 +496,8 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 			a->pos.x += a->dir.x*a->spd*delta;
 			a->pos.y += a->dir.y*a->spd*delta;
 		}
-		printf("2: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
+		printf("COLL 2: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		return true;
 	}
 	return false;
-}
-
-
-void createPlayer(){
-	char buffer[22];
-
-	while(true){	/*permanecer na função até que o usuário nao digite merda(digite algum caracter)*/
-		printf("Qual o nome do jogador? \n");
-		gets(buffer);
-
-		if (sscanf(buffer, "%s",gPlayer.nome) != EOF) {
-			strcpy(gPlayer.nome, buffer);
-			break;
-		}
-	}
-
-		/*gPlayer.nome[strlen(gPlayer.nome) - 1] = '\0';*/
-
-		/*	Captura a altura e a largura do texto TTF
-		if (TTF_SizeText(gFonte,gPlayer.nome,&gScoreBoardWidth,
-											&gScoreBoardHeight) == -1){
-												fprintf(stderr,
-												"Erro capturando as dimensões da fonte! %s\n",
-												TTF_GetError());
-											}
-		else{
-			printf("width = %d \t height = %d\n",gScoreBoardWidth,gScoreBoardHeight);
-		}
-		*/
-
-
-		gPlayer.vidas = 2;
-		gPlayer.pontos = 0;
-
-		gPlayer.ativo = true;
 }

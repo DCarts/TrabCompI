@@ -13,18 +13,21 @@ SFLAGS=-lSDL2
 
 GAME_FLAGS= $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS) $(TTF_FLAGS) $(MATH_FLAGS)
 
-SOURCES=main.c global.c game.c
-OBJS=main.o global.o game.o media.o render.o util.o
-BINARIES=breakout lvlbuilder
+OBJS=main.o global.o game.o media.o render.o util.o afterall.o
+BINARIES=bin/breakout bin/lvlbuilder
 
 #all: ex0 ex1 ex2 ex3 ex4 ex5 ex6 ex7 grafico texto
 # $(SOURCES) $(CFLAGS) $(LINUX_FLAGS) $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS) $(TTF_FLAGS)
 all: $(BINARIES)
 
-breakout: $(OBJS)
+breakout: bin/breakout
+
+lvlbuilder: bin/lvlbuilder
+
+bin/breakout: $(OBJS)
 	$(CC) -o ./bin/breakout $(OBJS) $(GAME_FLAGS)
 
-lvlbuilder: levelBuilder.c
+bin/lvlbuilder: levelBuilder.c
 	$(CC) -o ./bin/lvlbuilder levelBuilder.c $(CFLAGS) $(LINUX_FLAGS) $(SFLAGS) $(IMAGE_FLAGS) $(MATH_FLAGS)
 
 main.o: main.c
@@ -45,9 +48,11 @@ render.o: render.c
 util.o: util.c
 	$(CC) -c util.c $(CFLAGS) $(GAME_FLAGS)
 
+afterall.o: afterall.c
+	$(CC) -c afterall.c $(CFLAGS) $(GAME_FLAGS)
+
 clean:
-	rm -rf *.o *.exe *.bak *.c~ $(BINARIES) core a.out
+	rm -rf *.o bin/*.exe *.bak *.c~ $(BINARIES) core a.out
 
 limpa:
-	del *.o *.exe *.bak *.c~ $(BINARIES) core a.out
-
+	del *.o bin/*.exe *.bak *.c~ $(BINARIES) core a.out

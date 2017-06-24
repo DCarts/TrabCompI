@@ -9,6 +9,8 @@
 #ifndef GLOBALDEFS_H
 #define GLOBALDEFS_H
 
+#include <stdio.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -39,8 +41,13 @@ extern const int SOUND_FLOOR;
 
 /* Variaveis */
 
-extern int gScoreBoardHeight;
-extern int gScoreBoardWidth;
+extern int flip;
+
+extern int gScoreOffset;
+extern int gScoreWidth;
+extern int gGameWidth;
+extern int gGameHeight;
+
 extern int gScreenWidth;
 extern int gScreenHeight;
 
@@ -51,18 +58,19 @@ extern SDL_Surface* gBlocoImgs[10];
 extern SDL_Surface* gBlocoBreak;
 extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
-extern SDL_Surface* gTexto;
-extern SDL_Surface* gPontos;
+
 extern SDL_Surface* gLed[2];
 
-extern SDL_Color corDaFonte;
-extern SDL_Color backgroundColor;
+extern SDL_Renderer* gRenderer;
+extern SDL_Texture* gScoreTexture;
+extern SDL_Surface* gScoreSurface;
+extern TTF_Font* gScoreFonte;
 
 extern Mix_Chunk* gSons[10];
 
-extern TTF_Font* gFonte;
 
 extern int gMaxVidas;
+
 extern int gNumBolas;
 extern int gNumBlocos;
 
@@ -74,5 +82,11 @@ extern PWP* gPowerUp;
 
 extern int gLeft, gRight;
 extern int gXMouse, gYMouse;
+
+extern FILE *gRank;
+extern char gScoreText[8];
+
+extern SDL_Color gScoreFontColor;
+extern SDL_Color gBgColor;
 
 #endif
