@@ -77,7 +77,6 @@ void moveBall(BOLA* p, double delta) {
 	p->pos.x = p->pos.x + p->dir.x*p->spd*delta;
 	p->pos.y = p->pos.y + p->dir.y*p->spd*delta;
 
-	if (p->pos.x + p->dim > gScreenWidth-OFFSET - gScoreBoardWidth || p->pos.x < OFFSET) {
 	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x += p->dir.x*p->spd*delta;
@@ -229,9 +228,9 @@ PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, double spd, int ativo, SDL_Sur
 	pwp.pos = pos;
 	pwp.dir = dir;
 	pwp.tipo = tipo;
-	plat.img = img;
-	plat.spd = 0;
-	plat.ativo = ativo;
+	pwp.img = img;
+	pwp.spd = 0;
+	pwp.ativo = ativo;
 	return pwp;
 }
 
@@ -257,16 +256,16 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	gPowerUp = calloc(1, sizeof(PWP));
+	/*gPowerUp = calloc(1, sizeof(PWP));
 	if (!gPad) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
-	}
+	}*/
 	
 	pos.x = 300;
 	pos.y = 300;
 	
-	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPwpImg[tipo]);
+	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPWPImgs[0]);
 
 	for (i = 0; i < gNumBolas; i++) {
 		pos.x = (rand() % (gGameWidth-64))+32;

@@ -55,6 +55,7 @@ extern SDL_Window* gWindow;
 extern SDL_Surface* gScreenSurface;
 
 extern SDL_Surface* gBlocoImgs[10];
+extern SDL_Surface* gPWPImgs[10];
 extern SDL_Surface* gBlocoBreak;
 extern SDL_Surface* gBallImgs[5];
 extern SDL_Surface* gPadImgs[5];
@@ -78,7 +79,7 @@ extern PLATAFORMA* gPad;
 extern BOLA* gBolas;
 extern BLOCO* gBlocos;
 extern PLAYER gPlayer;
-extern PWP* gPowerUp;
+extern PWP gPowerUp;
 
 extern int gLeft, gRight;
 extern int gXMouse, gYMouse;

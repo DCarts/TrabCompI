@@ -52,7 +52,7 @@ afterall.o: afterall.c
 	$(CC) -c afterall.c $(CFLAGS) $(GAME_FLAGS)
 
 clean:
-	rm -rf *.o bin/*.exe *.bak *.c~ $(BINARIES) core a.out
+	rm -rf *.o *.bak *.c~ core a.out
 
 limpa:
-	del *.o bin/*.exe *.bak *.c~ $(BINARIES) core a.out
+	del *.o *.bak *.c~ core a.out

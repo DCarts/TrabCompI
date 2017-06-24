@@ -49,6 +49,7 @@ SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
 SDL_Surface* gBlocoImgs[10];
+SDL_Surface* gPWPImgs[10];
 SDL_Surface* gBlocoBreak;
 SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
@@ -69,7 +70,7 @@ PLATAFORMA* gPad = NULL;
 BOLA* gBolas = NULL;
 BLOCO* gBlocos = NULL;
 PLAYER gPlayer;
-PWP* gPowerUp = NULL;
+PWP gPowerUp;
 
 int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;
