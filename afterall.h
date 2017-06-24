@@ -13,6 +13,6 @@
  /*retorna 0 se tiver erro,retorna 1 se for tudo ok*/
 int setClipboard(void); /* blita dinamicamente o nome do player na tela  */
 
-void createPlayer(char*);/*  Cria o player atual */
+void savePlayer(char*);/*  Cria e salva o player atual */
 
 #endif

@@ -41,6 +41,8 @@ extern const int SOUND_FLOOR;
 
 /* Variaveis */
 
+extern int flip;
+
 extern int gScoreOffset;
 extern int gScoreWidth;
 extern int gGameWidth;

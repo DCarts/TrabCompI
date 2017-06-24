@@ -61,6 +61,8 @@ int main(int argc, char **argv) {
 	currentTime = countTime = SDL_GetTicks();
 	countTime++;
 
+	flip = 0;
+
 	gLeft = false;
 	gRight = false;
 
@@ -75,6 +77,7 @@ int main(int argc, char **argv) {
 		//printf("%.1f\n",currentTime/1000.0);
 		if (countTime < currentTime) {
 			printf("FPS=%d\n", count);
+			flip = 1 - flip;
 			count = 0;
 			countTime = currentTime + 1000;
 		}

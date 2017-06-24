@@ -225,6 +225,9 @@ int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
 
+	gPlayer.pontos = 0;
+	gPlayer.vidas = 3;
+
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -419,6 +422,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 						 b->pos.y + b->h + a->dim/2)) {
 		a->dir.y = -a->dir.y;
 		a->pos.y += a->dir.y*a->spd*delta;
+
+		puts("Segundo if");
 
 	}
 	else {

@@ -35,6 +35,8 @@ const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
 
+int flip;
+
 int gScoreOffset = 16;
 int gScoreWidth = 128;
 int gGameWidth = 640;

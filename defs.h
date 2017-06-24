@@ -51,7 +51,6 @@ typedef struct {
 typedef struct {
 	int vidas;
 	int pontos;
-	char nome[22];
 } PLAYER;
 
 typedef struct {

@@ -98,7 +98,7 @@ Mix_Chunk* loadSound(char* path) {
 
 TTF_Font* loadFont(char* path) {
 	TTF_Font* fonte;
-	fonte = TTF_OpenFont(path, 35);
+	fonte = TTF_OpenFont(path, 36);
 	if (!fonte) {
 		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
 	}
