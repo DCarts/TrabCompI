@@ -24,11 +24,11 @@
  #include "render.h"
  #include "afterall.h"
 
- #define MAXLEN 36
+ #define MAXLEN 24
 
 static char standardMessage[22] = "Digite seu nome:";
 static char namae[MAXLEN] = "aaa d";
-/*static char blank[MAXLEN] = "  ";*/
+static char blank[3] = " ";
 static SDL_Surface* standardMSurface = NULL;
 static SDL_Surface* clipboardSurface = NULL;
 static SDL_Event ev;
@@ -42,6 +42,7 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 	int err = false, cont = strlen(namae);
 	SDL_Surface* tmpScoreSurface = NULL;
 	char tmpScoreText[25];
+	char *txtToRender;
 	
 	sprintf(tmpScoreText, "%s %s", "Seu score:", gScoreText);
 	
@@ -75,9 +76,12 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 		while(SDL_PollEvent(&ev) != 0) {
 			/*printf("Entrei\n");*/
 			if(ev.type == SDL_KEYDOWN) {
-				if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0 && cont <= MAXLEN) {
+				if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0) {
+					/*
 					namae[cont] = '\0';
 					namae[--cont] = ' ';
+					*/
+					namae[--cont] = '\0';
 					ableRender = true;
 				}
 				else if(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_RETURN2) {
@@ -88,7 +92,12 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 			else if(ev.type == SDL_TEXTINPUT) {
 				if(!( ( ev.text.text[ 0 ] == 'c' || ev.text.text[ 0 ] == 'C' )
 						&& ( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' )
-						&& SDL_GetModState() & KMOD_CTRL )) {
+						&& SDL_GetModState() & KMOD_CTRL )
+						&& cont < MAXLEN-1) {
+					/*
+					namae[cont++] = ev.text.text[0];
+					namae[cont] = '\0';
+					*/
 					namae[cont++] = ev.text.text[0];
 					namae[cont] = '\0';
 					ableRender = true;
@@ -102,8 +111,15 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 			/* literalmente a pegunta "posso renderizar o texto?"*/
 			if (ableRender) {
 				
+				if (strlen(namae) > 0) {
+					txtToRender = namae;
+				}
+				else {
+					txtToRender = blank;
+				}
+				
 				/*	Renderizando o texto de entrada na superfície	*/
-				if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,namae,gScoreFontColor,gBgColor))) {
+				if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,txtToRender,gScoreFontColor,gBgColor))) {
 					fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
 					err = true;
 					break;
@@ -115,9 +131,7 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 				SDL_FillRect( gScreenSurface, NULL,
 						SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
 				
-				/*else{	printf("Renderizei ok\n");}*/
-				
-				
+				/*else{	printf("Renderizei ok\n");}*/			
 
 				dstRect.x = gScreenWidth/2 - standardMSurface->w/2; 
 				dstRect.y = 36;	/*	definindo a posição do retangulo do txt padrao */
