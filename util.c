@@ -9,6 +9,7 @@
 #include <math.h>
 #include "defs.h"
 #include "util.h"
+#include "global.h"
 
 double dotProduct(VETOR2D a, VETOR2D b) {
 	return (a.x * b.x)+(a.y * b.y);
@@ -29,6 +30,22 @@ double sqDist(VETOR2D a, VETOR2D b) {
 }
 
 int isInAABB(VETOR2D t, double p1x, double p1y, double p4x, double p4y) {
-	return  t.x < p4x && t.x > p1x &&
-			t.y < p4y && t.y > p1y;
+	return     t.x < p4x
+			&& t.x > p1x
+			&& t.y < p4y
+			&& t.y > p1y;
+}
+
+VETOR2D copyVector(VETOR2D orig) {
+	VETOR2D novo;
+	novo.x = orig.x;
+	novo.y = orig.y;
+	return novo;
+}
+
+int isInside(VETOR2D p, BLOCO* b) {
+	return isInAABB(p, b->pos.x, 
+					   b->pos.y,
+					   b->pos.x + b->w,
+					   b->pos.y + b->h);
 }

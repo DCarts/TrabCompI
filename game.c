@@ -74,12 +74,19 @@ int init() {
 
 void moveBall(BOLA* p, double delta) {
 
-	p->pos.x = p->pos.x + p->dir.x*p->spd*delta;
-	p->pos.y = p->pos.y + p->dir.y*p->spd*delta;
+	p->prevPos.x = p->pos.x;
+	p->prevPos.y = p->pos.y;
+
+	p->pos.x += p->dir.x*p->spd*delta;
+	p->pos.y += p->dir.y*p->spd*delta;
+	
+	//printf("px=%.3lf, py=%.3lf\n", p->prevPos.x, p->prevPos.y);
+	//printf("ox=%.3lf, oy=%.3lf\n\n", p->pos.x, p->pos.y);
+
 
 	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
-		p->pos.x += p->dir.x*p->spd*delta;
+		p->pos.x = p->prevPos.x;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
 	}
 	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
@@ -93,12 +100,12 @@ void moveBall(BOLA* p, double delta) {
 
 		p->ativo = false;
 		p->dir.y = -p->dir.y;
-		p->pos.y += p->dir.y*p->spd*delta;
+		p->pos.y = p->prevPos.y;
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
 		p->dir.y = -p->dir.y;
-		p->pos.y += p->dir.y*p->spd*delta;
+		p->pos.y  = p->prevPos.y;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
 	}
 }
@@ -138,16 +145,6 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 	}
 }
 
-/* @todo fazer funcionar direito */
-void collide(BOLA* a, BOLA* b, double delta) {
-	/*VETOR2D c, mp, n, tip, ray;
-	double dot;*/
-
-	/* bola n precisa colidir mesmo	:) */
-
-
-}
-
 int gameLoop(double delta) {
 	int i, j;
 
@@ -155,6 +152,8 @@ int gameLoop(double delta) {
 
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
+
+			/* if bola is colada continue */
 
             moveBall(gBolas+i, delta);
 			collBallPlat(gBolas+i, delta);
@@ -172,7 +171,6 @@ int gameLoop(double delta) {
 					}
 				}
 			}
-			/*detCollBlocos(alalalal*/
 		}
 		if(gPlayer.vidas == -1)
 		{
@@ -180,24 +178,14 @@ int gameLoop(double delta) {
 			exitGame();
 		}
 	}
-	/* colisao entre bolas */
-	/*for (i = 0; i < gNumBolas; i++) {
-		for (j = i+1; j < gNumBolas; j++) {
 
-			sqDistance = sqDist(gBolas[i].pos, gBolas[j].pos);
-			raios = (gBolas[i].dim/2) + (gBolas[j].dim/2);
-
-			if (raios*raios >= sqDistance) {
-				collide(gBolas+i, gBolas+j, delta);
-			}
-		}
-	}*/
 	return false;
 }
 
 BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Surface* img) {
 	BOLA bola;
 	bola.pos = pos;
+	bola.prevPos = copyVector(pos);
 	normalize(&step);
 	bola.dir = step;
 	bola.tipo = tipo;
@@ -387,9 +375,9 @@ int collBallPlat(BOLA* a, double delta){
 	double dx, dy, raio;
 	VETOR2D c;
 	int inv = 0;
-	c.x = a->pos.x + a->dim/2;
-	c.y = a->pos.y + a->dim/2;
-	raio = a->dim/2;
+	c.x = a->pos.x + a->dim/2.0;
+	c.y = a->pos.y + a->dim/2.0;
+	raio = a->dim/2.0;
 	if (!isInAABB(c, gPad->pos.x - raio,
 						  gPad->pos.y - raio,
 						  gPad->pos.x + gPad->w + raio,
@@ -429,33 +417,43 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	double dx, dy;
 	VETOR2D c;
 	int inv;
-	c.x = a->pos.x + a->dim/2;
-	c.y = a->pos.y + a->dim/2;
-	if (!isInAABB(c, b->pos.x - a->dim/2,
-					 b->pos.y - a->dim/2,
-					 b->pos.x + b->w + a->dim/2,
-					 b->pos.y + b->h + a->dim/2)) {
+	
+	c.x = a->pos.x + a->dim/2.0;
+	c.y = a->pos.y + a->dim/2.0;
+	if (!isInAABB(c, b->pos.x - a->dim,
+					 b->pos.y - a->dim,
+					 b->pos.x + b->w + a->dim,
+					 b->pos.y + b->h + a->dim) || isInside(c, b)) {
 		return false;
 	}
 
-	if (isInAABB(c, b->pos.x - a->dim/2,
+	if (isInAABB(c, b->pos.x - a->dim/2.0,
 					b->pos.y,
-					b->pos.x + b->w + a->dim/2,
+					b->pos.x + b->w + a->dim/2.0,
 					b->pos.y + b->h)) {
-		a->dir.x = -a->dir.x;
-		a->pos.x += a->dir.x*a->spd*delta;
-
-		puts("Primeiro if");
+		printf("\npx=%.3lf, py=%.3lf\n", a->prevPos.x, a->prevPos.y);
+		printf("ox=%.3lf, oy=%.3lf\n", a->pos.x, a->pos.y);
+						
+		a->dir.x = (c.x > b->pos.x + tol)? fabs(a->dir.x) : -fabs(a->dir.x) ;
+		a->pos.x = a->prevPos.x;
+		a->pos.y = a->prevPos.y;
+		moveBall(a, delta);
+		printf("Primeiro if ");
 
 	}
 	else if (isInAABB(c, b->pos.x,
-						 b->pos.y - a->dim/2,
+						 b->pos.y - a->dim/2.0,
 						 b->pos.x + b->w,
-						 b->pos.y + b->h + a->dim/2)) {
-		a->dir.y = -a->dir.y;
-		a->pos.y += a->dir.y*a->spd*delta;
-
-		puts("Segundo if");
+						 b->pos.y + b->h + a->dim/2.0)) {
+		 
+		printf("\npx=%.3lf, py=%.3lf\n", a->prevPos.x, a->prevPos.y);
+		printf("ox=%.3lf, oy=%.3lf\n", a->pos.x, a->pos.y);
+		
+		a->dir.y = (c.y > b->pos.y + tol)? fabs(a->dir.y) : -fabs(a->dir.y) ;
+		a->pos.y = a->prevPos.y;
+		a->pos.x = a->prevPos.x;
+		moveBall(a, delta);
+		printf("Segundo if ");
 
 	}
 	else {
@@ -476,7 +474,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		}
 		if (!inv) return false;
 	}
-	printf("Vida --: dx=%.2lf dy=%.2lf\n", a->dir.x, a->dir.y);
+	printf("Vida --: px=%.8lf py=%.8lf v=%.8lf\n", a->pos.x, a->pos.y, a->spd*delta);
 	if (b->vida-- == 1) {
         puts("E morreu. o que houve?");
     }
@@ -485,26 +483,27 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 }
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
-	if ( (a->dim /2 )* (a->dim / 2) > (dx*dx)+(dy*dy)) {
-		printf("COLL 1: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
+	if ( (a->dim /2.0 )* (a->dim / 2.0) + 4*tol > (dx*dx)+(dy*dy)) {
 		if (dx < dy) {
-			a->dir.x = -a->dir.x;
-			a->pos.x += a->dir.x*a->spd*delta;
-			a->pos.y += a->dir.y*a->spd*delta;
-		}
-		else if (dx > dy) {
 			a->dir.y = -a->dir.y;
-			a->pos.x += a->dir.x*a->spd*delta;
-			a->pos.y += a->dir.y*a->spd*delta;
+			a->pos.x = a->prevPos.x;
+			a->pos.y = a->prevPos.y;
+			moveBall(a, delta);
+		}
+		else if (dx > dy) {			
+			a->dir.x = -a->dir.x;
+			a->pos.x = a->prevPos.x;
+			a->pos.y = a->prevPos.y;
+			moveBall(a, delta);
 		}
 		else {
 
 			a->dir.x = -a->dir.x;
-			a->dir.y = -a->dir.y;
-			a->pos.x += a->dir.x*a->spd*delta;
-			a->pos.y += a->dir.y*a->spd*delta;
+ 			a->dir.y = -a->dir.y;
+			a->pos.x = a->prevPos.x;
+			a->pos.y = a->prevPos.y;
+			moveBall(a, delta);
 		}
-		printf("COLL 2: bx=%.2lf by=%.2lf\n", a->pos.x+dx, a->pos.y+dy);
 		return true;
 	}
 	return false;

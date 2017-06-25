@@ -74,6 +74,7 @@ int main(int argc, char **argv) {
 		lastTime = currentTime;
 		currentTime = SDL_GetTicks();
 		delta = (currentTime-lastTime)/1000.0;
+		if (delta > 0.016) delta = 0.016;
 		//printf("%.1f\n",currentTime/1000.0);
 		if (countTime < currentTime) {
 			printf("FPS=%d\n", count);

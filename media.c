@@ -166,7 +166,7 @@ int loadBlocosFromFile(char* levelName) {
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] =
 
-				createBloco(pos, c-'0', 32, 16, 4, gBlocoImgs[c-'0']);
+				createBloco(pos, c-'0', 32, 16, 4000, gBlocoImgs[c-'0']);
 
 			}
 		}

@@ -23,6 +23,8 @@
 extern const int true;
 extern const int false;
 
+extern const double tol; /*tolerancia nas comparacoes*/
+
 extern const int BLOCK_DIST;
 extern const int BLOCKS_W;
 extern const int BLOCKS_H;

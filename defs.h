@@ -21,6 +21,7 @@ typedef struct {
 typedef struct {
 	VETOR2D pos;
 	VETOR2D dir;
+	VETOR2D prevPos;
 	int tipo;
 	int ativo;
 	int dim;

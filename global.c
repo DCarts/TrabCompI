@@ -19,6 +19,8 @@
 const int true = 1;
 const int false = 0;
 
+const double tol = 1; /*tolerancia nas comparacoes*/
+
 const int BLOCK_DIST = 6;
 const int BLOCKS_W = 15;
 const int BLOCKS_H = 10;
@@ -63,7 +65,7 @@ SDL_Surface* gScoreSurface = NULL;
 TTF_Font* gScoreFonte = NULL;
 
 int gMaxVidas = 4;
-int gNumBolas = 6;
+int gNumBolas = 8;
 int gNumBlocos = 0;
 
 PLATAFORMA* gPad = NULL;
