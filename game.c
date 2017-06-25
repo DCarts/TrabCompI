@@ -86,6 +86,7 @@ void moveBall(BOLA* p, double delta) {
 		/*jogador perde pontos*/
 
 		gPlayer.pontos -= 1000;
+		gPlayer.vidas--;
 		if(gPlayer.pontos < 0){
 			gPlayer.pontos = 0;
 		}
@@ -162,12 +163,21 @@ int gameLoop(double delta) {
 				if (gBlocos[j].vida) {
 					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
 						gPlayer.pontos += 100;
+						if(gPlayer.pontos % 10000 == 0)
+						{
+							gPlayer.vidas++;
+						}
 						//if (gBlocos[j].vida == 1 && !(rand() % 5))
 						//	createPwp();
 					}
 				}
 			}
 			/*detCollBlocos(alalalal*/
+		}
+		if(gPlayer.vidas == -1)
+		{
+			SDL_UpdateWindowSurface(gWindow);
+			exitGame();
 		}
 	}
 	/* colisao entre bolas */
@@ -182,7 +192,6 @@ int gameLoop(double delta) {
 			}
 		}
 	}*/
-
 	return false;
 }
 
@@ -261,10 +270,10 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}*/
-	
+
 	pos.x = 300;
 	pos.y = 300;
-	
+
 	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPWPImgs[0]);
 
 	for (i = 0; i < gNumBolas; i++) {

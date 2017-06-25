@@ -61,11 +61,11 @@ int loadMedia() {
     if ( !(gBlocoImgs[9] = loadSurface("./data/brick9.png")) ) return false;
 
     if ( !(gBlocoBreak = loadSurface("./data/brickBreakingTexture.png")) ) return false;
-    
+
     /* Carrega Leds */
     if ( !(gLed[0] = loadSurface("./data/ledOn.png")) ) return false;
     if ( !(gLed[1] = loadSurface("./data/ledOff.png")) ) return false;
-    
+
     /* Carrega PowerUps */
     if ( !(gPWPImgs[0] = loadSurface("./data/pwpDeath.png")) ) return false;
     if ( !(gPWPImgs[1] = loadSurface("./data/pwpPad.png")) ) return false;
