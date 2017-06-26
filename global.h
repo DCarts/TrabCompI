@@ -40,10 +40,22 @@ extern const int MAX_NUM_BOLAS;
 extern const int SOUND_WALL;
 extern const int SOUND_TETO;
 extern const int SOUND_FLOOR;
+extern const int SOUND_PLAT;
+extern const int SOUND_BLOCK_BROKE;
+extern const int SOUND_BLOCK_HIT;
+extern const int SOUND_LIFE_LOST;
+extern const int SOUND_LIFE_GAIN;
+extern const int SOUND_GAMEOVER;
+extern const int SOUND_GAMESTART;
+
+extern const int MAXVIDAS;
 
 /* Variaveis */
 
 extern int flip;
+
+extern int gGameStatus;
+extern int gLvlNumber;
 
 extern int gScoreOffset;
 extern int gScoreWidth;
@@ -64,18 +76,17 @@ extern SDL_Surface* gPadImgs[5];
 
 extern SDL_Surface* gLed[2];
 
-extern SDL_Renderer* gRenderer;
-extern SDL_Texture* gScoreTexture;
 extern SDL_Surface* gScoreSurface;
 extern TTF_Font* gScoreFonte;
+extern TTF_Font* gHiScoreFonte;
 
 extern Mix_Chunk* gSons[10];
 
-
-extern int gMaxVidas;
+extern SCOREENTRY gPlayers[6];
 
 extern int gNumBolas;
 extern int gNumBlocos;
+extern int gAllPts;
 
 extern PLATAFORMA* gPad;
 extern BOLA* gBolas;

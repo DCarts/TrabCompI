@@ -51,6 +51,10 @@ int gameLoop();
 int handleEvent(SDL_Event* e);
 int handleInput(SDL_Event* evt);
 
+/* Vai para o proximo nivel */
+/* Retorna true se foi para o proximo nivel com sucesso, false se ja tava no ultimo */
+int goToNextLevel();
+
 /* Encerra os sistemas e sai do jogo */
 void exitGame();
 

@@ -28,7 +28,8 @@ int loadMedia() {
 
 	/* CARREGANDO FONTES */
 
-	if (!(gScoreFonte = loadFont("./data/DS-DIGI.TTF"))) return false;
+	if (!(gScoreFonte = loadFont("./data/DS-DIGI.TTF", 36))) return false;
+	if (!(gHiScoreFonte = loadFont("./data/DS-DIGI.TTF", 12))) return false;
 
 	/* FIM CARREGANDO FONTES */
 
@@ -85,8 +86,8 @@ int loadMedia() {
     /* CARREGANDO SONS */
 
     /* volume do som varia entre 0 e 127 */
-    //if ( !(gSons[0] = loadSound("./data/wall.wav")) ) return false;
-    //Mix_VolumeChunk(gSons[0], 64);
+    if ( !(gSons[SOUND_PLAT] = loadSound("./data/sound/plat_hit.wav")) ) return false;
+    Mix_VolumeChunk(gSons[SOUND_PLAT], 64);
 
     /* FIM CARREGANDO SONS */
     return true;
@@ -98,15 +99,18 @@ Mix_Chunk* loadSound(char* path) {
 	if (!sound) {
 		fprintf(stderr, "Erro: incapaz de carregar som: %s\n%s\n",
 						path, Mix_GetError() );
+						
+		gGameStatus = -301;
 	}
 	return sound;
 }
 
-TTF_Font* loadFont(char* path) {
+TTF_Font* loadFont(char* path, int fontsize) {
 	TTF_Font* fonte;
-	fonte = TTF_OpenFont(path, 36);
+	fonte = TTF_OpenFont(path, fontsize);
 	if (!fonte) {
 		fprintf(stderr,"Impossivel abrir fonte! %s\n", TTF_GetError() );
+		gGameStatus = -302;
 	}
 	return fonte;
 }
@@ -120,6 +124,7 @@ SDL_Surface* loadSurface(char* path ) {
     if(!loadedSurface) {
         fprintf(stderr, "Erro: incapaz de carregar imagem: %s\n%s\n",
 						path, IMG_GetError() );
+		gGameStatus = -303;
     }
     else {
         /* Converte a imagem ao formato da tela */
@@ -127,6 +132,7 @@ SDL_Surface* loadSurface(char* path ) {
         if(!optimizedSurface) {
             fprintf(stderr, "Erro: incapaz de otimizar imagem: %s\n%s\n",
 							path, SDL_GetError() );
+			gGameStatus = -304;
         }
 
         /* Libera a imagem normal da memoria */
@@ -134,6 +140,12 @@ SDL_Surface* loadSurface(char* path ) {
     }
 
     return optimizedSurface;
+}
+
+int loadBlocosFromNumber(int num) {
+	char levelName[7];
+	sprintf(levelName, "level%d", num);
+	return loadBlocosFromFile(levelName);
 }
 
 int loadBlocosFromFile(char* levelName) {
@@ -153,6 +165,8 @@ int loadBlocosFromFile(char* levelName) {
 
 	if (!(arq = fopen(path, "r"))) {
 		perror("Erro carregando bloco: ");
+		
+		gGameStatus = -abs(errno);
 		return false;
 	}
 	lc = 0;

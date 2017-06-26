@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 	SDL_Event evt;
 
 	//gGameHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
-	gScoreOffset += gGameWidth;
+	gScoreOffset = 16 + gGameWidth;
 
 	gScreenWidth = gScoreOffset+gScoreWidth;
 	gScreenHeight = gGameHeight;
@@ -66,6 +66,8 @@ int main(int argc, char **argv) {
 	gLeft = false;
 	gRight = false;
 
+	gGameStatus = 1;
+
 	/* Timer do jogo */
 	while (!quit) {
 		while (SDL_PollEvent(&evt) != 0) {
@@ -87,7 +89,15 @@ int main(int argc, char **argv) {
 		count++;
 	}
 
-	exitGame();
+	if(gGameStatus > 0 && gGameStatus < 300 && !setClipboard(gGameStatus == 101)){
+		gGameStatus = -666;
+		fprintf(stderr, "Erro ao renderizar clipboard. Verificar função setClipboard.\n");
+	}
+
+	if (gGameStatus == 103) {
+		//opaa roda dnv
+		main(0, NULL);
+	}
 
 	return !quit;
 }

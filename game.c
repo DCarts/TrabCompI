@@ -34,40 +34,56 @@ int init() {
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0) {
 		fprintf(stderr, "Erro: SDL falhou ao iniciar: %s\n",
 			SDL_GetError());
+			gGameStatus = -2;
 		return false;
 	}
 
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096) < 0) {
 		fprintf(stderr, "Erro: SDL_mixer nao conseguiu inicializar: %s\n",
 			Mix_GetError());
+			gGameStatus = -3;
 		return false;
 	}
 
 	if(TTF_Init() < 0){
 		fprintf(stderr,"Erro: SDL_ttf nao conseguiu inicializar: %s\n",
-		TTF_GetError());
+			TTF_GetError());
+		gGameStatus = -4;
 		return false;
 	}
 
 	Mix_AllocateChannels(8); /* Aloca 8 canais de audio pro jogo, sem contar musicas */
 
-	gWindow = SDL_CreateWindow("Breakout Work-in-Progress",
+	gWindow = SDL_CreateWindow("Breakout",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		gScreenWidth, gScreenHeight,
 		SDL_WINDOW_SHOWN);
 
 	if (!gWindow) {
 		fprintf(stderr, "Erro: Janela nao pode ser criada: %s\n",
-		SDL_GetError());
+			SDL_GetError());
+		gGameStatus = -5;
 		return false;
 	}
 
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
 		fprintf(stderr, "Erro: SDL_image nao conseguiu inicializar: %s\n",
 			SDL_GetError());
+		gGameStatus = -6;
 		return false;
 	}
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
+
+	/* poe o hiscore */
+	/*gRank = fopen("./data/rank/rank.bin","a");
+	if(!gRank){
+		puts("Impossivel abrir arquivo do rank!");
+		gGameStatus = -666;
+		return false;
+	}
+	
+	fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
+	fclose(gRank);*/
 
 	return true;
 }
@@ -79,7 +95,7 @@ void moveBall(BOLA* p, double delta) {
 
 	p->pos.x += p->dir.x*p->spd*delta;
 	p->pos.y += p->dir.y*p->spd*delta;
-	
+
 	//printf("px=%.3lf, py=%.3lf\n", p->prevPos.x, p->prevPos.y);
 	//printf("ox=%.3lf, oy=%.3lf\n\n", p->pos.x, p->pos.y);
 
@@ -98,9 +114,14 @@ void moveBall(BOLA* p, double delta) {
 			gPlayer.pontos = 0;
 		}
 
-		p->ativo = false;
-		p->dir.y = -p->dir.y;
-		p->pos.y = p->prevPos.y;
+		/*cola a bola*/
+		p->colada=true;
+		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - p->dim/2;
+		p->pos.y = gPad[0].pos.y - p->dim;
+		p->dir.x = (rand() % 2? -1 : 1);
+		p->dir.y = -1;
+		normalize(dir);
+		
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
@@ -108,10 +129,13 @@ void moveBall(BOLA* p, double delta) {
 		p->pos.y  = p->prevPos.y;
 		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
 	}
+	p->lastDelta = delta;
 }
 
 void movePlataforma (PLATAFORMA* p, double delta) {
-
+	int i;
+	double dx, origX = p->pos.x;
+	
 	if (gRight) {
 		p->spd += delta * 9;
 		if (p->spd > p->dir.x)
@@ -127,10 +151,9 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->spd += (p->spd < 0) ?
 			delta * 9 : delta * -9;
 	}
-
+	else if (p->spd < 0.5 && p->spd > -0.5) p->spd = 0;
 
 	p->pos.x += p->spd*PLAT_SPD*delta;
-
 
 	if (p->pos.x + p->w > gGameWidth-OFFSET) {
 		p->spd = 0;
@@ -143,6 +166,16 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->pos.x = OFFSET;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ /*idem*/
 	}
+	
+	/* movimento das bolas coladas */
+	dx = p->pos.x - origX;
+	
+	for (i = 0; i < gNumBolas; i++) {
+		if (gBolas[i].colada) {
+			gBolas[i].pos.x += dx;
+		}
+	}
+	
 }
 
 int gameLoop(double delta) {
@@ -153,18 +186,22 @@ int gameLoop(double delta) {
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
 
-			/* if bola is colada continue */
+			if (gBolas[i].colada) continue; //o movimento dela eh no movePlataforma
 
             moveBall(gBolas+i, delta);
-			collBallPlat(gBolas+i, delta);
+			if (collBallPlat(gBolas+i, delta)) {
+				Mix_PlayChannel(-1, gSons[SOUND_PLAT], 0);
+			}
 
 			for (j = 0; j < gNumBlocos; j++) {
 				if (gBlocos[j].vida) {
 					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
 						gPlayer.pontos += 100;
-						if(gPlayer.pontos % 10000 == 0)
+						gAllPts += 100;
+						if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
+						if(gAllPts % 10000 == 0)
 						{
-							gPlayer.vidas++;
+							if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
 						}
 						//if (gBlocos[j].vida == 1 && !(rand() % 5))
 						//	createPwp();
@@ -172,10 +209,10 @@ int gameLoop(double delta) {
 				}
 			}
 		}
-		if(gPlayer.vidas == -1)
-		{
+		if(gPlayer.vidas < 0) {
+			gGameStatus = 101;
 			SDL_UpdateWindowSurface(gWindow);
-			exitGame();
+			return true;
 		}
 	}
 
@@ -186,13 +223,14 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Su
 	BOLA bola;
 	bola.pos = pos;
 	bola.prevPos = copyVector(pos);
-	normalize(&step);
+	bola.lastDelta = 0;
 	bola.dir = step;
 	bola.tipo = tipo;
 	bola.dim = dim;
 	bola.spd = spd;
 	bola.img = img;
 	bola.ativo = true;
+	bola.colada = true;
 	return bola;
 }
 
@@ -241,21 +279,25 @@ int createNPCs() {
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
+		gGameStatus = -abs(errno);
 		return false;
 	}
 	gBlocos = calloc(BLOCKS_W*BLOCKS_H, sizeof(BLOCO));
 	if (!gBlocos) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
+		gGameStatus = -abs(errno);
 		return false;
 	}
 	gPad = calloc(1, sizeof(PLATAFORMA));
 	if (!gPad) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
+		gGameStatus = -abs(errno);
 		return false;
 	}
 	/*gPowerUp = calloc(1, sizeof(PWP));
 	if (!gPad) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
+		gGameStatus = -abs(errno);
 		return false;
 	}*/
 
@@ -265,14 +307,15 @@ int createNPCs() {
 	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPWPImgs[0]);
 
 	for (i = 0; i < gNumBolas; i++) {
-		pos.x = (rand() % (gGameWidth-64))+32;
-		pos.y = (rand() % (gGameHeight-64))+32;
+		pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
+		pos.y = gGameHeight-56 - gBallImgs[0]->h;
 		dir.x = (rand() % 2? -1 : 1);
-		dir.y = (rand() % 2? -1 : 1);
-		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/5, gBallImgs[0]);
+		dir.y = -1;
+		normalize(dir);
+		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
 	}
 
-	pos.x = gGameWidth/2;
+	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
 	pos.y = gGameHeight-56;
 	dir.x = 4;
 	dir.y = 4;
@@ -284,22 +327,29 @@ int createNPCs() {
 
 void exitGame() {
 
+	int i;
+
 	static int hasRan = 0;
 	if (hasRan) return;
 
 	SDL_FreeSurface(gScoreSurface);
-
 	SDL_FreeSurface(gBallImgs[0]);
+	
+	for(i = 0; i < 10; i++) {
+		SDL_FreeSurface(gBlocoImgs[i]);
+	}
+	for(i = 0; i < 2; i++) {
+		SDL_FreeSurface(gLed[i]);
+	}
+	for(i = 0; i < 4; i++) {
+		SDL_FreeSurface(gPWPImgs[i]);
+	}
 	SDL_FreeSurface(gBlocoBreak);
 	SDL_FreeSurface(gPadImgs[0]);
 	/*SDL_FreeSurface(gScoreSurface);*/
 
 	gBallImgs[0] = NULL;
 	gPadImgs[0] = NULL;
-
-	if(!setClipboard()){
-		printf("Erro ao renderizar clipboard.Verificar função setClipboard.\n");
-	}
 
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
@@ -309,6 +359,7 @@ void exitGame() {
 	Mix_CloseAudio();
 
 	TTF_CloseFont(gScoreFonte);/*	encerra a utilização da fonte do ttf	*/
+	TTF_CloseFont(gHiScoreFonte);/*	encerra a utilização da fonte do ttf	*/
 
 	TTF_Quit();/*	fecha o SDL_ttf	*/
 	IMG_Quit();
@@ -331,14 +382,22 @@ int handleInput(SDL_Event* evt){
 			}
 			if (e.key.keysym.sym == SDLK_UP) {
 				for (i=0; i<gNumBolas; i++)
-				gBolas[i].ativo = false;
+					gBolas[i].ativo = false;
 			}
 			if (e.key.keysym.sym == SDLK_DOWN) {
 				for (i=0; i<gNumBolas; i++)
-				gBolas[i].ativo = true;
+					gBolas[i].ativo = true;
 			}
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
+			}
+			if (e.key.keysym.sym == SDLK_SPACE) {
+				for (i=0; i<gNumBolas; i++) {
+					if (gBolas[i].colada) {
+						gBolas[i].colada = false;
+						break;
+					}
+				}
 			}
 			break;
 		case SDL_KEYUP:
@@ -362,6 +421,7 @@ int handleEvent(SDL_Event* evt) {
 
 	switch (e.type) {
 		case SDL_QUIT:
+			gGameStatus = 200;
 			quit = true;
 		break;
 		default:
@@ -375,6 +435,11 @@ int collBallPlat(BOLA* a, double delta){
 	double dx, dy, raio;
 	VETOR2D c;
 	int inv = 0;
+	
+	if (a->dir.y < 0 || a->colada) { //bola ta indo pra cima ou ta colada, n colide!
+		return false;
+	}
+	
 	c.x = a->pos.x + a->dim/2.0;
 	c.y = a->pos.y + a->dim/2.0;
 	raio = a->dim/2.0;
@@ -417,7 +482,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	double dx, dy;
 	VETOR2D c;
 	int inv;
-	
+
 	c.x = a->pos.x + a->dim/2.0;
 	c.y = a->pos.y + a->dim/2.0;
 	if (!isInAABB(c, b->pos.x - a->dim,
@@ -431,13 +496,15 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 					b->pos.y,
 					b->pos.x + b->w + a->dim/2.0,
 					b->pos.y + b->h)) {
-		printf("\npx=%.3lf, py=%.3lf\n", a->prevPos.x, a->prevPos.y);
-		printf("ox=%.3lf, oy=%.3lf\n", a->pos.x, a->pos.y);
-						
+
 		a->dir.x = (c.x > b->pos.x + tol)? fabs(a->dir.x) : -fabs(a->dir.x) ;
-		a->pos.x = a->prevPos.x;
+		if (a->dir.x > 0) {
+			a->pos.x = b->pos.x+b->w+0.125;
+		}
+		else {
+			a->pos.x = b->pos.x - a->dim-0.125;
+		}
 		a->pos.y = a->prevPos.y;
-		moveBall(a, delta);
 		printf("Primeiro if ");
 
 	}
@@ -445,14 +512,15 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 						 b->pos.y - a->dim/2.0,
 						 b->pos.x + b->w,
 						 b->pos.y + b->h + a->dim/2.0)) {
-		 
-		printf("\npx=%.3lf, py=%.3lf\n", a->prevPos.x, a->prevPos.y);
-		printf("ox=%.3lf, oy=%.3lf\n", a->pos.x, a->pos.y);
-		
+
 		a->dir.y = (c.y > b->pos.y + tol)? fabs(a->dir.y) : -fabs(a->dir.y) ;
-		a->pos.y = a->prevPos.y;
+		if (a->dir.y > 0) {
+			a->pos.y = b->pos.y+b->h+0.125;
+		}
+		else {
+			a->pos.y = b->pos.y - a->dim-0.125;
+		}
 		a->pos.x = a->prevPos.x;
-		moveBall(a, delta);
 		printf("Segundo if ");
 
 	}
@@ -483,28 +551,65 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 }
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
-	if ( (a->dim /2.0 )* (a->dim / 2.0) + 4*tol > (dx*dx)+(dy*dy)) {
+	if ( (a->dim /2.0 )* (a->dim / 2.0) > (dx*dx)+(dy*dy)) {
+		dx = fabs(dx);
+		dy = fabs(dy);
 		if (dx < dy) {
 			a->dir.y = -a->dir.y;
-			a->pos.x = a->prevPos.x;
-			a->pos.y = a->prevPos.y;
-			moveBall(a, delta);
+			a->pos.y += a->dir.y*a->spd*a->lastDelta;
 		}
-		else if (dx > dy) {			
+		else if (dx > dy) {
 			a->dir.x = -a->dir.x;
-			a->pos.x = a->prevPos.x;
-			a->pos.y = a->prevPos.y;
-			moveBall(a, delta);
+			a->pos.x += a->dir.x*a->spd*a->lastDelta;
 		}
 		else {
 
 			a->dir.x = -a->dir.x;
  			a->dir.y = -a->dir.y;
-			a->pos.x = a->prevPos.x;
-			a->pos.y = a->prevPos.y;
-			moveBall(a, delta);
+
+			a->pos.x += a->dir.x*a->spd*a->lastDelta;
+			a->pos.y += a->dir.y*a->spd*a->lastDelta;
+
 		}
 		return true;
 	}
 	return false;
+}
+
+int goToNextLevel() {
+	VETOR2D pos, dir;
+	int i;
+	
+	if (gLvlNumber == 9) {
+		return false;
+	}
+	
+	gPlayer.pontos += 10000;
+	gAllPts += 10000;
+	if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
+	if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
+	
+	for (i = 1; i < gNumBolas; i++) {
+		gBolas[i].ativo = 0;
+	}
+	
+	loadBlocosFromNumber(++gLvlNumber);
+	
+	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
+	pos.y = gGameHeight-56;
+	dir.x = 4;
+	dir.y = 4;
+
+	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
+		
+	gNumBolas = 1;
+	
+	pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
+	pos.y = gPad[0].pos.y - gBallImgs[0]->h;
+	dir.x = (rand() % 2? -1 : 1);
+	dir.y = -1;
+	normalize(dir);
+	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
+	
+	return true;
 }

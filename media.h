@@ -22,7 +22,10 @@ SDL_Surface* loadSurface (char* path);
 Mix_Chunk* loadSound(char* path);
 
 /* Carrega uma fonte */
-TTF_Font* loadFont(char* path);
+TTF_Font* loadFont(char* path, int fontsize);
+
+/* Carrega os blocos do nivel num */
+int loadBlocosFromNumber(int num);
 
 /* Carrega blocos de um level *
  * O level deve estar em ./data/level/ *

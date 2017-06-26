@@ -13,6 +13,7 @@
  #include <math.h>
  #include <errno.h>
  #include <string.h>
+ #include <time.h>
 
  #include <SDL2/SDL.h>
  #include <SDL2/SDL_image.h>
@@ -24,25 +25,27 @@
  #include "render.h"
  #include "afterall.h"
 
- #define MAXLEN 24
+ #define MAXLEN 12
 
+static char gameOverMSG[22] = "Digite seu nome:";
 static char standardMessage[22] = "Digite seu nome:";
-static char namae[MAXLEN] = "aaa d";
+static char namae[MAXLEN] = "ze sa";
 static char blank[] = "  ";
 static SDL_Surface* standardMSurface = NULL;
 static SDL_Surface* clipboardSurface = NULL;
 static SDL_Event ev;
 static SDL_Rect dstRect;
 
-
-int setClipboard() {	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
+int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
 	long countTime, currentTime;
-	int ableRender;
+	int ableRender, sizeText;
 	int leave = false;
-	int err = false, cont = strlen(namae);
+	int err = false;
+	int cont = strlen(namae);
 	SDL_Surface* tmpScoreSurface = NULL;
 	char tmpScoreText[25];
 	char *txtToRender;
+	char finalTxtToRender[MAXLEN+1]; 
 
 	sprintf(tmpScoreText, "%s %s", "Seu score:", gScoreText);
 
@@ -52,12 +55,14 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 	/*	renderizando a mensagem padrão na superfície	*/
 	if(!(standardMSurface = TTF_RenderText_Shaded(gScoreFonte,standardMessage,gScoreFontColor,gBgColor))) {
 		fprintf(stderr,"Impossivel renderizar texto standardMessage na tela!%s\n",TTF_GetError());
+		gGameStatus = -101;
 		err = true;
 	}
 
 	/*	renderizando a mensagem padrão de score na superfície	*/
 	if(!(tmpScoreSurface = TTF_RenderText_Shaded(gScoreFonte,tmpScoreText,gScoreFontColor,gBgColor))) {
 		fprintf(stderr,"Impossivel renderizar texto standardMessage na tela!%s\n",TTF_GetError());
+		gGameStatus = -102;
 		err = true;
 	}
 
@@ -74,13 +79,18 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 		}
 
 		while(SDL_PollEvent(&ev) != 0) {
-			/*printf("Entrei\n");*/
+			if(ev.type == SDL_QUIT) {
+				gGameStatus = 300;
+				SDL_StopTextInput();
+				return 1;
+			}
 			if(ev.type == SDL_KEYDOWN) {
+				if (ev.key.keysym.sym == SDLK_ESCAPE) {
+					gGameStatus = 300;
+					SDL_StopTextInput();
+					return 1;
+				}
 				if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0) {
-					/*
-					namae[cont] = '\0';
-					namae[--cont] = ' ';
-					*/
 					namae[--cont] = '\0';
 					ableRender = true;
 				}
@@ -94,77 +104,84 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 						&& ( ev.text.text[ 0 ] == 'v' || ev.text.text[ 0 ] == 'V' )
 						&& SDL_GetModState() & KMOD_CTRL )
 						&& cont < MAXLEN-1) {
-					/*
-					namae[cont++] = ev.text.text[0];
-					namae[cont] = '\0';
-					*/
 					namae[cont++] = ev.text.text[0];
 					namae[cont] = '\0';
 					ableRender = true;
 				}
 			}
+		}
+		
+		/*if(strlen(namae) > 0) {
+			ableRender = true;
+		}*/
 
-			if(strlen(namae) > 0) {
-				ableRender = true;
+		/* literalmente a pegunta "posso renderizar o texto?"*/
+		if (ableRender) {
+
+			if (strlen(namae) > 0) {
+				txtToRender = namae;
+			}
+			else {
+				txtToRender = blank;
 			}
 
-			/* literalmente a pegunta "posso renderizar o texto?"*/
-			if (ableRender) {
-
-				if (strlen(namae) > 0) {
-					txtToRender = namae;
-				}
-				else {
-					txtToRender = blank;
-				}
-
-				/*	Renderizando o texto de entrada na superfície	*/
-				if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,txtToRender,gScoreFontColor,gBgColor))) {
-					fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
-					err = true;
-					break;
-				}
-
-				/* agora realmente renderizando (blitando) */
-
-				/* Tornando a superfície escura novamente */
-				SDL_FillRect( gScreenSurface, NULL,
-						SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
-
-				/*else{	printf("Renderizei ok\n");}*/
-
-				dstRect.x = gScreenWidth/2 - standardMSurface->w/2;
-				dstRect.y = 36;	/*	definindo a posição do retangulo do txt padrao */
-
-				/*	blitando a msg padrao	*/
-				if (SDL_BlitSurface(standardMSurface, NULL, gScreenSurface,&dstRect) < 0) {
-					fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
-					err = true;
-				}
-
-				dstRect.x = gScreenWidth/2 - tmpScoreSurface->w/2;
-				dstRect.y = 0;	/*	definindo a posição do retangulo do score */
-
-				/*	blitando o score */
-				if (SDL_BlitSurface(tmpScoreSurface, NULL, gScreenSurface,&dstRect) < 0) {
-					fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
-					err = true;
-				}
-
-				dstRect.x = gScreenWidth/2 - clipboardSurface->w/2;
-				dstRect.y = gScreenHeight/2 - clipboardSurface->h/2; /*	definindo a posição do texto sendo escrito */
-
-				/*	blitando o texto sendo escrito	*/
-				if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface, &dstRect) < 0) {
-					fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
-					err = true;
-					break;
-				}
-				/*else{	printf("Blitei ok\n");}*/
-
-				SDL_UpdateWindowSurface(gWindow);
-				/*printf("%s\n",namae);*/
+			strcpy(finalTxtToRender, txtToRender);
+			if (flip) {
+				strcat(finalTxtToRender, "_");
 			}
+
+			/*	Renderizando o texto de entrada na superfície	*/
+			if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,finalTxtToRender,gScoreFontColor,gBgColor))) {
+				fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
+				gGameStatus = -103;
+				err = true;
+				break;
+			}
+
+			/* agora realmente renderizando (blitando) */
+
+			/* Tornando a superfície escura novamente */
+			SDL_FillRect( gScreenSurface, NULL,
+					SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
+
+			/*else{	printf("Renderizei ok\n");}*/
+
+			dstRect.x = gScreenWidth/2 - standardMSurface->w/2;
+			dstRect.y = 36;	/*	definindo a posição do retangulo do txt padrao */
+
+			/*	blitando a msg padrao	*/
+			if (SDL_BlitSurface(standardMSurface, NULL, gScreenSurface,&dstRect) < 0) {
+				fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
+				gGameStatus = -104;
+				err = true;
+			}
+
+			dstRect.x = gScreenWidth/2 - tmpScoreSurface->w/2;
+			dstRect.y = 0;	/*	definindo a posição do retangulo do score */
+
+			/*	blitando o score */
+			if (SDL_BlitSurface(tmpScoreSurface, NULL, gScreenSurface,&dstRect) < 0) {
+				fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
+				gGameStatus = -105;
+				err = true;
+			}
+
+			TTF_SizeText(gScoreFonte, txtToRender, &sizeText, NULL);
+
+			dstRect.x = gScreenWidth/2 - sizeText/2;
+			dstRect.y = gScreenHeight/2 - clipboardSurface->h/2; /*	definindo a posição do texto sendo escrito */
+
+			/*	blitando o texto sendo escrito	*/
+			if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface, &dstRect) < 0) {
+				fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
+				gGameStatus = -106;
+				err = true;
+				break;
+			}
+			/*else{	printf("Blitei ok\n");}*/
+
+			SDL_UpdateWindowSurface(gWindow);
+			/*printf("%s\n",namae);*/
 		}
 	}
 
@@ -183,19 +200,35 @@ int setClipboard() {	/* função para capturar a entrada do nome do player e bli
 
 void savePlayer(char* namae) {
 
-	strcat(namae, "  ");	/* append dois espaços	*/
-	strcat(namae, gScoreText);	/* append pontuação do jogador */
-	strcat(namae, "\n"); /*	append '\n'	*/
+	gGameStatus += 1;
+	SCOREENTRY current;
+
+	current.name = namae;
+	current.pts = gPlayer.pontos;
+	current.sysTime = time(NULL);
 
 	gRank = fopen("./data/rank/rank.bin","a");
 	if(!gRank){
 		puts("Impossivel abrir arquivo do rank!");
 		exit(666);
 	}
+	
+	//fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
+	//players[5] = current;
+	
+	//qsort(gPlayers, 6, sizeof(SCOREENTRY), sortByScore);
 
-	fwrite(namae,sizeof(char),strlen(namae),gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
+	/* ta assim pra criar as entradas padrao no rank.bin
+	 * qnd tiver pronto, tem que alterar pra usar o gPlayers e
+	 * alterar no init() pra carregar o gPlayers */
+	fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
-	fclose(gRank);
 	gPlayer.vidas = 3;
 	gPlayer.pontos = 0;
+	gGameStatus += 1;
+}
+
+int sortByScore(SCOREENTRY* a, SCOREENTRY* b) {
+	if (a->pts == b->pts) return a->sysTime < b->sysTime;
+	else return a->pts > b->pts;
 }

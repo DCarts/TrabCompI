@@ -63,6 +63,7 @@ int render() {
 								gScreenSurface, &dstRect ) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				err = true;
+				gGameStatus = -201;
 			}
 
 			if (gBlocos[i].vida < gBlocos[i].maxVida){
@@ -71,6 +72,7 @@ int render() {
 				if( SDL_BlitSurface( gBlocoBreak, &srcRect,
 									gScreenSurface, &dstRect ) < 0 ) {
 					fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+					gGameStatus = -202;
 					err = true;
 				}
 			}
@@ -80,7 +82,7 @@ int render() {
 	/* Renderiza os leds */
 	srcRect.x = 0; srcRect.y = 0;
 
-	for(i = 0; i < gMaxVidas; i++) {
+	for(i = 0; i < MAXVIDAS; i++) {
 		srcRect.w = 24;
 		srcRect.h = 8;
 
@@ -91,6 +93,7 @@ int render() {
 			if( SDL_BlitSurface( gLed[0], &srcRect,
 								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -203;
 				err = true;
 			}
 		} 
@@ -98,6 +101,7 @@ int render() {
 			if( SDL_BlitSurface( gLed[1], &srcRect,
 								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -204;
 				err = true;
 			}
 		}
@@ -116,6 +120,7 @@ int render() {
 			if( SDL_BlitSurface( gBolas[i].img, &srcRect,
 								gScreenSurface, &dstRect) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -205;
 				err = true;
 			}
 		}
@@ -131,10 +136,12 @@ int render() {
 	if( SDL_BlitSurface( gPad[0].img, &srcRect,
 							gScreenSurface, &dstRect ) < 0 ) {
 			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+			gGameStatus = -206;
             err = true;
 		}
 
-	err = renderScoreboard();
+	if (!err)
+		err = renderScoreboard();
 
     /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );
@@ -156,6 +163,7 @@ int renderScoreboard() {
 		gScoreSurface = NULL;
 		if(!(gScoreSurface = TTF_RenderText_Shaded(gScoreFonte, gScoreText, gScoreFontColor, gBgColor))) {
 			fprintf(stderr,"Impossivel renderizar texto na tela! %s\n",TTF_GetError());
+			gGameStatus = -207;
 			err = true;
 		}
 	}
@@ -167,6 +175,7 @@ int renderScoreboard() {
 
 	if (SDL_BlitSurface(gScoreSurface, NULL, gScreenSurface, &dstRect) < 0) {
 		fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
+		gGameStatus = -208;
 		err = true;
 	}
 	return err;

@@ -26,7 +26,9 @@ typedef struct {
 	int ativo;
 	int dim;
 	double spd;
+	double lastDelta;
 	SDL_Surface* img;
+	int colada;
 } BOLA;
 
 typedef struct {
@@ -62,5 +64,12 @@ typedef struct {
 	int ativo;
 	SDL_Surface* img;
 } PWP;
+
+
+typedef struct {
+	char* name;
+	int pts;
+	long int sysTime;
+} SCOREENTRY;
 
 #endif
