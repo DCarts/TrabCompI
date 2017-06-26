@@ -120,7 +120,7 @@ void moveBall(BOLA* p, double delta) {
 		p->pos.y = gPad[0].pos.y - p->dim;
 		p->dir.x = (rand() % 2? -1 : 1);
 		p->dir.y = -1;
-		normalize(dir);
+		normalize(&p->dir);
 		
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
@@ -311,7 +311,7 @@ int createNPCs() {
 		pos.y = gGameHeight-56 - gBallImgs[0]->h;
 		dir.x = (rand() % 2? -1 : 1);
 		dir.y = -1;
-		normalize(dir);
+		normalize(&dir);
 		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
 	}
 
@@ -608,7 +608,7 @@ int goToNextLevel() {
 	pos.y = gPad[0].pos.y - gBallImgs[0]->h;
 	dir.x = (rand() % 2? -1 : 1);
 	dir.y = -1;
-	normalize(dir);
+	normalize(&dir);
 	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
 	
 	return true;
