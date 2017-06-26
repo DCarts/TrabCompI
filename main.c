@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (gGameStatus == 103) {
-		//opaa roda dnv
+		exitGame();
 		main(0, NULL);
 	}
 
