@@ -38,12 +38,14 @@ static SDL_Rect dstRect;
 
 int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
 	long countTime, currentTime;
-	int ableRender;
+	int ableRender, sizeText;
 	int leave = false;
-	int err = false, cont = strlen(namae);
+	int err = false;
+	int cont = strlen(namae);
 	SDL_Surface* tmpScoreSurface = NULL;
 	char tmpScoreText[25];
 	char *txtToRender;
+	char finalTxtToRender[MAXLEN+1]; 
 
 	sprintf(tmpScoreText, "%s %s", "Seu score:", gScoreText);
 
@@ -107,72 +109,79 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 					ableRender = true;
 				}
 			}
+		}
+		
+		/*if(strlen(namae) > 0) {
+			ableRender = true;
+		}*/
 
-			if(strlen(namae) > 0) {
-				ableRender = true;
+		/* literalmente a pegunta "posso renderizar o texto?"*/
+		if (ableRender) {
+
+			if (strlen(namae) > 0) {
+				txtToRender = namae;
+			}
+			else {
+				txtToRender = blank;
 			}
 
-			/* literalmente a pegunta "posso renderizar o texto?"*/
-			if (ableRender) {
-
-				if (strlen(namae) > 0) {
-					txtToRender = namae;
-				}
-				else {
-					txtToRender = blank;
-				}
-
-				/*	Renderizando o texto de entrada na superfície	*/
-				if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,txtToRender,gScoreFontColor,gBgColor))) {
-					fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
-					gGameStatus = -103;
-					err = true;
-					break;
-				}
-
-				/* agora realmente renderizando (blitando) */
-
-				/* Tornando a superfície escura novamente */
-				SDL_FillRect( gScreenSurface, NULL,
-						SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
-
-				/*else{	printf("Renderizei ok\n");}*/
-
-				dstRect.x = gScreenWidth/2 - standardMSurface->w/2;
-				dstRect.y = 36;	/*	definindo a posição do retangulo do txt padrao */
-
-				/*	blitando a msg padrao	*/
-				if (SDL_BlitSurface(standardMSurface, NULL, gScreenSurface,&dstRect) < 0) {
-					fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
-					gGameStatus = -104;
-					err = true;
-				}
-
-				dstRect.x = gScreenWidth/2 - tmpScoreSurface->w/2;
-				dstRect.y = 0;	/*	definindo a posição do retangulo do score */
-
-				/*	blitando o score */
-				if (SDL_BlitSurface(tmpScoreSurface, NULL, gScreenSurface,&dstRect) < 0) {
-					fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
-					gGameStatus = -105;
-					err = true;
-				}
-
-				dstRect.x = gScreenWidth/2 - clipboardSurface->w/2;
-				dstRect.y = gScreenHeight/2 - clipboardSurface->h/2; /*	definindo a posição do texto sendo escrito */
-
-				/*	blitando o texto sendo escrito	*/
-				if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface, &dstRect) < 0) {
-					fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
-					gGameStatus = -106;
-					err = true;
-					break;
-				}
-				/*else{	printf("Blitei ok\n");}*/
-
-				SDL_UpdateWindowSurface(gWindow);
-				/*printf("%s\n",namae);*/
+			strcpy(finalTxtToRender, txtToRender);
+			if (flip) {
+				strcat(finalTxtToRender, "_");
 			}
+
+			/*	Renderizando o texto de entrada na superfície	*/
+			if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,finalTxtToRender,gScoreFontColor,gBgColor))) {
+				fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
+				gGameStatus = -103;
+				err = true;
+				break;
+			}
+
+			/* agora realmente renderizando (blitando) */
+
+			/* Tornando a superfície escura novamente */
+			SDL_FillRect( gScreenSurface, NULL,
+					SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
+
+			/*else{	printf("Renderizei ok\n");}*/
+
+			dstRect.x = gScreenWidth/2 - standardMSurface->w/2;
+			dstRect.y = 36;	/*	definindo a posição do retangulo do txt padrao */
+
+			/*	blitando a msg padrao	*/
+			if (SDL_BlitSurface(standardMSurface, NULL, gScreenSurface,&dstRect) < 0) {
+				fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
+				gGameStatus = -104;
+				err = true;
+			}
+
+			dstRect.x = gScreenWidth/2 - tmpScoreSurface->w/2;
+			dstRect.y = 0;	/*	definindo a posição do retangulo do score */
+
+			/*	blitando o score */
+			if (SDL_BlitSurface(tmpScoreSurface, NULL, gScreenSurface,&dstRect) < 0) {
+				fprintf(stderr,"Impossivel blitar texto padrão na tela! %s\n",SDL_GetError());
+				gGameStatus = -105;
+				err = true;
+			}
+
+			TTF_SizeText(gScoreFonte, txtToRender, &sizeText, NULL);
+
+			dstRect.x = gScreenWidth/2 - sizeText/2;
+			dstRect.y = gScreenHeight/2 - clipboardSurface->h/2; /*	definindo a posição do texto sendo escrito */
+
+			/*	blitando o texto sendo escrito	*/
+			if (SDL_BlitSurface(clipboardSurface, NULL, gScreenSurface, &dstRect) < 0) {
+				fprintf(stderr,"Impossivel blitar texto de entrada na tela! %s\n",SDL_GetError());
+				gGameStatus = -106;
+				err = true;
+				break;
+			}
+			/*else{	printf("Blitei ok\n");}*/
+
+			SDL_UpdateWindowSurface(gWindow);
+			/*printf("%s\n",namae);*/
 		}
 	}
 

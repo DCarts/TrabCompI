@@ -36,6 +36,13 @@ const int MAX_NUM_BOLAS = 50;
 const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
+const int SOUND_PLAT = 3;
+const int SOUND_BLOCK_BROKE = 4;
+const int SOUND_BLOCK_HIT = 5;
+const int SOUND_LIFE_LOST = 6;
+const int SOUND_LIFE_GAIN = 7;
+const int SOUND_GAMEOVER = 8;
+const int SOUND_GAMESTART = 9;
 
 const int MAXVIDAS = 4;
 
