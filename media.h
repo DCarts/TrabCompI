@@ -29,4 +29,7 @@ TTF_Font* loadFont(char* path);
  * Retorna true se leu de boas, false se deu merda */
 int loadBlocosFromFile(char* levelName);
 
+/* Retorna a vida de um bloco */
+int blocoLife(int tipo);
+
 #endif
