@@ -140,7 +140,8 @@ int render() {
             err = true;
 		}
 
-	err = renderScoreboard();
+	if (!err)
+		err = renderScoreboard();
 
     /*	Update the surface	*/
     SDL_UpdateWindowSurface( gWindow );

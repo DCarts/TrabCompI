@@ -86,8 +86,8 @@ int loadMedia() {
     /* CARREGANDO SONS */
 
     /* volume do som varia entre 0 e 127 */
-    //if ( !(gSons[0] = loadSound("./data/wall.wav")) ) return false;
-    //Mix_VolumeChunk(gSons[0], 64);
+    if ( !(gSons[SOUND_PLAT] = loadSound("./data/sound/plat_hit.wav")) ) return false;
+    Mix_VolumeChunk(gSons[SOUND_PLAT], 64);
 
     /* FIM CARREGANDO SONS */
     return true;

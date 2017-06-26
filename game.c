@@ -116,10 +116,11 @@ void moveBall(BOLA* p, double delta) {
 
 		/*cola a bola*/
 		p->colada=true;
-		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - gBallImgs[0]->w/2;
+		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - p->dim/2;
 		p->pos.y = gPad[0].pos.y - p->dim;
 		p->dir.x = (rand() % 2? -1 : 1);
 		p->dir.y = -1;
+		normalize(dir);
 		
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
@@ -150,7 +151,7 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->spd += (p->spd < 0) ?
 			delta * 9 : delta * -9;
 	}
-	else if (p->spd < 0.125 && p->spd > -0.125) p->spd = 0;
+	else if (p->spd < 0.5 && p->spd > -0.5) p->spd = 0;
 
 	p->pos.x += p->spd*PLAT_SPD*delta;
 
@@ -188,7 +189,9 @@ int gameLoop(double delta) {
 			if (gBolas[i].colada) continue; //o movimento dela eh no movePlataforma
 
             moveBall(gBolas+i, delta);
-			collBallPlat(gBolas+i, delta);
+			if (collBallPlat(gBolas+i, delta)) {
+				Mix_PlayChannel(-1, gSons[SOUND_PLAT], 0);
+			}
 
 			for (j = 0; j < gNumBlocos; j++) {
 				if (gBlocos[j].vida) {
@@ -221,7 +224,6 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Su
 	bola.pos = pos;
 	bola.prevPos = copyVector(pos);
 	bola.lastDelta = 0;
-	normalize(&step);
 	bola.dir = step;
 	bola.tipo = tipo;
 	bola.dim = dim;
@@ -309,6 +311,7 @@ int createNPCs() {
 		pos.y = gGameHeight-56 - gBallImgs[0]->h;
 		dir.x = (rand() % 2? -1 : 1);
 		dir.y = -1;
+		normalize(dir);
 		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
 	}
 
@@ -391,7 +394,7 @@ int handleInput(SDL_Event* evt){
 			if (e.key.keysym.sym == SDLK_SPACE) {
 				for (i=0; i<gNumBolas; i++) {
 					if (gBolas[i].colada) {
-						gBolas[i].colada = 0;
+						gBolas[i].colada = false;
 						break;
 					}
 				}
@@ -605,6 +608,7 @@ int goToNextLevel() {
 	pos.y = gPad[0].pos.y - gBallImgs[0]->h;
 	dir.x = (rand() % 2? -1 : 1);
 	dir.y = -1;
+	normalize(dir);
 	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
 	
 	return true;
