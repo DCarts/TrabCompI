@@ -114,9 +114,13 @@ void moveBall(BOLA* p, double delta) {
 			gPlayer.pontos = 0;
 		}
 
-		p->ativo = false;
-		p->dir.y = -p->dir.y;
-		p->pos.y = p->prevPos.y;
+		/*cola a bola*/
+		p->colada=true;
+		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - gBallImgs[0]->w/2;
+		p->pos.y = gPad[0].pos.y - p->dim;
+		p->dir.x = (rand() % 2? -1 : 1);
+		p->dir.y = -1;
+		
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
