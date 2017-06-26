@@ -501,7 +501,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		else {
 			a->pos.x = b->pos.x - a->dim-0.125;
 		}
-
+		a->pos.y = a->prevPos.y;
 		printf("Primeiro if ");
 
 	}
@@ -517,7 +517,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		else {
 			a->pos.y = b->pos.y - a->dim-0.125;
 		}
-
+		a->pos.x = a->prevPos.x;
 		printf("Segundo if ");
 
 	}
