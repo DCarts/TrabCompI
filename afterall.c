@@ -192,7 +192,6 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 void savePlayer(char* namae) {
 
 	gGameStatus += 1;
-	SCOREENTRY players[6];
 	SCOREENTRY current;
 
 	current.name = namae;
@@ -205,11 +204,14 @@ void savePlayer(char* namae) {
 		exit(666);
 	}
 	
-	//fread(players, sizeof(SCOREENTRY), 5, gRank);
+	//fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
 	//players[5] = current;
 	
-	//qsort(players, 6, sizeof(SCOREENTRY), sortByScore);
+	//qsort(gPlayers, 6, sizeof(SCOREENTRY), sortByScore);
 
+	/* ta assim pra criar as entradas padrao no rank.bin
+	 * qnd tiver pronto, tem que alterar pra usar o gPlayers e
+	 * alterar no init() pra carregar o gPlayers */
 	fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 	gPlayer.vidas = 3;

@@ -95,7 +95,7 @@ void moveBall(BOLA* p, double delta) {
 
 	p->pos.x += p->dir.x*p->spd*delta;
 	p->pos.y += p->dir.y*p->spd*delta;
-	
+
 	//printf("px=%.3lf, py=%.3lf\n", p->prevPos.x, p->prevPos.y);
 	//printf("ox=%.3lf, oy=%.3lf\n\n", p->pos.x, p->pos.y);
 
@@ -475,7 +475,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	double dx, dy;
 	VETOR2D c;
 	int inv;
-	
+
 	c.x = a->pos.x + a->dim/2.0;
 	c.y = a->pos.y + a->dim/2.0;
 	if (!isInAABB(c, b->pos.x - a->dim,
@@ -489,7 +489,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 					b->pos.y,
 					b->pos.x + b->w + a->dim/2.0,
 					b->pos.y + b->h)) {
-						
+
 		a->dir.x = (c.x > b->pos.x + tol)? fabs(a->dir.x) : -fabs(a->dir.x) ;
 		if (a->dir.x > 0) {
 			a->pos.x = b->pos.x+b->w+0.125;
@@ -505,7 +505,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 						 b->pos.y - a->dim/2.0,
 						 b->pos.x + b->w,
 						 b->pos.y + b->h + a->dim/2.0)) {
-		
+
 		a->dir.y = (c.y > b->pos.y + tol)? fabs(a->dir.y) : -fabs(a->dir.y) ;
 		if (a->dir.y > 0) {
 			a->pos.y = b->pos.y+b->h+0.125;
@@ -551,7 +551,7 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 			a->dir.y = -a->dir.y;
 			a->pos.y += a->dir.y*a->spd*a->lastDelta;
 		}
-		else if (dx > dy) {			
+		else if (dx > dy) {
 			a->dir.x = -a->dir.x;
 			a->pos.x += a->dir.x*a->spd*a->lastDelta;
 		}
