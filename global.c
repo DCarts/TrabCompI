@@ -37,9 +37,27 @@ const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
 const int SOUND_FLOOR = 2;
 
+const int MAXVIDAS = 4;
+
 int flip;
 
-int gScoreOffset = 16;
+/*
+ * < 0 = erro
+ * 0 = começando
+ * 1 = rodando 
+ * > 99 = saindo
+ * 100 = jogo saindo pq deu gameover (nesse caso a gente chama a main dnv ehuaheauhe
+ * 200 = jogo saindo no meio (esc ou X)
+ * 300 = saindo da tela de salvar (sem salvar)
+ * _01 = salvar score
+ * _02 = salvando score
+ * _03 = score salvo
+ * 
+ */
+int gGameStatus = 0;
+int gLvlNumber = 1;
+
+int gScoreOffset = 0;
 int gScoreWidth = 128;
 int gGameWidth = 640;
 int gGameHeight = 480;
@@ -59,14 +77,15 @@ SDL_Surface* gLed[2];
 
 Mix_Chunk* gSons[10];
 
-SDL_Renderer* gRenderer = NULL;
-SDL_Texture* gScoreTexture = NULL;
 SDL_Surface* gScoreSurface = NULL;
 TTF_Font* gScoreFonte = NULL;
+TTF_Font* gHiScoreFonte = NULL;
 
-int gMaxVidas = 4;
-int gNumBolas = 8;
+SCOREENTRY gPlayers[6];
+
+int gNumBolas = 1;
 int gNumBlocos = 0;
+int gAllPts = 0;
 
 PLATAFORMA* gPad = NULL;
 BOLA* gBolas = NULL;
