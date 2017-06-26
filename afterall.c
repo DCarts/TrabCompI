@@ -193,7 +193,7 @@ void savePlayer(char* namae) {
 		exit(666);
 	}
 
-	fwrite(namae,sizeof(char),strlen(namae),gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
+	fwrite(namae,sizeof(char),22,gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 	fclose(gRank);
 	gPlayer.vidas = 3;
