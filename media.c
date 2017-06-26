@@ -180,11 +180,31 @@ int loadBlocosFromFile(char* levelName) {
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
 				gBlocos[gNumBlocos++] =
 
-				createBloco(pos, c-'0', 32, 16, 4, gBlocoImgs[c-'0']);
+				createBloco(pos, c-'0', 32, 16, blocoLife(c-'0'), gBlocoImgs[c-'0']);
 
 			}
 		}
 		lc++;
 	}
 	return true;
+}
+
+int blocoLife(int tipo){
+	
+	switch (tipo){
+		case 0: return 1; break;
+		case 1: return 1; break;
+		case 2: return 1; break;
+		case 3: return 1; break;
+		case 4: return 1; break;
+		case 5: return 2; break;
+		case 6: return 2; break;
+		case 7: return 1; break;
+		case 8: return 4; break;
+		case 9: return 8; break;
+		
+	}
+	
+	return 1;
+
 }
