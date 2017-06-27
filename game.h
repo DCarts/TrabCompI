@@ -62,6 +62,7 @@ int goToNextLevel();
 void exitGame();
 
 /* Funcoes de colisao */
+int collPwpPlat(PWP* p, PLATAFORMA* b, double delta);
 int collBallPlat(BOLA* a, double delta);
 int collBallBlock(BOLA* a, BLOCO* b, double delta);
 int collBallPoint(BOLA* a, double dx, double dy, double delta);
