@@ -81,7 +81,7 @@ int init() {
 		gGameStatus = -666;
 		return false;
 	}
-	
+
 	fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
 	fclose(gRank);*/
 
@@ -121,7 +121,7 @@ void moveBall(BOLA* p, double delta) {
 		p->dir.x = (rand() % 2? -1 : 1);
 		p->dir.y = -1;
 		normalize(&p->dir);
-		
+
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
 	else if (p->pos.y < 32) {
@@ -135,7 +135,7 @@ void moveBall(BOLA* p, double delta) {
 void movePlataforma (PLATAFORMA* p, double delta) {
 	int i;
 	double dx, origX = p->pos.x;
-	
+
 	if (gRight) {
 		p->spd += delta * 9;
 		if (p->spd > p->dir.x)
@@ -166,16 +166,16 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 		p->pos.x = OFFSET;
 		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */ /*idem*/
 	}
-	
+
 	/* movimento das bolas coladas */
 	dx = p->pos.x - origX;
-	
+
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].colada) {
 			gBolas[i].pos.x += dx;
 		}
 	}
-	
+
 }
 
 int gameLoop(double delta) {
@@ -334,7 +334,7 @@ void exitGame() {
 
 	SDL_FreeSurface(gScoreSurface);
 	SDL_FreeSurface(gBallImgs[0]);
-	
+
 	for(i = 0; i < 10; i++) {
 		SDL_FreeSurface(gBlocoImgs[i]);
 	}
@@ -435,11 +435,11 @@ int collBallPlat(BOLA* a, double delta){
 	double dx, dy, raio;
 	VETOR2D c;
 	int inv = 0;
-	
+
 	if (a->dir.y < 0 || a->colada) { //bola ta indo pra cima ou ta colada, n colide!
 		return false;
 	}
-	
+
 	c.x = a->pos.x + a->dim/2.0;
 	c.y = a->pos.y + a->dim/2.0;
 	raio = a->dim/2.0;
@@ -579,37 +579,45 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 int goToNextLevel() {
 	VETOR2D pos, dir;
 	int i;
-	
+
 	if (gLvlNumber == 9) {
 		return false;
 	}
-	
+
 	gPlayer.pontos += 10000;
 	gAllPts += 10000;
 	if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
 	if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
-	
+
 	for (i = 1; i < gNumBolas; i++) {
 		gBolas[i].ativo = 0;
 	}
-	
+
 	loadBlocosFromNumber(++gLvlNumber);
-	
+
 	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
 	pos.y = gGameHeight-56;
 	dir.x = 4;
 	dir.y = 4;
 
 	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
-		
+
 	gNumBolas = 1;
-	
+
 	pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
 	pos.y = gPad[0].pos.y - gBallImgs[0]->h;
 	dir.x = (rand() % 2? -1 : 1);
 	dir.y = -1;
 	normalize(&dir);
 	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
-	
+
 	return true;
 }
+
+
+/*void definitions()
+{
+	gGameStatus = 0;
+	gLvlNumber = 1;
+	gScoreOffset = 0;
+}*/

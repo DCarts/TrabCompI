@@ -38,21 +38,31 @@ int main(int argc, char **argv) {
 	double delta;
 	SDL_Event evt;
 
+
+	/*definitions();*/
 	//gGameHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
 	gScoreOffset = 16 + gGameWidth;
 
 	gScreenWidth = gScoreOffset+gScoreWidth;
 	gScreenHeight = gGameHeight;
-
-	if (!init()) {
-		return 1;
+	
+	if(gTimesPlayed == 0)
+	{
+		if (!init()) {
+			return 1;
+		}
 	}
+
 
 	atexit(exitGame);
 
-	if (!loadMedia()) {
-		return 1;
+	if(gTimesPlayed == 0)
+	{
+		if (!loadMedia()) {
+			return 1;
+		}
 	}
+
 
 	createNPCs();
 	loadBlocosFromFile("teste");
@@ -94,15 +104,15 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Erro ao renderizar clipboard. Verificar função setClipboard.\n");
 	}
 
-/*	quando ele escolhe jogar dnv,gGameStatus aumenta de 1	*/
+	/*	quando ele escolhe jogar dnv,gGameStatus aumenta de 1	*/
 	if (tryAgain() == 0) {
-		exitGame();
+		/*exitGame();*/
 		main(0, NULL);
 	}
 	else{
-		main(0,NULL);
+		quit = true;
 	}
-	/*	Passei essa decisão para a função tryAgain	*/
+	/*Passei essa decisão para a função tryAgain	*/
 
 	return !quit;
 }

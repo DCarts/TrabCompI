@@ -5,7 +5,7 @@
  *                Guilherme <guiavenas@ufrj.br>
  *                Gabriel <gabrielizotongo@gmail.com>
  */
- 
+
 #include <stdio.h>
 
 #include <SDL2/SDL.h>
@@ -51,7 +51,7 @@ int flip;
 /*
  * < 0 = erro
  * 0 = começando
- * 1 = rodando 
+ * 1 = rodando
  * > 99 = saindo
  * 100 = jogo saindo pq deu gameover (nesse caso a gente chama a main dnv ehuaheauhe
  * 200 = jogo saindo no meio (esc ou X)
@@ -59,7 +59,7 @@ int flip;
  * _01 = salvar score
  * _02 = salvando score
  * _03 = score salvo
- * 
+ *
  */
 int gGameStatus = 0;
 int gLvlNumber = 1;
@@ -93,6 +93,7 @@ SCOREENTRY gPlayers[6];
 int gNumBolas = 1;
 int gNumBlocos = 0;
 int gAllPts = 0;
+int gTimesPlayed = 0;/* talvez isso seja util */
 
 PLATAFORMA* gPad = NULL;
 BOLA* gBolas = NULL;

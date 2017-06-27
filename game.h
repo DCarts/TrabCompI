@@ -63,4 +63,7 @@ int collBallPlat(BOLA* a, double delta);
 int collBallBlock(BOLA* a, BLOCO* b, double delta);
 int collBallPoint(BOLA* a, double dx, double dy, double delta);
 
+/* definição das variáveis	*/
+void definitions(void);
+
 #endif

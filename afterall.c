@@ -300,20 +300,19 @@ int tryAgain()
           {
             freeTryAgain();
             leave = true;
-            /*exitGame();
-            return 8;*/
+            return 8;
           }
           if(event.key.keysym.sym == SDLK_RETURN)
           {
             gGameStatus++;
+            gTimesPlayed++;
             leave = true;
             freeTryAgain();
+            return 0;
           }
       }
     }
   }
-
-  return 0;
 }
 
 

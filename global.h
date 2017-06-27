@@ -87,6 +87,7 @@ extern SCOREENTRY gPlayers[6];
 extern int gNumBolas;
 extern int gNumBlocos;
 extern int gAllPts;
+extern int gTimesPlayed;
 
 extern PLATAFORMA* gPad;
 extern BOLA* gBolas;
