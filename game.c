@@ -203,7 +203,11 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 
 int gameLoop(double delta) {
 	int i, j;
-	
+
+	if (gNumBlocosAlive < 1) {
+		goToNextLevel();
+	}
+
 	movePlataforma(gPad, delta);
 	
 	movePwp(&gPowerUp, delta);
@@ -301,9 +305,8 @@ PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, int ativo
 int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
-
-	gPlayer.pontos = 0;
-	gPlayer.vidas = 3;
+	
+	gNumBolas = 1;
 
 	if (gBolas) free(gBolas);
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
@@ -403,6 +406,9 @@ int handleInput(SDL_Event* evt){
 	int i;
 	switch (e.type) {
 		case SDL_KEYDOWN:
+			if (e.key.keysym.sym == SDLK_k) {
+				gNumBlocosAlive = 0; //fuk da police
+			}
 			if (e.key.keysym.sym == SDLK_LEFT) {
 				gLeft = true;
 			}
@@ -584,6 +590,9 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 				gPowerUp.dir.y = a->dir.y;
 			}
 		}
+        
+        gNumBlocosAlive--;
+
     }
 
 	return true;
@@ -619,43 +628,38 @@ int goToNextLevel() {
 	VETOR2D pos, dir;
 	int i;
 
-	if (gLvlNumber == 9) {
+	if (gLvlNumber >= 8) {
 		return false;
 	}
 
 	if (gLvlNumber > 0) {
-		gNumBolas = 1;
 		gPlayer.pontos += 10000;
 		gAllPts += 10000;
 		if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
 		if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
 	}
 	else {
-		createNPCs();
+		gPlayer.pontos = 0;
+		gPlayer.vidas = 3;
 		gAllPts = 0;
 	}
 
-	for (i = 1; i < gNumBolas; i++) {
-		gBolas[i].ativo = 0;
-	}
-
+	createNPCs();
 	loadBlocosFromNumber(++gLvlNumber);
 
-	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
+	/*pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
 	pos.y = gGameHeight-56;
 	dir.x = 4;
 	dir.y = 4;
 
 	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
 
-	gNumBolas = 1;
-
 	pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
 	pos.y = gPad[0].pos.y - gBallImgs[0]->h;
 	dir.x = (rand() % 2? -1 : 1);
 	dir.y = -1;
 	normalize(&dir);
-	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/2.5, gBallImgs[0]);
+	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/2.5, gBallImgs[0]);*/
 
 	return true;
 }

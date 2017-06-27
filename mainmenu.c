@@ -160,6 +160,7 @@ void freeMenu()
 
 void showRanking()
 {
+	int i;
   /* poe o hiscore */
   gRank = fopen("./data/rank/rank.bin","rb");
   if(!gRank){
@@ -168,6 +169,11 @@ void showRanking()
     return false;
   }
 
-  fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
+  readPlayers();
+  
+  for (int i = 0; i < 5; i++) {
+	  printf("%s: %d pts; %ld\n", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
+  }
+  
   fclose(gRank);
 }

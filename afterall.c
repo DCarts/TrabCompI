@@ -25,6 +25,7 @@
  #include "render.h"
  #include "afterall.h"
  #include "game.h"
+ #include "media.h"
 
  #define MAXLEN 12
 
@@ -201,16 +202,16 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 }
 
 
-void savePlayer(char* namae) {
+void savePlayer(char* pName) {
 
 	gGameStatus += 1;
 	SCOREENTRY current;
 
-	current.name = namae;
+	current.name = pName;
 	current.pts = gPlayer.pontos;
 	current.sysTime = time(NULL);
 
-	gRank = fopen("./data/rank/rank.bin","a");
+	gRank = fopen("./data/rank/rank.bin","wb");
 	if(!gRank){
 		puts("Impossivel abrir arquivo do rank!");
 		exit(666);
@@ -224,23 +225,23 @@ void savePlayer(char* namae) {
 	 * qnd tiver pronto, tem que alterar pra usar o gPlayers e
 	 * alterar no init() pra carregar o gPlayers */
 
-   //rewind(gRank)
-   //fwrite(gPlayers, 5, sizeof(SCOREENTRY), gRank);
-	fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
+	//fwrite(gPlayers, 5, sizeof(SCOREENTRY), gRank);
+	writePlayers();
+	//fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 	gPlayer.vidas = 3;
 	gPlayer.pontos = 0;
 	gGameStatus += 1;
 
-  fclose(gRank);
+	fclose(gRank);
 }
 
 int sortByScore(const void* aa, const void* bb) {
-  SCOREENTRY* a, *b;
+  SCOREENTRY *a, *b;
   a = (SCOREENTRY*)aa;
   b = (SCOREENTRY*)bb;
-	if (a->pts == b->pts) return a->sysTime < b->sysTime;
-	else return a->pts > b->pts;
+	if (a->pts == b->pts) return a->sysTime > b->sysTime;
+	else return a->pts < b->pts;
 }
 
 

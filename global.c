@@ -90,8 +90,9 @@ TTF_Font* gHiScoreFonte = NULL;
 
 SCOREENTRY gPlayers[6];
 
-int gNumBolas = 1;
-int gNumBlocos = 0;
+int gNumBolas;
+int gNumBlocos;
+int gNumBlocosAlive;
 int gAllPts = 0;
 int gTimesPlayed = 0;/* talvez isso seja util */
 
@@ -105,7 +106,7 @@ int gLeft = 0, gRight = 0;
 int gXMouse = 0, gYMouse = 0;
 
 FILE *gRank;/* arquivo que armazena a pontuação do jogador */
-char gScoreText[8];
+char gScoreText[12];
 
 SDL_Color gScoreFontColor = {255,255,255};
 SDL_Color gBgColor = {0,0,0};
