@@ -53,14 +53,16 @@ int main(int argc, char **argv) {
 		if (!loadMedia()) {
 			return 1;
 		}
-		
+
 	}
 
+	//showRanking(); //roda sempre! trocar para loadRanking();
 	loadRanking();
 
 	switch (menu()) {
 		case 2:
 			showRanking();
+			break;
 		case 3:
 			return 0;
 	}

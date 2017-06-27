@@ -25,4 +25,10 @@ void freeMenu(void);
 /*Apresentar o ranking dos melhores jogadores */
 void showRanking(void);
 
+/*retorna 0 se for de boas,retorna conforme o codigo de erro */
+int renderAndBlit(int);
+
+/*fecha as superficies do ranking*/
+void freeRanking(int);
+
 #endif
