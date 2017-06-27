@@ -242,7 +242,7 @@ int tryAgain()
 {
   SDL_Event event;
   SDL_Rect dstRect;
-  char tryAgMessage [] = "Aperte ENTER para jogar novamente.";
+  char tryAgMessage [] = "Aperte ENTER para retornar ao menu.";
   char qMessage[] = "Aperte Q para sair do jogo.";
   char defaultMessage[] = "Por favor,digite uma opção válida";
   int leave = false;
@@ -250,8 +250,6 @@ int tryAgain()
   /* Tornando a superfície escura novamente */
   SDL_FillRect( gScreenSurface, NULL,
       SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
-
-
 
   /*	Renderizando o texto de entrada na superfície	*/
   if (!(tryAgSurface1 = TTF_RenderText_Shaded(gScoreFonte,tryAgMessage,gScoreFontColor,gBgColor))) {

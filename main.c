@@ -31,6 +31,7 @@
 #include "media.h"
 #include "render.h"
 #include "afterall.h"
+#include "mainmenu.h"
 
 int main(int argc, char **argv) {
 	int quit, count;
@@ -45,14 +46,13 @@ int main(int argc, char **argv) {
 
 	gScreenWidth = gScoreOffset+gScoreWidth;
 	gScreenHeight = gGameHeight;
-	
+
 	if(gTimesPlayed == 0)
 	{
 		if (!init()) {
 			return 1;
 		}
 	}
-
 
 	atexit(exitGame);
 
@@ -63,6 +63,12 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	switch (menu()) {
+		case 2:
+			/*a adicionar*/
+		case 3:
+			return 1;
+	}
 
 	createNPCs();
 	loadBlocosFromFile("teste");

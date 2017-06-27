@@ -13,7 +13,7 @@ SFLAGS=-lSDL2
 
 GAME_FLAGS= $(SFLAGS) $(IMAGE_FLAGS) $(AUDIO_FLAGS) $(TTF_FLAGS) $(MATH_FLAGS)
 
-OBJS=main.o global.o game.o media.o render.o util.o afterall.o
+OBJS=main.o global.o game.o media.o render.o util.o afterall.o mainmenu.o
 BINARIES=bin/breakout bin/lvlbuilder
 
 #all: ex0 ex1 ex2 ex3 ex4 ex5 ex6 ex7 grafico texto
@@ -50,6 +50,9 @@ util.o: util.c
 
 afterall.o: afterall.c
 	$(CC) -c afterall.c $(CFLAGS) $(GAME_FLAGS)
+
+mainmenu.o: mainmenu.c
+	$(CC) -c mainmenu.c $(CFLAGS) $(GAME_FLAGS)
 
 clean:
 	rm -rf *.o *.bak *.c~ core a.out

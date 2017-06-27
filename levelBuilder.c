@@ -104,9 +104,9 @@ void exitGame();
 /* Fim das funcoes da main.c */
 
 int main(int argc, char **argv) {
-	
+
 	char arqOrig[64];
-	
+
 	printf("Arquivo de origem:\n");
 	scanf("%s", arqOrig);
 	printf("Arquivo de destino:\n");
@@ -126,10 +126,10 @@ int main(int argc, char **argv) {
 	}
 
 	createNPCs();
-	
+
 	gCursor->pos.x = OFFSET + BLOCK_DIST;
 	gCursor->pos.y = OFFSET + BLOCK_DIST;
-	
+
 	loadBlocosFromFile(arqOrig);
 
 	quit = false;
@@ -269,7 +269,7 @@ int createNPCs() {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		return false;
 	}
-	
+
 	gBlocos = calloc(BLOCKS_W * BLOCKS_H, sizeof(BLOCO));
 	if (!gBlocos) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -333,7 +333,7 @@ int handleInput(SDL_Event* evt){
 						gBlocos[i].tipo = gCursor->tipo;
 						gBlocos[i].img = gBlocoImgs[gCursor->tipo];
 					}
-				}				
+				}
 			}
 			if (e.key.keysym.sym == SDLK_SPACE) {
 				for(i = 0; i < gNumBlocos; i++){
@@ -341,7 +341,7 @@ int handleInput(SDL_Event* evt){
 					&& gBlocos[i].pos.y == gCursor->pos.y){
 						gBlocos[i].ativo = false;
 					}
-				}	
+				}
 			}
 			if (e.key.keysym.sym == SDLK_s) {
 				saveBlocosOnFile(gArqAlvo);
@@ -412,26 +412,26 @@ int render() {
 		}
 
 	}
-				
+
 	srcRect.w = gBlocos[0].w;
 	srcRect.h = gBlocos[0].h;
 
 	dstRect.x = OFFSET + BLOCK_DIST;
 	dstRect.y = STD_SCREEN_HEIGHT - OFFSET - BLOCK_DIST - 16;
-	
+
 	if( SDL_BlitSurface( gBlocoImgs[gCursor->tipo], &srcRect,
 						gScreenSurface, &dstRect ) < 0 ) {
 		fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 		err = true;
 	}
-	
+
 	srcRect.x = gCursor->pos.x;  srcRect.y = gCursor->pos.y+8;
 	srcRect.w = 32;    srcRect.h = 8;
 
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0xFF, 0xFF, 0xFF ) );
-	
+
     //Update the surface
     SDL_UpdateWindowSurface( gWindow );
 
@@ -465,7 +465,7 @@ int loadBlocosFromFile(char* levelName) {
 			if (c >= '0' && c <= '9') {
 				pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
 				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
-				gBlocos[gNumBlocos++] = 
+				gBlocos[gNumBlocos++] =
 				createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
 		}
@@ -480,10 +480,10 @@ int saveBlocosOnFile(char* target) {
 	char* path;
 	int i, lc; /*linha count*/
 	int b;
-	
+
 	path = malloc((strlen(target) + 17)*sizeof(char));
 	path[0] = '\0';
-	
+
 	strcat(path, "./data/level/");
 	strcat(path, target);
 	strcat(path, ".dat");
@@ -491,7 +491,7 @@ int saveBlocosOnFile(char* target) {
 		perror("Erro carregando bloco");
 		return false;
 	}
-	
+
 	for (lc = OFFSET + BLOCK_DIST; lc <= OFFSET + BLOCKS_H*(16+BLOCK_DIST); lc += 16 + BLOCK_DIST){
 		for (i = OFFSET + BLOCK_DIST; i <= OFFSET + BLOCKS_W*(32+BLOCK_DIST); i += 32 + BLOCK_DIST){
 			for (b = 0; b < gNumBlocos; b++){
@@ -506,6 +506,6 @@ int saveBlocosOnFile(char* target) {
 		}
 		fprintf(arq, "\n");
 	}
-	
+
 	return true;
 }

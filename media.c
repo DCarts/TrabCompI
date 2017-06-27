@@ -99,7 +99,7 @@ Mix_Chunk* loadSound(char* path) {
 	if (!sound) {
 		fprintf(stderr, "Erro: incapaz de carregar som: %s\n%s\n",
 						path, Mix_GetError() );
-						
+
 		gGameStatus = -301;
 	}
 	return sound;
@@ -165,7 +165,7 @@ int loadBlocosFromFile(char* levelName) {
 
 	if (!(arq = fopen(path, "r"))) {
 		perror("Erro carregando bloco: ");
-		
+
 		gGameStatus = -abs(errno);
 		return false;
 	}
@@ -190,7 +190,7 @@ int loadBlocosFromFile(char* levelName) {
 }
 
 int blocoLife(int tipo){
-	
+
 	switch (tipo){
 		case 0: return 1; break;
 		case 1: return 1; break;
@@ -202,9 +202,9 @@ int blocoLife(int tipo){
 		case 7: return 1; break;
 		case 8: return 4; break;
 		case 9: return 8; break;
-		
+
 	}
-	
+
 	return 1;
 
 }
