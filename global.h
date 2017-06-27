@@ -86,6 +86,7 @@ extern SCOREENTRY gPlayers[6];
 
 extern int gNumBolas;
 extern int gNumBlocos;
+extern int gNumBlocosAlive;
 extern int gAllPts;
 extern int gTimesPlayed;
 
@@ -99,7 +100,7 @@ extern int gLeft, gRight;
 extern int gXMouse, gYMouse;
 
 extern FILE *gRank;
-extern char gScoreText[8];
+extern char gScoreText[12];
 
 extern SDL_Color gScoreFontColor;
 extern SDL_Color gBgColor;
