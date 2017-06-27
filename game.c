@@ -520,10 +520,10 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 	c.x = a->pos.x + a->dim/2.0;
 	c.y = a->pos.y + a->dim/2.0;
-	if (!isInAABB(c, b->pos.x - a->dim,
-					 b->pos.y - a->dim,
-					 b->pos.x + b->w + a->dim,
-					 b->pos.y + b->h + a->dim) || isInside(c, b)) {
+	if (!isInAABB(c, b->pos.x - a->dim/2.0,
+					 b->pos.y - a->dim/2.0,
+					 b->pos.x + b->w + a->dim/2.0,
+					 b->pos.y + b->h + a->dim/2.0) || isInside(c, b)) {
 		return false;
 	}
 
@@ -560,8 +560,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 	}
 	else {
-		dx = c.x - b->pos.x;
-		dy = c.y - b->pos.y;
+		dx = b->pos.x - c.x;
+		dy = b->pos.y - c.y;
 		inv = collBallPoint(a, dx, dy, delta);
 		dx += b->w;
 		if (!inv) {
