@@ -170,10 +170,53 @@ void showRanking()
   }
 
   readPlayers();
-  
-  for (int i = 0; i < 5; i++) {
-	  printf("%s: %d pts; %ld\n", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
+  int x;
+  for (i = 0; i < 5; i++) {
+    //char txtToRender[12];
+	  sprintf(txtToRender,"%s: %d pts; %ld\n", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
+    if((x = renderAndBlit(i)) != 0)
+    {
+      printf("%d\n",x);
+    }
   }
-  
+  SDL_UpdateWindowSurface(gWindow);
+  SDL_Delay(10000);
   fclose(gRank);
+  freeRanking(--i);
+  switch (menu()) {
+		case 2:
+			showRanking();
+			break;
+		case 3:
+			exit(3);
+	}
+}
+
+int renderAndBlit(int i)
+{
+  SDL_Rect dstRect;
+  if(!(bestPlayersSurface[i] = TTF_RenderText_Shaded(gScoreFonte,txtToRender,gScoreFontColor,gBgColor))) {
+		fprintf(stderr,"Impossivel renderizar bestplayer %d na superfície!%s\n",i + 1,TTF_GetError());
+		//gGameStatus = -101;
+		return 11;
+	}
+
+  dstRect.x = gScreenWidth/2 - bestPlayersSurface[i]->w/2;
+  dstRect.y =gScreenWidth / 4 + 36 * (i);
+
+  if(SDL_BlitSurface(bestPlayersSurface[i],NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar texto de tryagain na tela!%s\n",SDL_GetError());
+    //gGameStatus = -669;
+    return 12;
+  }
+}
+
+void freeRanking(int i)
+{
+  while(i > -1)
+  {
+    SDL_FreeSurface(bestPlayersSurface[i]);
+    i--;
+  }
 }
