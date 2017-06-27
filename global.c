@@ -62,7 +62,7 @@ int flip;
  *
  */
 int gGameStatus = 0;
-int gLvlNumber = 1;
+int gLvlNumber;
 
 int gScoreOffset = 0;
 int gScoreWidth = 128;

@@ -269,18 +269,21 @@ int createNPCs() {
 	gPlayer.pontos = 0;
 	gPlayer.vidas = 3;
 
+	if (gBolas) free(gBolas);
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
 	if (!gBolas) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		gGameStatus = -abs(errno);
 		return false;
 	}
+	if (gBlocos) free(gBlocos);
 	gBlocos = calloc(BLOCKS_W*BLOCKS_H, sizeof(BLOCO));
 	if (!gBlocos) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
 		gGameStatus = -abs(errno);
 		return false;
 	}
+	if (gPad) free(gPad);
 	gPad = calloc(1, sizeof(PLATAFORMA));
 	if (!gPad) {
 		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
@@ -305,7 +308,7 @@ int createNPCs() {
 		dir.x = (rand() % 2? -1 : 1);
 		dir.y = -1;
 		normalize(&dir);
-		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
+		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/2.5, gBallImgs[0]);
 	}
 
 	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
@@ -577,10 +580,17 @@ int goToNextLevel() {
 		return false;
 	}
 
-	gPlayer.pontos += 10000;
-	gAllPts += 10000;
-	if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
-	if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
+	if (gLvlNumber > 0) {
+		gNumBolas = 1;
+		gPlayer.pontos += 10000;
+		gAllPts += 10000;
+		if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
+		if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
+	}
+	else {
+		createNPCs();
+		gAllPts = 0;
+	}
 
 	for (i = 1; i < gNumBolas; i++) {
 		gBolas[i].ativo = 0;
@@ -602,7 +612,7 @@ int goToNextLevel() {
 	dir.x = (rand() % 2? -1 : 1);
 	dir.y = -1;
 	normalize(&dir);
-	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/4, gBallImgs[0]);
+	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/2.5, gBallImgs[0]);
 
 	return true;
 }

@@ -39,39 +39,35 @@ int main(int argc, char **argv) {
 	double delta;
 	SDL_Event evt;
 
-
-	/*definitions();*/
-	//gGameHeight += gScoreBoardHeight;/*aumentei para caber o scoreboard na tela*/
-	gScoreOffset = 16 + gGameWidth;
-
-	gScreenWidth = gScoreOffset+gScoreWidth;
-	gScreenHeight = gGameHeight;
-
 	if(gTimesPlayed == 0)
 	{
+		gScoreOffset = 16 + gGameWidth;
+
+		gScreenWidth = gScoreOffset+gScoreWidth;
+		gScreenHeight = gGameHeight;
+
 		if (!init()) {
 			return 1;
 		}
-	}
-
-	atexit(exitGame);
-
-	if(gTimesPlayed == 0)
-	{
+		atexit(exitGame);
 		if (!loadMedia()) {
 			return 1;
 		}
+		
 	}
 
 	switch (menu()) {
 		case 2:
 			showRanking();
 		case 3:
-			return 1;
+			return 0;
 	}
 
-	createNPCs();
-	loadBlocosFromFile("level5");
+	//createNPCs();
+	//loadBlocosFromFile("level5");
+
+	gLvlNumber = 0;
+	goToNextLevel();
 
 	quit = false;
 	currentTime = countTime = SDL_GetTicks();
