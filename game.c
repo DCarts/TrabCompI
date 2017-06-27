@@ -74,16 +74,7 @@ int init() {
 	}
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
 
-	/* poe o hiscore */
-	/*gRank = fopen("./data/rank/rank.bin","a");
-	if(!gRank){
-		puts("Impossivel abrir arquivo do rank!");
-		gGameStatus = -666;
-		return false;
-	}
 
-	fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
-	fclose(gRank);*/
 
 	return true;
 }
@@ -113,9 +104,9 @@ void moveBall(BOLA* p, double delta) {
 		if(gPlayer.pontos < 0){
 			gPlayer.pontos = 0;
 		}
-		
+
 		gPad[0].pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
-		
+
 		/*cola a bola*/
 		p->colada=true;
 		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - p->dim/2;

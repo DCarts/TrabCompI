@@ -216,22 +216,29 @@ void savePlayer(char* namae) {
 		exit(666);
 	}
 
-	//fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
-	//players[5] = current;
+	gPlayers[5] = current;
 
-	//qsort(gPlayers, 6, sizeof(SCOREENTRY), sortByScore);
+	qsort(gPlayers, 6, sizeof(SCOREENTRY), sortByScore);
 
 	/* ta assim pra criar as entradas padrao no rank.bin
 	 * qnd tiver pronto, tem que alterar pra usar o gPlayers e
 	 * alterar no init() pra carregar o gPlayers */
+
+   //rewind(gRank)
+   //fwrite(gPlayers, 5, sizeof(SCOREENTRY), gRank);
 	fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 	gPlayer.vidas = 3;
 	gPlayer.pontos = 0;
 	gGameStatus += 1;
+
+  fclose(gRank);
 }
 
-int sortByScore(SCOREENTRY* a, SCOREENTRY* b) {
+int sortByScore(const void* aa, const void* bb) {
+  SCOREENTRY* a, *b;
+  a = (SCOREENTRY*)aa;
+  b = (SCOREENTRY*)bb;
 	if (a->pts == b->pts) return a->sysTime < b->sysTime;
 	else return a->pts > b->pts;
 }

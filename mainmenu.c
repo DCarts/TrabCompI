@@ -35,7 +35,8 @@ static SDL_Surface* gameNameSurface = NULL;
 static SDL_Surface* oneSurface = NULL;
 static SDL_Surface* twoSurface = NULL;
 static SDL_Surface* threeSurface = NULL;
-
+static SDL_Surface* bestPlayersSurface[6];
+static char txtToRender[5];
 
 int menu()
 {
@@ -131,11 +132,13 @@ int menu()
             freeMenu();
             return 2;
           }
-          if(event.key.keysym.sym == SDLK_3)
+          if(event.key.keysym.sym == SDLK_3 || event.key.keysym.sym == SDLK_ESCAPE)
           {
             freeMenu();
             return 3;
           }
+        case SDL_QUIT:
+          return 3;
       }
     }
   }
@@ -152,4 +155,19 @@ void freeMenu()
   /* Tornando a superfície escura novamente */
   SDL_FillRect( gScreenSurface, NULL,
       SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
+}
+
+
+void showRanking()
+{
+  /* poe o hiscore */
+  gRank = fopen("./data/rank/rank.bin","rb");
+  if(!gRank){
+    puts("Impossivel abrir arquivo do rank!");
+    gGameStatus = -666;
+    return false;
+  }
+
+  fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
+  fclose(gRank);
 }

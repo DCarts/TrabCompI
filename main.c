@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 
 	switch (menu()) {
 		case 2:
-			/*a adicionar*/
+			showRanking();
 		case 3:
 			return 1;
 	}

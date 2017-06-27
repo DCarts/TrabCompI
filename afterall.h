@@ -20,7 +20,7 @@ int setClipboard(int gameOver);
 void savePlayer(char*);
 
 /* sorta os scores pra salvar */
-int sortByScore(SCOREENTRY* a, SCOREENTRY* b);
+int sortByScore(const void* a, const void* b);
 
 /* blita a mensagem de tryagain e recomeça o jogo */
 /*	retorna != 0 se der ruim,retorna 0 se for de boas*/

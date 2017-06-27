@@ -22,4 +22,7 @@ int menu(void);
 /*	Liberar as superfícies que foram usadas na função Menu */
 void freeMenu(void);
 
+/*Apresentar o ranking dos melhores jogadores */
+void showRanking(void);
+
 #endif
