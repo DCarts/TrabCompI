@@ -88,6 +88,12 @@ int loadMedia() {
     /* volume do som varia entre 0 e 127 */
     if ( !(gSons[SOUND_PLAT] = loadSound("./data/sound/plat_hit.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_PLAT], 64);
+    
+    if ( !(gSons[SOUND_WALL] = loadSound("./data/sound/bump.wav")) ) return false;
+    Mix_VolumeChunk(gSons[SOUND_WALL], 96);
+    
+    if ( !(gSons[SOUND_BLOCK_BROKE] = loadSound("./data/sound/block_pop.wav")) ) return false;
+    Mix_VolumeChunk(gSons[SOUND_BLOCK_BROKE], 96);
 
     /* FIM CARREGANDO SONS */
     return true;

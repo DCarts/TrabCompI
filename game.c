@@ -94,7 +94,7 @@ void moveBall(BOLA* p, double delta) {
 	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x = p->prevPos.x;
-		/* Mix_PlayChannel(-1, gSons[SOUND_WALL], 0); */
+		Mix_PlayChannel(-1, gSons[SOUND_WALL], 0);
 	}
 	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
 		/*jogador perde pontos*/
@@ -120,10 +120,40 @@ void moveBall(BOLA* p, double delta) {
 	else if (p->pos.y < 32) {
 		p->dir.y = -p->dir.y;
 		p->pos.y  = p->prevPos.y;
-		/* Mix_PlayChannel(-1, gSons[SOUND_TETO], 0); */
+		Mix_PlayChannel(-1, gSons[SOUND_WALL], 0);
 	}
 	p->lastDelta = delta;
 }
+
+void movePwp(PWP* p, double delta){
+	
+	if (p->ativo){
+		p->prevPos.x = p->pos.x;
+		p->prevPos.y = p->pos.y;
+		
+		p->dir.y += 0.0075;
+	
+		p->pos.x += p->dir.x*p->spd*delta;
+		p->pos.y += p->dir.y*p->spd*delta;
+	}
+	
+	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
+		p->dir.x = -p->dir.x;
+		p->pos.x = p->prevPos.x;
+		Mix_PlayChannel(-1, gSons[SOUND_WALL], 0);
+	}
+	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
+		p->ativo = 0;
+	}
+	else if (p->pos.y < 32) {
+		p->dir.y = -p->dir.y;
+		p->pos.y  = p->prevPos.y;
+		Mix_PlayChannel(-1, gSons[SOUND_WALL], 0);
+	}
+	p->lastDelta = delta;
+
+}
+
 
 void movePlataforma (PLATAFORMA* p, double delta) {
 	int i;
@@ -173,9 +203,11 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 
 int gameLoop(double delta) {
 	int i, j;
-
+	
 	movePlataforma(gPad, delta);
-
+	
+	movePwp(&gPowerUp, delta);
+	
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
 
@@ -251,14 +283,18 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 	return plat;
 }
 
-PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, double spd, int ativo, SDL_Surface* img){
+PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, int ativo, SDL_Surface* img){
 	PWP pwp;
 	pwp.pos = pos;
+	pwp.prevPos = copyVector(pos);
+	pwp.lastDelta = 0;
 	pwp.dir = dir;
 	pwp.tipo = tipo;
-	pwp.img = img;
-	pwp.spd = 0;
+	pwp.dim = dim;
+	pwp.spd = spd;
 	pwp.ativo = ativo;
+	pwp.img = img;
+	
 	return pwp;
 }
 
@@ -290,17 +326,14 @@ int createNPCs() {
 		gGameStatus = -abs(errno);
 		return false;
 	}
-	/*gPowerUp = calloc(1, sizeof(PWP));
-	if (!gPad) {
-		fprintf(stderr, "Erro: Problema alocando memoria:\n%s\n", strerror(errno));
-		gGameStatus = -abs(errno);
-		return false;
-	}*/
 
 	pos.x = 300;
-	pos.y = 300;
+	pos.y = 40;
+	
+	dir.x = -1;
+	dir.y = 1;
 
-	gPowerUp = createPwp(pos, dir, 0, 10, 1, gPWPImgs[0]);
+	gPowerUp = createPwp(pos, dir, 0, 24, 50, 1, gPWPImgs[0]);
 
 	for (i = 0; i < gNumBolas; i++) {
 		pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
@@ -541,6 +574,16 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	printf("Vida --: px=%.8lf py=%.8lf v=%.8lf\n", a->pos.x, a->pos.y, a->spd*delta);
 	if (b->vida-- == 1) {
         puts("E morreu. o que houve?");
+        Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
+        if (rand()%4 == 0){
+			if (!gPowerUp.ativo){
+				gPowerUp.ativo = true;
+				gPowerUp.pos.x = a->pos.x;
+				gPowerUp.pos.y = a->pos.y;
+				gPowerUp.dir.x = a->dir.x;
+				gPowerUp.dir.y = a->dir.y;
+			}
+		}
     }
 
 	return true;

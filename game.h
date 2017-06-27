@@ -31,13 +31,16 @@ BLOCO createBloco(VETOR2D pos, int tipo, int w, int h, int v, SDL_Surface* img);
 PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D dir, SDL_Surface* img);
 
 /* "Cria" um powerup */
-PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, double spd, int ativo, SDL_Surface* img);
+PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, int ativo, SDL_Surface* img);
 
 /* Cria o player atual */
 void createPlayer();
 
 /* Move uma bolinha */
 void moveBall(BOLA* b, double delta);
+
+/* Move uma melhoria (powerup) */
+void movePwp(PWP* pwp, double delta);
 
 /* Move a plataforma */
 void movePlataforma(PLATAFORMA *p, double delta);

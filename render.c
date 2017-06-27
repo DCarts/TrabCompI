@@ -139,6 +139,22 @@ int render() {
 			gGameStatus = -206;
             err = true;
 		}
+		
+	/* Renderiza o powerup */
+	if (gPowerUp.ativo){
+		srcRect.w = gPowerUp.dim;
+		srcRect.h = gPowerUp.dim;
+
+		dstRect.x = gPowerUp.pos.x;
+		dstRect.y = gPowerUp.pos.y;
+
+		if( SDL_BlitSurface( gPowerUp.img, &srcRect,
+								gScreenSurface, &dstRect ) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -206;
+				err = true;
+			}
+	}
 
 	if (!err)
 		err = renderScoreboard();
