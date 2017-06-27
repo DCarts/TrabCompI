@@ -26,6 +26,7 @@
  #include "afterall.h"
  #include "game.h"
  #include "mainmenu.h"
+ #include "media.h"
 
 static char gameName[] = "Breakout";
 static char opOne[] = "1 -> Iniciar jogo";
@@ -35,6 +36,7 @@ static SDL_Surface* gameNameSurface = NULL;
 static SDL_Surface* oneSurface = NULL;
 static SDL_Surface* twoSurface = NULL;
 static SDL_Surface* threeSurface = NULL;
+static SDL_Surface* backSurface = NULL;
 static SDL_Surface* bestPlayersSurface[6];
 static char txtToRender[5];
 
@@ -77,7 +79,7 @@ int menu()
   }
 
   dstRect.x = gScreenWidth/2 - gameNameSurface->w/2;
-  dstRect.y = 0;
+  dstRect.y = 36;
   if(SDL_BlitSurface(gameNameSurface,NULL,gScreenSurface,&dstRect) < 0)
   {
     fprintf(stderr,"Impossivel blitar superfície do nome do jogo na tela!%s\n",SDL_GetError());
@@ -86,7 +88,7 @@ int menu()
   }
 
   dstRect.x = gScreenWidth/2 - oneSurface->w/2;
-  dstRect.y = gScreenHeight / 2;
+  dstRect.y = gScreenHeight / 4;
   if(SDL_BlitSurface(oneSurface,NULL,gScreenSurface,&dstRect) < 0)
   {
     fprintf(stderr,"Impossivel blitar opção 1 na tela!%s\n",SDL_GetError());
@@ -132,7 +134,8 @@ int menu()
             freeMenu();
             return 2;
           }
-          if(event.key.keysym.sym == SDLK_3 || event.key.keysym.sym == SDLK_ESCAPE)
+          if(event.key.keysym.sym == SDLK_3 ||
+            event.key.keysym.sym == SDLK_ESCAPE)
           {
             freeMenu();
             return 3;
@@ -160,17 +163,36 @@ void freeMenu()
 
 void showRanking()
 {
-	int i;
+	int i,leave = false,x;
+  SDL_Event event;
+  SDL_Rect dstRect;
+  char backMessage[] = "Aperte ENTER ou ESC para voltar.";
   /* poe o hiscore */
-  gRank = fopen("./data/rank/rank.bin","rb");
+  /*gRank = fopen("./data/rank/rank.bin","rb");
   if(!gRank){
     puts("Impossivel abrir arquivo do rank!");
     gGameStatus = -666;
     return false;
+  }*/
+
+  //readPlayers();
+
+  if(!(backSurface = TTF_RenderText_Shaded(gScoreFonte,backMessage,gScoreFontColor,gBgColor))) {
+		fprintf(stderr,"Impossivel renderizar backMessage na superfície!%s\n",TTF_GetError());
+		//gGameStatus = -101;
+		return 11;
+	}
+
+  dstRect.x = gScreenWidth/2 - backSurface->w / 2;
+  dstRect.y = gScreenHeight - 36;
+
+  if(SDL_BlitSurface(backSurface,NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar backSurface na tela!%s\n",SDL_GetError());
+    //gGameStatus = -669;
+    return 12;
   }
 
-  readPlayers();
-  int x;
   for (i = 0; i < 5; i++) {
     //char txtToRender[12];
 	  sprintf(txtToRender,"%s: %d pts; %ld\n", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
@@ -179,16 +201,42 @@ void showRanking()
       printf("%d\n",x);
     }
   }
-  SDL_UpdateWindowSurface(gWindow);
-  SDL_Delay(10000);
-  fclose(gRank);
-  freeRanking(--i);
+
+  while(!leave)
+  {
+    SDL_UpdateWindowSurface(gWindow);
+    while(SDL_PollEvent(&event) != 0)
+    {
+      switch (event.type) {
+        case SDL_KEYDOWN:
+          if(event.key.keysym.sym == SDLK_ESCAPE ||
+            event.key.keysym.sym == SDLK_RETURN)
+            {
+              leave = true;
+              freeRanking(--i);
+              break;
+            }
+        case SDL_QUIT:
+          leave = true;
+          freeRanking(--i);
+          freeMenu();
+          exitGame();
+          break;
+      }
+    }
+  }
+
+  //SDL_Delay(10000);
+  //fclose(gRank);
+
   switch (menu()) {
 		case 2:
+      freeRanking(--i);
 			showRanking();
 			break;
 		case 3:
-			exit(3);
+      freeRanking(--i);
+			exitGame();
 	}
 }
 
@@ -202,11 +250,11 @@ int renderAndBlit(int i)
 	}
 
   dstRect.x = gScreenWidth/2 - bestPlayersSurface[i]->w/2;
-  dstRect.y =gScreenWidth / 4 + 36 * (i);
+  dstRect.y = gScreenHeight / 4 + 36 * (i);
 
   if(SDL_BlitSurface(bestPlayersSurface[i],NULL,gScreenSurface,&dstRect) < 0)
   {
-    fprintf(stderr,"Impossivel blitar texto de tryagain na tela!%s\n",SDL_GetError());
+    fprintf(stderr,"Impossivel blitar bestPlayersSurface %d na tela!%s\n",i,SDL_GetError());
     //gGameStatus = -669;
     return 12;
   }
