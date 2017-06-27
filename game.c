@@ -105,7 +105,7 @@ void moveBall(BOLA* p, double delta) {
 			gPlayer.pontos = 0;
 		}
 
-		gPad[0].pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
+		/* gPad[0].pos.x = gGameWidth/2 - gPadImgs[0]->w/2; */
 
 		/*cola a bola*/
 		p->colada=true;
@@ -211,6 +211,18 @@ int gameLoop(double delta) {
 	movePlataforma(gPad, delta);
 	
 	movePwp(&gPowerUp, delta);
+	if (gPowerUp.ativo && collPwpPlat(&gPowerUp, gPad, delta)){
+		
+		gPowerUp.ativo = false;
+		
+		switch(gPowerUp.tipo){
+			case 0: gPlayer.vidas--; break;
+			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
+			case 2: printf("Porra mano parabens isso n faz nada 2\n"); break;
+			case 3: printf("Porra mano parabens isso n faz nada 3\n"); break;
+		}
+		
+	}
 	
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
@@ -513,6 +525,25 @@ int collBallPlat(BOLA* a, double delta){
 	return false;
 }
 
+int collPwpPlat(PWP* p, PLATAFORMA* b, double delta){
+	VETOR2D p1, p2;
+
+	p1.x = p->pos.x;
+	p1.y = p->pos.y + p->dim;
+	
+	p2.x = p->pos.x + p->dim;
+	p2.y = p->pos.y + p->dim;
+	
+	if (isInAABB(p1, b->pos.x, 			b->pos.y,
+					 b->pos.x + b->w, 	b->pos.y + b->h)
+		||  isInAABB(p2, b->pos.x, 		b->pos.y,
+					 b->pos.x + b->w, 	b->pos.y + b->h)) {
+	   return true;
+   }
+	return false;
+	
+}
+
 int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	double dx, dy;
 	VETOR2D c;
@@ -520,10 +551,10 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 	c.x = a->pos.x + a->dim/2.0;
 	c.y = a->pos.y + a->dim/2.0;
-	if (!isInAABB(c, b->pos.x - a->dim,
-					 b->pos.y - a->dim,
-					 b->pos.x + b->w + a->dim,
-					 b->pos.y + b->h + a->dim) || isInside(c, b)) {
+	if (!isInAABB(c, b->pos.x - a->dim/2.0,
+					 b->pos.y - a->dim/2.0,
+					 b->pos.x + b->w + a->dim/2.0,
+					 b->pos.y + b->h + a->dim/2.0) || isInside(c, b)) {
 		return false;
 	}
 
@@ -560,8 +591,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 	}
 	else {
-		dx = c.x - b->pos.x;
-		dy = c.y - b->pos.y;
+		dx = b->pos.x - c.x;
+		dy = b->pos.y - c.y;
 		inv = collBallPoint(a, dx, dy, delta);
 		dx += b->w;
 		if (!inv) {
@@ -583,11 +614,14 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
         Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
         if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
+				int jooj = rand()%4;
 				gPowerUp.ativo = true;
+				gPowerUp.img = gPWPImgs[jooj];
+				gPowerUp.tipo = jooj;
 				gPowerUp.pos.x = a->pos.x;
 				gPowerUp.pos.y = a->pos.y;
 				gPowerUp.dir.x = a->dir.x;
-				gPowerUp.dir.y = a->dir.y;
+				gPowerUp.dir.y = -1.5*a->dir.y;
 			}
 		}
         

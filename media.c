@@ -209,7 +209,7 @@ int blocoLife(int tipo){
 void readPlayers() {
 	int i;
 	for (i = 0; i < 5; i++) {
-		gPlayers[i].name = malloc(12*sizeof(char)); //12 = MAXLEN
+		gPlayers[i].name = calloc(12, sizeof(char)); //12 = MAXLEN
 		fread(gPlayers[i].name, sizeof(char), 12, gRank);
 		fread(&gPlayers[i].pts, sizeof(int), 1, gRank);
 		fread(&gPlayers[i].sysTime, sizeof(long), 1, gRank);
@@ -223,4 +223,24 @@ void writePlayers() {
 		fwrite(&gPlayers[i].pts, sizeof(int), 1, gRank);
 		fwrite(&gPlayers[i].sysTime, sizeof(long), 1, gRank);
 	}
+}
+
+int loadRanking() {
+	int i;
+	/* poe o hiscore */
+	gRank = fopen("./data/rank/rank.bin","rb");
+	if(!gRank){
+		puts("Impossivel abrir arquivo do rank!");
+		gGameStatus = -666;
+		return false;
+	}
+
+	readPlayers();
+  
+	for (int i = 0; i < 5; i++) {
+		printf("%s: %d pts; %ld\n", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
+	}
+  
+	fclose(gRank);
+	return true;
 }

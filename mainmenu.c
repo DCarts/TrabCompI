@@ -160,6 +160,7 @@ void freeMenu()
 
 void showRanking()
 {
+<<<<<<< HEAD
 	int i;
   /* poe o hiscore */
   gRank = fopen("./data/rank/rank.bin","rb");
@@ -219,4 +220,7 @@ void freeRanking(int i)
     SDL_FreeSurface(bestPlayersSurface[i]);
     i--;
   }
+=======
+	
+>>>>>>> master
 }
