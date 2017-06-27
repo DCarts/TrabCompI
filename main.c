@@ -56,12 +56,11 @@ int main(int argc, char **argv) {
 		
 	}
 
-	showRanking(); //roda sempre! trocar para loadRanking();
+	loadRanking();
 
 	switch (menu()) {
 		case 2:
-			//showRanking();
-			break;
+			showRanking();
 		case 3:
 			return 0;
 	}
