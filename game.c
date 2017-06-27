@@ -244,8 +244,6 @@ int gameLoop(double delta) {
 						{
 							if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
 						}
-						//if (gBlocos[j].vida == 1 && !(rand() % 5))
-						//	createPwp();
 					}
 				}
 			}
@@ -612,7 +610,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	if (b->vida-- == 1) {
         puts("E morreu. o que houve?");
         Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
-        if (rand()%4 == 0){
+        
+		if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
 				int jooj = rand()%4;
 				gPowerUp.ativo = true;
@@ -624,12 +623,20 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 				gPowerUp.dir.y = -1.5*a->dir.y;
 			}
 		}
-        
+		
+		if (b->tipo == 7) {
+			destroiVizinhos(b);
+		}
         gNumBlocosAlive--;
 
     }
 
 	return true;
+}
+
+void destroiVizinhos(BLOCO* b){
+	//@Todo
+	printf("AEEEEEEHOOOOOOOOOOOOOOOOOOOO\n");
 }
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {

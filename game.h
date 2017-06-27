@@ -49,6 +49,8 @@ void movePlataforma(PLATAFORMA *p, double delta);
 /* Loop do jogo */
 int gameLoop();
 
+/* Destruicao de adjacentes indesejados */
+void destroiVizinhos(BLOCO* b);
 
 /* Processa eventos */
 int handleEvent(SDL_Event* e);
