@@ -38,5 +38,6 @@ int blocoLife(int tipo);
 //acessa arquivo de rank
 void readPlayers();
 void writePlayers();
+int loadRanking();
 
 #endif
