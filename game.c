@@ -625,12 +625,6 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 }
 
 int goToNextLevel() {
-	VETOR2D pos, dir;
-	int i;
-
-	if (gLvlNumber >= 8) {
-		return false;
-	}
 
 	if (gLvlNumber > 0) {
 		gPlayer.pontos += 10000;
@@ -645,21 +639,7 @@ int goToNextLevel() {
 	}
 
 	createNPCs();
-	loadBlocosFromNumber(++gLvlNumber);
-
-	/*pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
-	pos.y = gGameHeight-56;
-	dir.x = 4;
-	dir.y = 4;
-
-	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
-
-	pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
-	pos.y = gPad[0].pos.y - gBallImgs[0]->h;
-	dir.x = (rand() % 2? -1 : 1);
-	dir.y = -1;
-	normalize(&dir);
-	gBolas[0] = createBola(pos, dir, 1, 10, gGameHeight/2.5, gBallImgs[0]);*/
+	loadBlocosFromNumber(gLvlNumber++ % 8);
 
 	return true;
 }

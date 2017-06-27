@@ -194,6 +194,7 @@ int loadBlocosFromFile(char* levelName) {
 		lc++;
 	}
 	gNumBlocosAlive = gNumBlocos;
+	fclose(arq);
 	return true;
 }
 
