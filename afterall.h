@@ -22,4 +22,11 @@ void savePlayer(char*);
 /* sorta os scores pra salvar */
 int sortByScore(SCOREENTRY* a, SCOREENTRY* b);
 
+/* blita a mensagem de tryagain e recomeça o jogo */
+/*	retorna != 0 se der ruim,retorna 0 se for de boas*/
+int tryAgain(void);
+
+/*	libera as superfícies usadas em tryagain 	*/
+void freeTryAgain(void);
+
 #endif

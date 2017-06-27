@@ -24,6 +24,7 @@
  #include "global.h"
  #include "render.h"
  #include "afterall.h"
+ #include "game.h"
 
  #define MAXLEN 12
 
@@ -33,6 +34,8 @@ static char namae[MAXLEN] = "ze sa";
 static char blank[] = "  ";
 static SDL_Surface* standardMSurface = NULL;
 static SDL_Surface* clipboardSurface = NULL;
+static SDL_Surface* tryAgSurface1 = NULL;
+static SDL_Surface* tryAgSurface2 = NULL;
 static SDL_Event ev;
 static SDL_Rect dstRect;
 
@@ -45,7 +48,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 	SDL_Surface* tmpScoreSurface = NULL;
 	char tmpScoreText[25];
 	char *txtToRender;
-	char finalTxtToRender[MAXLEN+1]; 
+	char finalTxtToRender[MAXLEN+1];
 
 	sprintf(tmpScoreText, "%s %s", "Seu score:", gScoreText);
 
@@ -85,11 +88,11 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 				return 1;
 			}
 			if(ev.type == SDL_KEYDOWN) {
-				if (ev.key.keysym.sym == SDLK_ESCAPE) {
+				/*if (ev.key.keysym.sym == SDLK_ESCAPE) {
 					gGameStatus = 300;
 					SDL_StopTextInput();
 					return 1;
-				}
+				}*/
 				if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0) {
 					namae[--cont] = '\0';
 					ableRender = true;
@@ -110,7 +113,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 				}
 			}
 		}
-		
+
 		/*if(strlen(namae) > 0) {
 			ableRender = true;
 		}*/
@@ -212,10 +215,10 @@ void savePlayer(char* namae) {
 		puts("Impossivel abrir arquivo do rank!");
 		exit(666);
 	}
-	
+
 	//fread(gPlayers, sizeof(SCOREENTRY), 5, gRank);
 	//players[5] = current;
-	
+
 	//qsort(gPlayers, 6, sizeof(SCOREENTRY), sortByScore);
 
 	/* ta assim pra criar as entradas padrao no rank.bin
@@ -231,4 +234,91 @@ void savePlayer(char* namae) {
 int sortByScore(SCOREENTRY* a, SCOREENTRY* b) {
 	if (a->pts == b->pts) return a->sysTime < b->sysTime;
 	else return a->pts > b->pts;
+}
+
+
+/*  retorna != 0 se der ruim,retorna 0 se for de boas */
+int tryAgain()
+{
+  SDL_Event event;
+  SDL_Rect dstRect;
+  char tryAgMessage [] = "Aperte ENTER para jogar novamente.";
+  char qMessage[] = "Aperte Q para sair do jogo.";
+  char defaultMessage[] = "Por favor,digite uma opção válida";
+  int leave = false;
+
+  /* Tornando a superfície escura novamente */
+  SDL_FillRect( gScreenSurface, NULL,
+      SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
+
+
+
+  /*	Renderizando o texto de entrada na superfície	*/
+  if (!(tryAgSurface1 = TTF_RenderText_Shaded(gScoreFonte,tryAgMessage,gScoreFontColor,gBgColor))) {
+    fprintf(stderr,"Impossivel renderizar texto de tryagain na tela!%s\n",TTF_GetError());
+    gGameStatus = -667;
+    return 666;
+  }
+
+  /*	Renderizando o texto de entrada na superfície	*/
+  if (!(tryAgSurface2 = TTF_RenderText_Shaded(gScoreFonte,qMessage,gScoreFontColor,gBgColor))) {
+    fprintf(stderr,"Impossivel renderizar texto de quitgame na tela!%s\n",TTF_GetError());
+    gGameStatus = -668;
+    return 666;
+  }
+
+  dstRect.x = gScreenWidth/2 - tryAgSurface1->w/2;
+  dstRect.y = gScreenHeight / 2;
+
+  if(SDL_BlitSurface(tryAgSurface1,NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar texto de tryagain na tela!%s\n",SDL_GetError());
+    gGameStatus = -669;
+    return 666;
+  }
+
+  dstRect.x = gScreenWidth/2 - tryAgSurface2->w/2;
+  dstRect.y = dstRect.y + 36;
+
+  if(SDL_BlitSurface(tryAgSurface2,NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar texto de quitgame na tela!%s\n",SDL_GetError());
+    gGameStatus = -670;
+    return 666;
+  }
+
+  SDL_UpdateWindowSurface(gWindow);
+  /*SDL_Delay(5000);*/
+
+  while (!leave)
+  {
+    while(SDL_PollEvent(&event) != 0)
+    {
+      switch (event.type) {
+        case SDL_KEYDOWN:
+          if(event.key.keysym.sym == SDLK_q)
+          {
+            freeTryAgain();
+            leave = true;
+            /*exitGame();
+            return 8;*/
+          }
+          if(event.key.keysym.sym == SDLK_RETURN)
+          {
+            gGameStatus++;
+            leave = true;
+            freeTryAgain();
+          }
+      }
+    }
+  }
+
+  return 0;
+}
+
+
+void freeTryAgain()
+{
+  SDL_FreeSurface(tryAgSurface1);
+  SDL_FreeSurface(tryAgSurface2);
 }

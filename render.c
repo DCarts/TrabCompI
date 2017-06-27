@@ -39,7 +39,7 @@ int render() {
 
 	srcRect.x = 32; srcRect.y = 32;
 	srcRect.w = 576; srcRect.h = 416;
-	
+
 	SDL_FillRect( gScreenSurface, &srcRect,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
@@ -47,13 +47,13 @@ int render() {
 	/* Renderiza os blocos */
 	for(i = 0; i < gNumBlocos; i++) {
 		if (gBlocos[i].vida){
-			
+
 			srcRect.y = 0;
 			srcRect.w = gBlocos[i].w;
 			srcRect.h = gBlocos[i].h;
-			
+
 			srcRect.x = 0; srcRect.y = 0;
-			
+
 			dstRect.x = gBlocos[i].pos.x;
 			dstRect.y = gBlocos[i].pos.y;
 
@@ -96,7 +96,7 @@ int render() {
 				gGameStatus = -203;
 				err = true;
 			}
-		} 
+		}
 		else {
 			if( SDL_BlitSurface( gLed[1], &srcRect,
 								gScreenSurface, &dstRect) < 0 ) {
@@ -106,8 +106,8 @@ int render() {
 			}
 		}
 	}
-	
-	
+
+
 	/* Renderiza as bolas */
 	for(i = 0; i < gNumBolas; i++) {
 		srcRect.w = gBolas[i].dim;
@@ -174,7 +174,7 @@ int renderScoreboard() {
 	dstRect.h = 48;
 
 	if (SDL_BlitSurface(gScoreSurface, NULL, gScreenSurface, &dstRect) < 0) {
-		fprintf(stderr,"Impossivel blitar texto na tela! %s\n",SDL_GetError());
+		fprintf(stderr,"Impossivel blitar textoB na tela! %s\n",SDL_GetError());
 		gGameStatus = -208;
 		err = true;
 	}

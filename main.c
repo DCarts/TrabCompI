@@ -94,10 +94,15 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Erro ao renderizar clipboard. Verificar função setClipboard.\n");
 	}
 
-	if (gGameStatus == 103) {
+/*	quando ele escolhe jogar dnv,gGameStatus aumenta de 1	*/
+	if (tryAgain() == 0) {
 		exitGame();
 		main(0, NULL);
 	}
+	else{
+		main(0,NULL);
+	}
+	/*	Passei essa decisão para a função tryAgain	*/
 
 	return !quit;
 }
