@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 	}
 
 	createNPCs();
-	loadBlocosFromFile("teste");
+	loadBlocosFromFile("level5");
 
 	quit = false;
 	currentTime = countTime = SDL_GetTicks();
