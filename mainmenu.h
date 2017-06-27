@@ -31,4 +31,9 @@ int renderAndBlit(int);
 /*fecha as superficies do ranking*/
 void freeRanking(int);
 
+/*Blita o nome dos participantes na tela*/
+void blitParts(void);
+
+/*	Libera as superfícies parts */
+void freeParts(void);
 #endif

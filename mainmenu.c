@@ -32,11 +32,17 @@ static char gameName[] = "Breakout";
 static char opOne[] = "1 -> Iniciar jogo";
 static char opTwo[] = "2 -> Ranking";
 static char opThree[] = "3 -> Sair do jogo";
+static char partOne[] = "Daniel Cardoso -> dcsouza@dcc.ufrj.br";
+static char partTwo[] = "Gabriel Izoton -> gabrielizotongo@gmail.com";
+static char partThree[] = "Guilherme Avelino -> guiavenas@ufrj.br";
 static SDL_Surface* gameNameSurface = NULL;
 static SDL_Surface* oneSurface = NULL;
 static SDL_Surface* twoSurface = NULL;
 static SDL_Surface* threeSurface = NULL;
 static SDL_Surface* backSurface = NULL;
+static SDL_Surface* partOneSurface = NULL;
+static SDL_Surface* partTwoSurface = NULL;
+static SDL_Surface* partThreeSurface = NULL;
 static SDL_Surface* bestPlayersSurface[6];
 static char txtToRender[5];
 
@@ -114,7 +120,7 @@ int menu()
     return 666;
   }
 
-
+  blitParts();
 
   while(!leave)
   {
@@ -232,10 +238,12 @@ void showRanking()
   switch (menu()) {
 		case 2:
       freeRanking(--i);
+      freeParts();
 			showRanking();
 			break;
 		case 3:
       freeRanking(--i);
+      freeParts();
 			exitGame();
 	}
 }
@@ -267,4 +275,64 @@ void freeRanking(int i)
     SDL_FreeSurface(bestPlayersSurface[i]);
     i--;
   }
+}
+
+void blitParts()
+{
+  SDL_Rect dstRect;
+
+  if (!(partOneSurface = TTF_RenderText_Shaded(gScoreFonte,partOne,gScoreFontColor,gBgColor))) {
+    fprintf(stderr,"Impossivel renderizar partOne na superficie!%s\n",TTF_GetError());
+    /*gGameStatus = -667;
+    return 666;*/
+  }
+
+  if (!(partTwoSurface = TTF_RenderText_Shaded(gScoreFonte,partTwo,gScoreFontColor,gBgColor))) {
+    fprintf(stderr,"Impossivel renderizar partTwo na tela!%s\n",TTF_GetError());
+    /*gGameStatus = -667;
+    return 666;*/
+  }
+
+  if (!(partThreeSurface = TTF_RenderText_Shaded(gScoreFonte,partThree,gScoreFontColor,gBgColor))) {
+    fprintf(stderr,"Impossivel renderizar partTwo na tela!%s\n",TTF_GetError());
+    /*gGameStatus = -667;
+    return 666;*/
+  }
+
+  dstRect.x = 10;
+  dstRect.y = gScreenHeight / 2 + 108;
+
+  if(SDL_BlitSurface(partOneSurface,NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar partOneSurface na tela!%s\n",SDL_GetError());
+    /*gGameStatus = -669;
+    return 666;*/
+  }
+
+  //dstRect.x = 10;
+  dstRect.y += 36;
+
+  if(SDL_BlitSurface(partTwoSurface,NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar partOneSurface na tela!%s\n",SDL_GetError());
+    /*gGameStatus = -669;
+    return 666;*/
+  }
+
+  //dstRect.x = 10;
+  dstRect.y += 36;
+
+  if(SDL_BlitSurface(partThreeSurface,NULL,gScreenSurface,&dstRect) < 0)
+  {
+    fprintf(stderr,"Impossivel blitar partOneSurface na tela!%s\n",SDL_GetError());
+    /*gGameStatus = -669;
+    return 666;*/
+  }
+}
+
+void freeParts()
+{
+  SDL_FreeSurface(partOneSurface);
+  SDL_FreeSurface(partTwoSurface);
+  SDL_FreeSurface(partThreeSurface);
 }
