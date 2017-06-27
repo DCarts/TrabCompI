@@ -111,10 +111,11 @@ int menu()
     return 666;
   }
 
-  SDL_UpdateWindowSurface(gWindow);
+
 
   while(!leave)
   {
+    SDL_UpdateWindowSurface(gWindow);
     while(SDL_PollEvent(&event) != 0)
     {
       switch(event.type)
