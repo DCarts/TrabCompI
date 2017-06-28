@@ -345,7 +345,7 @@ void blitParts()
       switch(event.type)
       {
         case SDL_KEYDOWN:
-          if(event.key.keysym.sym == SDLK_ESCAPE 
+          if(event.key.keysym.sym == SDLK_ESCAPE
             || event.key.keysym.sym == SDLK_RETURN)
             {
               leave = true;

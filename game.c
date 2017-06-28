@@ -231,6 +231,10 @@ int gameLoop(double delta) {
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
 			case 2: dupaBalls(); break;
 			case 3: spdUp = true; break;
+			case 4: printf("Mano parabens isso era pra aumentar a plataforma\n"); break;
+			case 5: printf("Mano parabens isso era pra diminuir a plataforma\n"); break;
+			case 6: gPad->dir.x /= 1.5; break;
+			case 7: gPad->dir.x *= 1.5; break;
 		}
 
 	}
@@ -240,9 +244,8 @@ int gameLoop(double delta) {
 			
 			if (spdUp){
 				/* printf("spd antes: %f\n", gBolas[i].spd); */
-				gBolas[i].spd *= 2;
+				gBolas[i].spd *= 1.5;
 				/* printf("spd depois: %f\n", gBolas[i].spd); */
-				spdUp = false;
 			}
 
 			if (gBolas[i].colada) continue; /* o movimento dela eh no movePlataforma */
@@ -274,7 +277,8 @@ int gameLoop(double delta) {
 			return true;
 		}
 	}
-
+    spdUp = false;
+    
 	return false;
 }
 
@@ -648,7 +652,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 		if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
-				int jooj = rand()%4;
+				int jooj = rand()%8;
 				gPowerUp.ativo = true;
 				gPowerUp.img = gPWPImgs[jooj];
 				gPowerUp.tipo = jooj;

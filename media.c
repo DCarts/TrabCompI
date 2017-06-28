@@ -71,6 +71,10 @@ int loadMedia() {
     if ( !(gPWPImgs[1] = loadSurface("./data/pwpPad.png")) ) return false;
     if ( !(gPWPImgs[2] = loadSurface("./data/pwpBallDup.png")) ) return false;
     if ( !(gPWPImgs[3] = loadSurface("./data/pwpBallSpdUp.png")) ) return false;
+    if ( !(gPWPImgs[4] = loadSurface("./data/pwpSizePlus.png")) ) return false;
+    if ( !(gPWPImgs[5] = loadSurface("./data/pwpSizeLess.png")) ) return false;
+    if ( !(gPWPImgs[6] = loadSurface("./data/pwpSpdLess.png")) ) return false;
+    if ( !(gPWPImgs[7] = loadSurface("./data/pwpSpdPlus.png")) ) return false;
 
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );
@@ -98,7 +102,7 @@ int loadMedia() {
     Mix_VolumeChunk(gSons[SOUND_LIFE_LOST], 96);
     
     if ( !(gSons[SOUND_EXPLODE] = loadSound("./data/sound/explosion.wav")) ) return false;
-    Mix_VolumeChunk(gSons[SOUND_EXPLODE], 128);
+    Mix_VolumeChunk(gSons[SOUND_EXPLODE], 64);
 
     /* FIM CARREGANDO SONS */
     return true;
