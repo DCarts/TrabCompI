@@ -695,6 +695,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
@@ -707,6 +708,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
@@ -719,6 +721,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
@@ -731,6 +734,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
