@@ -49,3 +49,13 @@ int isInside(VETOR2D p, BLOCO* b) {
 					   b->pos.x + b->w,
 					   b->pos.y + b->h);
 }
+
+void turnRad(VETOR2D* v, double angle) {
+    double nx, ny;
+    
+    nx = v->x * cos(angle) - v->y * sin(angle);
+    ny = v->x * sin(angle) + v->y * cos(angle);
+    
+    v->x = nx;
+    v->y = ny;
+}
