@@ -56,16 +56,26 @@ int main(int argc, char **argv) {
 
 	}
 
-	//showRanking(); //roda sempre! trocar para loadRanking();
 	loadRanking();
 
-	switch (menu()) {
-		case 2:
-			showRanking();
-			break;
-		case 3:
-			return 0;
-	}
+    quit = false;
+
+    /* menu! :D */
+    /* aqui, quit significa JOGAR */
+    while (!quit) {
+        switch (menu()) {
+            case 1:
+                quit = true;
+                break;
+            case 2:
+                if (showRanking()) {
+                    quit = true;
+                }
+                break;
+            case 3:
+                return 0;
+        }
+    }
 
 	//createNPCs();
 	//loadBlocosFromFile("level5");

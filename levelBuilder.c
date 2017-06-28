@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
 		}
 		if (render()) return 1;
 	}
-	exitGame();
+
 	return 0;
 }
 

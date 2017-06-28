@@ -316,6 +316,11 @@ int tryAgain()
             freeTryAgain();
             return 0;
           }
+          break;
+        case SDL_QUIT: 
+          freeTryAgain();
+          leave = true;
+          return 8;
       }
     }
   }
