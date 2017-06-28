@@ -57,6 +57,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 	countTime--; /*pra renderizar no comeco*/
 
 	/*	renderizando a mensagem padrão na superfície	*/
+    if (standardMSurface) SDL_FreeSurface(standardMSurface);
 	if(!(standardMSurface = TTF_RenderText_Shaded(gScoreFonte,standardMessage,gScoreFontColor,gBgColor))) {
 		fprintf(stderr,"Impossivel renderizar texto standardMessage na tela!%s\n",TTF_GetError());
 		gGameStatus = -101;
@@ -64,6 +65,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 	}
 
 	/*	renderizando a mensagem padrão de score na superfície	*/
+    if (tmpScoreSurface) SDL_FreeSurface(tmpScoreSurface);
 	if(!(tmpScoreSurface = TTF_RenderText_Shaded(gScoreFonte,tmpScoreText,gScoreFontColor,gBgColor))) {
 		fprintf(stderr,"Impossivel renderizar texto standardMessage na tela!%s\n",TTF_GetError());
 		gGameStatus = -102;
@@ -86,7 +88,8 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 			if(ev.type == SDL_QUIT) {
 				gGameStatus = 300;
 				SDL_StopTextInput();
-				return 1;
+				//return 1;
+                exit(0);
 			}
 			if(ev.type == SDL_KEYDOWN) {
 				/*if (ev.key.keysym.sym == SDLK_ESCAPE) {
@@ -135,6 +138,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 			}
 
 			/*	Renderizando o texto de entrada na superfície	*/
+            if (clipboardSurface) SDL_FreeSurface(clipboardSurface);
 			if (!(clipboardSurface = TTF_RenderText_Shaded(gScoreFonte,finalTxtToRender,gScoreFontColor,gBgColor))) {
 				fprintf(stderr,"Impossivel renderizar texto de entrada na tela!%s\n",TTF_GetError());
 				gGameStatus = -103;
@@ -316,6 +320,11 @@ int tryAgain()
             freeTryAgain();
             return 0;
           }
+          break;
+        case SDL_QUIT: 
+          freeTryAgain();
+          leave = true;
+          return 8;
       }
     }
   }

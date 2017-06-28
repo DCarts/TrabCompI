@@ -28,13 +28,13 @@
  #include "mainmenu.h"
  #include "media.h"
 
-static char gameName[] = "Breakout";
-static char opOne[] = "1 -> Iniciar jogo";
-static char opTwo[] = "2 -> Ranking";
-static char opThree[] = "3 -> Sair do jogo";
-static char partOne[] = "Daniel Cardoso -> dcsouza@dcc.ufrj.br";
-static char partTwo[] = "Gabriel Izoton -> gabrielizotongo@gmail.com";
-static char partThree[] = "Guilherme Avelino -> guiavenas@ufrj.br";
+static char gameName[19] = "Breakout";
+static char opOne[118] = "1 -> Iniciar jogo";
+static char opTwo[113] = "2 -> Ranking";
+static char opThree[118] = "3 -> Sair do jogo";
+static char partOne[138] = "Daniel Cardoso -> dcsouza@dcc.ufrj.br";
+static char partTwo[144] = "Gabriel Izoton -> gabrielizotongo@gmail.com";
+static char partThree[139] = "Guilherme Avelino -> guiavenas@ufrj.br";
 static SDL_Surface* gameNameSurface = NULL;
 static SDL_Surface* oneSurface = NULL;
 static SDL_Surface* twoSurface = NULL;
@@ -44,7 +44,7 @@ static SDL_Surface* partOneSurface = NULL;
 static SDL_Surface* partTwoSurface = NULL;
 static SDL_Surface* partThreeSurface = NULL;
 static SDL_Surface* bestPlayersSurface[6];
-static char txtToRender[5];
+static char txtToRender[40];
 
 int menu()
 {
@@ -146,8 +146,11 @@ int menu()
             freeMenu();
             return 3;
           }
+          break;
         case SDL_QUIT:
-          return 3;
+          freeMenu();
+          //return 3;
+          exit(0);
       }
     }
   }
@@ -160,6 +163,7 @@ void freeMenu()
   SDL_FreeSurface(oneSurface);
   SDL_FreeSurface(twoSurface);
   SDL_FreeSurface(threeSurface);
+  freeParts();
 
   /* Tornando a superfície escura novamente */
   SDL_FillRect( gScreenSurface, NULL,
@@ -167,7 +171,7 @@ void freeMenu()
 }
 
 
-void showRanking()
+int showRanking()
 {
 	int i,leave = false,x;
   SDL_Event event;
@@ -201,7 +205,7 @@ void showRanking()
 
   for (i = 0; i < 5; i++) {
     //char txtToRender[12];
-	  sprintf(txtToRender,"%s: %d pts; %ld\n", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
+	  sprintf(txtToRender,"%s: %d pts", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
     if((x = renderAndBlit(i)) != 0)
     {
       printf("%d\n",x);
@@ -210,9 +214,9 @@ void showRanking()
 
   while(!leave)
   {
-    SDL_UpdateWindowSurface(gWindow);
     while(SDL_PollEvent(&event) != 0)
     {
+      SDL_UpdateWindowSurface(gWindow);
       switch (event.type) {
         case SDL_KEYDOWN:
           if(event.key.keysym.sym == SDLK_ESCAPE ||
@@ -220,14 +224,13 @@ void showRanking()
             {
               leave = true;
               freeRanking(--i);
-              break;
+              return false;
             }
+            break;
         case SDL_QUIT:
           leave = true;
           freeRanking(--i);
-          freeMenu();
-          exitGame();
-          break;
+          return true;
       }
     }
   }
@@ -235,17 +238,14 @@ void showRanking()
   //SDL_Delay(10000);
   //fclose(gRank);
 
-  switch (menu()) {
+  /*switch (menu()) {
 		case 2:
-      freeRanking(--i);
-      freeParts();
 			showRanking();
 			break;
 		case 3:
-      freeRanking(--i);
-      freeParts();
-			exitGame();
-	}
+			//exitGame();
+            break;
+	}*/
 }
 
 int renderAndBlit(int i)

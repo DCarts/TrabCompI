@@ -472,7 +472,8 @@ int handleEvent(SDL_Event* evt) {
 	switch (e.type) {
 		case SDL_QUIT:
 			gGameStatus = 200;
-			quit = true;
+			//quit = true;
+            exit(0);
 		break;
 		default:
 			quit = handleInput(evt);
