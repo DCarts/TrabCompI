@@ -27,8 +27,12 @@
 |     |___ Aperte "2" para acessar os placares.
 |
 |___(1.3) - SAIR:
+|     |
+|     |___ Aperte "3" para sair do jogo.
+|
+|___(1.4) - AUTORES:
       |
-      |___ Aperte "3" para sair do jogo.
+      |___ Aperte "4" para ver o nome dos integrantes do grupo que fez esse trabalho.
 
 
 
@@ -40,15 +44,39 @@
 |          para movimentar a plataforma.
 |
 |___(2.2) - BOTÃO DE AÇÃO:
+|     |
+|     |___ Caso a bolinha esteja grudada na plataforma, 
+|          aperte a barra de espaço para liberá-la.
+|
+|___(2.3) - BOTÕES DE SAÍDA:
+|     |
+|     |___ A qualquer momento, aperte ESC ou clique no "x" da janela
+|          para sair do jogo.
+| 
+|___(2.4) - CONTROLES ADICIONAIS:
       |
-      |___ Caso possua uma melhoria, aperte a barra de
-           espaço para utilizá-la. Caso a bolinha esteja
-           grudada na plataforma, aperte a barra de espaço
-           para liberá-la.
+      |___ Durante o jogo opções adicionais de controle
+           podem ser mostradas.
 
 
 
 (3) - O JOGO:
+|
+|___(3.0) - OBJETIVO
+|     |
+|     |_____ O objetivo do jogo é acumular o máximo de pontos quanto 
+|            for possível destruindo os blocos na tela. Os blocos são
+|            destruídos quando uma bolinha bate neles uma certa quantidade 
+|            de vezes, e a sua interação no jogo é, principalmente, impedir que
+|            a bolinha seja destruída impedindo-a de colidir com a parte inferior 
+|            da tela, controlando uma plataforma para fazer isso. Quando todos os 
+|            blocos de um nível são destruídos, o jogador avança para o próximo nível
+|            e ganha 10000 pontos. A cada vez que a bola acerta um bloco, ganha-se 
+|            100 pontos. A cada vez que o jogador ganha 10000 pontos, ele ganha uma 
+|            vida. Ele começa com três vidas, e cada vida dá uma chance do jogador 
+|            continuar a jogar após a última bola encostar na parte inferior da tela. 
+|            Só se perde uma vida se a única bola ativa encostar na parte inferior 
+|            da tela, e se isso acontecer quando não houver mais vidas o jogo acaba.
 |
 |___(3.1) - COMPONENTES DA TELA:
 |     |
@@ -63,22 +91,60 @@
 |                 quantidade de vidas restantes.
 |
 |___(3.2) - BLOCOS:
+|     |
+|     |___(3.2.1) - SEM RESISTÊNCIA:
+|     |      |  
+|     |      |___ Os blocos vermelhos, amarelos, verdes,
+|     |           azuis e rosas não possuem resistência.
+|     |
+|     |___(3.2.2) - COM RESISTÊNCIA:
+|     |      |
+|     |      |___ Os blocos pretos e brancos possuem
+|     |           resistência 2. O bloco de madeira possui
+|     |           resistência 4. O bloco de cimento possui
+|     |           resistência 8.
+|     |
+|     |___(3.2.3) - ESPECIAIS:
+|            |
+|            |___ Os blocos brilhantes (alaranjado na borda
+|                 e claro no meio) não possuem resistência.
+|                 Quando destruídos, destroem blocos vizinhos
+|                 no seu eixo vertical e horizontal. (Podendo gerar uma reação em cadeia)
+|
+|___(3.3) - POWER-UPS:
       |
-      |___(3.2.1) - SEM RESISTÊNCIA:
+      |     Power-Ups são coisas que "caem" dos blocos quando 
+      |     são quebrados às vezes que podem afetar o jogo de 
+      |     diversas maneiras caso eles caiam em cima da plataforma.
+      |
+      |___(3.3.1) - CAVEIRA:
       |      |  
-      |      |___ Os blocos vermelhos, amarelos, verdes,
-      |           azuis e rosas não possuem resistência.
+      |      |___ Esse Power-Up faz o jogador perder uma vida.
       |
-      |___(3.2.2) - COM RESISTÊNCIA:
+      |___(3.3.2) - VIDA:
       |      |
-      |      |___ Os blocos pretos e brancos possuem
-      |           resistência 2. O bloco de madeira possui
-      |           resistência 4. O bloco de cimento possui
-      |           resistência 8.
+      |      |___ Esse Power-Up faz o jogador ganhar uma vida.
       |
-      |___(3.2.3) - ESPECIAIS:
+      |___(3.3.3) - DUPE:
+      |      |
+      |      |___ Esse Power-Up duplica as bolas na tela, até o máximo de 8 bolas.
+      |
+      |___(3.3.4) - SANIC:
+      |      |
+      |      |___ Esse Power-Up aumenta a velocidade das bolas na tela.
+      |
+      |___(3.3.5) - PYTHON:
+      |      |
+      |      |___ Esse Power-Up diminui a velocidade das bolas na tela.
+      |
+      |___(3.3.6) - GORDO:
+      |      |
+      |      |___ Esse Power-Up faz a plataforma ficar mais larga.
+      |
+      |___(3.3.7) - MAGRO:
+      |      |
+      |      |___ Esse Power-Up faz a plataforma ficar mais curta.
+      |
+      |___(3.3.8) - FUTURO:
              |
-             |___ Os blocos brilhantes (alaranjado na borda
-                  e claro no meio) não possuem resistência.
-                  Quando destruídos, destroem blocos vizinhos
-                  no seu eixo vertical e horizontal.
+             |___ Esse não faz nada ainda :P

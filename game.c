@@ -96,7 +96,7 @@ void moveBall(BOLA* p, double delta) {
 		/*jogador perde pontos*/
 		Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0);
 		gPlayer.pontos -= 1000;
-		gPlayer.vidas--;
+        
 		if(gPlayer.pontos < 0){
 			gPlayer.pontos = 0;
 		}
@@ -106,14 +106,25 @@ void moveBall(BOLA* p, double delta) {
 		gPad[0].dir.x = 4;
 		gPad[0].dir.y = 4;
 		
-		/*cola a bola*/
-		p->colada=true;
-        p->spd = gGameHeight/2.5; /* reseta a vel. */
-		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - p->dim/2;
-		p->pos.y = gPad[0].pos.y - p->dim;
-		p->dir.x = (rand() % 2? -1 : 1);
-		p->dir.y = -1;
-		normalize(&p->dir);
+		/* Ultima bola(cha) alive */
+        if (gNumBolasAlive-- == 1) {
+            
+            gPlayer.vidas--;
+            
+            gNumBolasAlive = 1;
+            
+            /*cola a bola*/
+            p->colada=true;
+            p->spd = gGameHeight/2.5; /* reseta a vel. */
+            p->pos.x = gPad[0].pos.x + gPad[0].w/2 - p->dim/2;
+            p->pos.y = gPad[0].pos.y - p->dim;
+            p->dir.x = (rand() % 2? -1 : 1);
+            p->dir.y = -1;
+            normalize(&p->dir);
+        }
+        else {
+            p->ativo = false;
+        }
 
 		/* Mix_PlayChannel(-1, gSons[SOUND_FLOOR], 0); */
 	}
@@ -223,7 +234,7 @@ int gameLoop(double delta) {
 		switch(gPowerUp.tipo){
 			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
-			case 2: printf("Mano parabens isso era pra duplicar a bola\n"); break;
+			case 2: dupaBalls(); break;
 			case 3: spdUp = true; break;
 			case 4:
 				gPad->pedacos++;
@@ -237,8 +248,8 @@ int gameLoop(double delta) {
 					gPad->pedacos = 0;
 				gPad->w = 48 + (24 * gPad->pedacos);
 				break;
-			case 6: gPad->dir.x /= 2; break;
-			case 7: gPad->dir.x *= 2; break;
+			case 6: gPad->dir.x /= 1.5; break;
+			case 7: gPad->dir.x *= 1.5; break;
 		}
 
 	}
@@ -248,9 +259,8 @@ int gameLoop(double delta) {
 			
 			if (spdUp){
 				/* printf("spd antes: %f\n", gBolas[i].spd); */
-				gBolas[i].spd *= 2;
+				gBolas[i].spd *= 1.5;
 				/* printf("spd depois: %f\n", gBolas[i].spd); */
-				spdUp = false;
 			}
 
 			if (gBolas[i].colada) continue; /* o movimento dela eh no movePlataforma */
@@ -282,7 +292,8 @@ int gameLoop(double delta) {
 			return true;
 		}
 	}
-
+    spdUp = false;
+    
 	return false;
 }
 
@@ -298,6 +309,21 @@ BOLA createBola(VETOR2D pos, VETOR2D step, int tipo, int dim, double spd, SDL_Su
 	bola.img = img;
 	bola.ativo = true;
 	bola.colada = true;
+	return bola;
+}
+
+BOLA cloneBola(BOLA* orig) {
+	BOLA bola;
+	bola.pos = copyVector(orig->pos);
+	bola.prevPos = copyVector(orig->prevPos);
+	bola.lastDelta = orig->lastDelta;
+	bola.dir = orig->dir;
+	bola.tipo = orig->tipo;
+	bola.dim = orig->dim;
+	bola.spd = orig->spd;
+	bola.img = orig->img;
+	bola.ativo = orig->ativo;
+	bola.colada = orig->colada;
 	return bola;
 }
 
@@ -348,6 +374,7 @@ int createNPCs() {
 	int i;
 
 	gNumBolas = 1;
+    gNumBolasAlive = 1;
 
 	if (gBolas) free(gBolas);
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
@@ -792,4 +819,38 @@ void platModify(BOLA* b) {
     turnRad(&b->dir, dx);
     normalize(&b->dir);
     b->dir.x *= sig;
+}
+
+void dupaBalls() {
+    int i, j, oNumBalls = gNumBolas;
+    
+    for (i = 0; i < oNumBalls; i++) {
+        if (gNumBolas == MAX_NUM_BOLAS) {
+            break;
+        }
+        
+        if (gBolas[i].ativo != true) continue;
+        
+        for (j = 0; j <= oNumBalls; j++) {
+            if (j == oNumBalls) {
+                gBolas[gNumBolas++] = cloneBola(gBolas+i);
+                gNumBolasAlive++;
+                gBolas[gNumBolas-1].dir.x = -gBolas[i].dir.x;
+                gBolas[gNumBolas-1].ativo = 2; /* Nao passa pelo filtro acima, evitando duplicar bolas recem-criadas */
+                break;
+            }
+            else if (gBolas[j].ativo == false) {
+                /* Opaa reativamos */
+                gBolas[j] = cloneBola(gBolas+i);
+                gNumBolasAlive++;
+                gBolas[j].dir.x = -gBolas[i].dir.x;
+                gBolas[j].ativo = 2; /* Nao passa pelo filtro acima, evitando duplicar bolas recem-criadas */
+                break;
+            }
+        }
+    }
+    /* Limpa filtro */
+    for (i = 0; i < gNumBolas; i++) {
+        if (gBolas[i].ativo > 1) gBolas[i].ativo = true;
+    }
 }
