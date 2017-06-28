@@ -31,18 +31,20 @@
 |
 |___(1.1) - TUDO:
 |     |
-|     |___ Executar somente o comando "make" na pasta. Para executar, veja os dois itens abaixo.
+|     |___ Executar somente o comando "make" na pasta. Para
+|          executar, veja os dois itens abaixo.
 |
 |___(1.2) - O JOGO:
 |     |
-|     |___ Executar somente o comando "make breakout" na pasta.
+|     |___ Para compilar, use somente o comando "make breakout"
+|	   na pasta.
 |          Para executar, digite ./breakout
 |
 |___(1.3) - O EDITOR DE NIVEIS:
       |
-      |___ Executar somente o comando "make lvlbuilder" na pasta.
-           Para executar, digite ./lvlbuilder
-           E em seguida digite ...
+      |___ Para compilar, use somente o comando "make lvlbuilder"
+	   na pasta.
+	   Para executar, digite ./lvlbuilder
 
 (1) - MENU
 |
@@ -60,7 +62,8 @@
 |
 |___(1.4) - AUTORES:
       |
-      |___ Aperte "4" para ver o nome dos integrantes do grupo que fez esse trabalho.
+      |___ Aperte "4" para ver o nome dos integrantes do grupo
+	   que fez esse trabalho.
 
 
 
@@ -78,8 +81,8 @@
 |
 |___(2.3) - BOTÕES DE SAÍDA:
 |     |
-|     |___ A qualquer momento, aperte ESC ou clique no "x" da janela
-|          para sair do jogo.
+|     |___ A qualquer momento, aperte ESC ou clique no "x"
+|	   da janela para sair do jogo.
 | 
 |___(2.4) - CONTROLES ADICIONAIS:
       |
@@ -92,19 +95,25 @@
 |
 |___(3.0) - OBJETIVO
 |     |
-|     |_____ O objetivo do jogo é acumular o máximo de pontos quanto 
-|            for possível destruindo os blocos na tela. Os blocos são
-|            destruídos quando uma bolinha bate neles uma certa quantidade 
-|            de vezes, e a sua interação no jogo é, principalmente, impedir que
-|            a bolinha seja destruída impedindo-a de colidir com a parte inferior 
-|            da tela, controlando uma plataforma para fazer isso. Quando todos os 
-|            blocos de um nível são destruídos, o jogador avança para o próximo nível
-|            e ganha 10000 pontos. A cada vez que a bola acerta um bloco, ganha-se 
-|            100 pontos. A cada vez que o jogador ganha 10000 pontos, ele ganha uma 
-|            vida. Ele começa com três vidas, e cada vida dá uma chance do jogador 
-|            continuar a jogar após a última bola encostar na parte inferior da tela. 
-|            Só se perde uma vida se a única bola ativa encostar na parte inferior 
-|            da tela, e se isso acontecer quando não houver mais vidas o jogo acaba.
+|     |_____ O objetivo do jogo é acumular o máximo de
+|     	     pontos quanto for possível destruindo os
+|            blocos na tela. Os blocos são destruídos
+|            quando uma bolinha bate neles uma certa
+|	     quantidade de vezes, e a sua interação no
+|	     jogo é, principalmente, impedir que a bolinha
+|	     seja destruída impedindo-a de colidir com a
+|	     parte inferior da tela, controlando uma plataforma
+|	     para fazer isso. Quando todos os blocos de um
+|	     nível são destruídos, o jogador avança para o
+|	     próximo nível e ganha 10000 pontos. A cada vez que
+|	     a bola acerta um bloco, ganha-se 100 pontos. A
+|	     cada vez que o jogador ganha 10000 pontos, ele
+|	     ganha uma vida. Ele começa com três vidas, e cada
+|            uma dá a chance do jogador continuar a jogar após
+|	     a última bola encostar na parte inferior da tela. 
+|            Só se perde uma vida se a única bola ativa encostar
+|	     na parte inferior da tela, e se isso acontecer
+|	     quando não houver mais vidas, o jogo acaba.
 |
 |___(3.1) - COMPONENTES DA TELA:
 |     |
@@ -137,7 +146,8 @@
 |            |___ Os blocos brilhantes (alaranjado na borda
 |                 e claro no meio) não possuem resistência.
 |                 Quando destruídos, destroem blocos vizinhos
-|                 no seu eixo vertical e horizontal. (Podendo gerar uma reação em cadeia)
+|                 no seu eixo vertical e horizontal. (Podendo
+|		  gerar uma reação em cadeia)
 |
 |___(3.3) - POWER-UPS:
       |
@@ -155,7 +165,8 @@
       |
       |___(3.3.3) - DUPE:
       |      |
-      |      |___ Esse Power-Up duplica as bolas na tela, até o máximo de 8 bolas.
+      |      |___ Esse Power-Up duplica as bolas na tela, até o
+      |		  máximo de 8 bolas.
       |
       |___(3.3.4) - VELOCIDADE:
       |      |
@@ -176,3 +187,45 @@
       |___(3.3.8) - AGILIDADE:
              |
              |___ Esse Power-Up faz a plataforma ficar mais rápida.
+
+(4) - O LVLBUILDER:
+|
+|___(4.0) - OBJETIVO
+|     |
+|     |_____ O objetivo do programa é editar dinamicamente níveis
+|            para o jogo. Criar arquivos de texto pode ser demorar
+|            e não dar a resposta visual adequada ao criador.
+|
+|___(4.1) - COMPONENTES DA TELA:
+|     |
+|     |___(4.1.1) - TELA DE INPUT:
+|     |      |
+|     |      |___ A tela de input pede o nome de dois arquivos
+|     |           (sem a extensão): o arquivo de origem e o
+|     |           arquivo de destino. Dados serão lidos do arquivo
+|     |           de origem e, ao final do processo de edição, serão
+|     |           salvos no arquivo de destino.
+|     |
+|     |___(4.1.2) - TELA DE EDIÇÃO:
+|            |
+|            |___ Mostra o nível atual, o cursor, os blocos e o bloco
+|                 atual selecionado.
+|
+|___(4.2) - CONTROLES:
+      |
+      |___(4.2.1) - NAVEGAÇÃO:
+      |      |  
+      |      |___ Utilize as setas de navegação para selecionar com
+      |           o cursor o bloco desejado.
+      |
+      |
+      |___(4.2.2) - EDIÇÃO:
+      |      |
+      |      |___ Utilize 'Z' e 'X' para alterar o tipo de bloco;
+      |           'C' para trocar/criar um bloco no nível;
+      |           Barra de espaço para deletar.
+      |
+      |___(4.2.3) - SALVAR E SAIR:
+             |
+             |___ A tecla 'S' salva automaticamente seu trabalho no
+                  arquivo de destino. Para sair, aperte 'Esc'.
