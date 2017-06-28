@@ -199,7 +199,7 @@ int renderScoreboard() {
 	int err = false;
 	static int lastScore = -1;
 	int lastLevel = -1;
-	static char lvlStr[4];
+	static char lvlStr[7];
 	/*	static char scoreText[8];	*/
 
 	if (gPlayer.pontos != lastScore) {
