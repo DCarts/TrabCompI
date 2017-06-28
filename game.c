@@ -478,23 +478,11 @@ int handleInput(SDL_Event* evt){
 	int i;
 	switch (e.type) {
 		case SDL_KEYDOWN:
-            /*REMOVER*/
-			if (e.key.keysym.sym == SDLK_k) {
-				gNumBlocosAlive = 0; /* fuk da police */
-			}
 			if (e.key.keysym.sym == SDLK_LEFT) {
 				gLeft = true;
 			}
 			if (e.key.keysym.sym == SDLK_RIGHT) {
 				gRight = true;
-			}
-			if (e.key.keysym.sym == SDLK_UP) {
-				for (i=0; i<gNumBolas; i++)
-					gBolas[i].ativo = false;
-			}
-			if (e.key.keysym.sym == SDLK_DOWN) {
-				for (i=0; i<gNumBolas; i++)
-					gBolas[i].ativo = true;
 			}
 			if (e.key.keysym.sym == SDLK_ESCAPE) {
 				quit = true;
@@ -825,7 +813,7 @@ void dupaBalls() {
     int i, j, oNumBalls = gNumBolas;
     
     for (i = 0; i < oNumBalls; i++) {
-        if (gNumBolas == MAX_NUM_BOLAS) {
+        if (gNumBolasAlive == MAX_NUM_BOLAS) {
             break;
         }
         
