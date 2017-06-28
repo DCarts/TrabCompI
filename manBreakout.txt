@@ -29,18 +29,18 @@
 
 (0) - COMPILAÇÃO E EXECUÇÃO
 |
-|___(1.1) - TUDO:
+|___(0.1) - TUDO:
 |     |
 |     |___ Executar somente o comando "make" na pasta. Para
 |          executar, veja os dois itens abaixo.
 |
-|___(1.2) - O JOGO:
+|___(0.2) - O JOGO:
 |     |
 |     |___ Para compilar, use somente o comando "make breakout"
 |	   na pasta.
 |          Para executar, digite ./breakout
 |
-|___(1.3) - O EDITOR DE NIVEIS:
+|___(0.3) - O EDITOR DE NIVEIS:
       |
       |___ Para compilar, use somente o comando "make lvlbuilder"
 	   na pasta.
