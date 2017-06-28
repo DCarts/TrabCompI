@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
                 break;
             case 2:
                 if (showRanking()) {
-                    quit = true;
+                    return 0;
                 }
                 break;
             case 3:

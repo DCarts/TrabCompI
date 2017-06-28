@@ -146,9 +146,11 @@ int menu()
             freeMenu();
             return 3;
           }
+          break;
         case SDL_QUIT:
           freeMenu();
-          return 3;
+          //return 3;
+          exit(0);
       }
     }
   }
@@ -224,6 +226,7 @@ int showRanking()
               freeRanking(--i);
               return false;
             }
+            break;
         case SDL_QUIT:
           leave = true;
           freeRanking(--i);
