@@ -94,6 +94,9 @@ int loadMedia() {
     
     if ( !(gSons[SOUND_BLOCK_BROKE] = loadSound("./data/sound/block_pop.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_BLOCK_BROKE], 96);
+    
+    if ( !(gSons[SOUND_LIFE_LOST] = loadSound("./data/sound/death.wav")) ) return false;
+    Mix_VolumeChunk(gSons[SOUND_LIFE_LOST], 96);
 
     /* FIM CARREGANDO SONS */
     return true;
