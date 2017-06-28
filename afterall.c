@@ -29,12 +29,13 @@
 
  #define MAXLEN 12
 
-static char gameOverMSG[22] = "Digite seu nome:";
+static char gameOverMSG[22] = "GAME OVER";
 static char standardMessage[22] = "Digite seu nome:";
 static char namae[MAXLEN] = "ze sa";
 static char blank[] = "  ";
 static SDL_Surface* standardMSurface = NULL;
 static SDL_Surface* clipboardSurface = NULL;
+static SDL_Surface* gameOverSurface = NULL;
 static SDL_Surface* tryAgSurface1 = NULL;
 static SDL_Surface* tryAgSurface2 = NULL;
 static SDL_Event ev;
@@ -88,7 +89,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 			if(ev.type == SDL_QUIT) {
 				gGameStatus = 300;
 				SDL_StopTextInput();
-				//return 1;
+				/*return 1;*/
                 exit(0);
 			}
 			if(ev.type == SDL_KEYDOWN) {
@@ -196,7 +197,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 	SDL_StopTextInput(); /*	encerrando a entrada de texto	*/
 
 	if(err){
-		printf("Erro ao renderizar clipboard\n");
+		fprintf(stderr, "Erro ao renderizar clipboard\n");
 		return 0;
 	}
 
@@ -208,8 +209,8 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 
 void savePlayer(char* pName) {
 
+    SCOREENTRY current;
 	gGameStatus += 1;
-	SCOREENTRY current;
 
 	current.name = pName;
 	current.pts = gPlayer.pontos;
@@ -229,9 +230,7 @@ void savePlayer(char* pName) {
 	 * qnd tiver pronto, tem que alterar pra usar o gPlayers e
 	 * alterar no init() pra carregar o gPlayers */
 
-	//fwrite(gPlayers, 5, sizeof(SCOREENTRY), gRank);
 	writePlayers();
-	//fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 	gPlayer.vidas = 3;
 	gPlayer.pontos = 0;
@@ -256,14 +255,13 @@ int tryAgain()
   SDL_Rect dstRect;
   char tryAgMessage [] = "Aperte ENTER para retornar ao menu.";
   char qMessage[] = "Aperte Q para sair do jogo.";
-//  char defaultMessage[] = "Por favor,digite uma opção válida";
   int leave = false;
 
   /* Tornando a superfície escura novamente */
   SDL_FillRect( gScreenSurface, NULL,
       SDL_MapRGB( gScreenSurface->format, 0, 0, 0 ) );
 
-  /*	Renderizando o texto de entrada na superfície	*/
+  /*	Renderizando o texto de tryagain na superfície	*/
   if (!(tryAgSurface1 = TTF_RenderText_Shaded(gScoreFonte,tryAgMessage,gScoreFontColor,gBgColor))) {
     fprintf(stderr,"Impossivel renderizar texto de tryagain na tela!%s\n",TTF_GetError());
     gGameStatus = -667;
@@ -297,6 +295,25 @@ int tryAgain()
     return 666;
   }
 
+  if(gGameOver)
+  {
+    if (!(gameOverSurface = TTF_RenderText_Shaded(gScoreFonte,gameOverMSG,gScoreFontColor,gBgColor))) {
+      fprintf(stderr,"Impossivel renderizar texto de gameOver na superfície!%s\n",TTF_GetError());
+      gGameStatus = -671;
+      return 666;
+    }
+
+    dstRect.x = gScreenWidth/2 - gameOverSurface->w / 2;
+    dstRect.y = 0;
+
+    if(SDL_BlitSurface(gameOverSurface,NULL,gScreenSurface,&dstRect) < 0)
+    {
+      fprintf(stderr,"Impossivel blitar texto de quitgame na tela!%s\n",SDL_GetError());
+      gGameStatus = -672;
+      return 666;
+    }
+  }
+
   SDL_UpdateWindowSurface(gWindow);
   /*SDL_Delay(5000);*/
 
@@ -321,7 +338,7 @@ int tryAgain()
             return 0;
           }
           break;
-        case SDL_QUIT: 
+        case SDL_QUIT:
           freeTryAgain();
           leave = true;
           return 8;
@@ -336,4 +353,9 @@ void freeTryAgain()
 {
   SDL_FreeSurface(tryAgSurface1);
   SDL_FreeSurface(tryAgSurface2);
+  if(gGameOver)
+  {
+    SDL_FreeSurface(gameOverSurface);
+    gGameOver = false;/*novo jogo*/
+  }
 }

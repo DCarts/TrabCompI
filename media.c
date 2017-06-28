@@ -212,7 +212,7 @@ int blocoLife(int tipo){
 void readPlayers() {
 	int i;
 	for (i = 0; i < 5; i++) {
-		gPlayers[i].name = calloc(12, sizeof(char)); //12 = MAXLEN
+		gPlayers[i].name = calloc(12, sizeof(char)); /* 12 = MAXLEN */
 		fread(gPlayers[i].name, sizeof(char), 12, gRank);
 		fread(&gPlayers[i].pts, sizeof(int), 1, gRank);
 		fread(&gPlayers[i].sysTime, sizeof(long), 1, gRank);

@@ -89,6 +89,7 @@ extern int gNumBlocos;
 extern int gNumBlocosAlive;
 extern int gAllPts;
 extern int gTimesPlayed;
+extern int gGameOver;
 
 extern PLATAFORMA* gPad;
 extern BOLA* gBolas;
