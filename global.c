@@ -95,6 +95,7 @@ int gNumBlocos;
 int gNumBlocosAlive;
 int gAllPts = 0;
 int gTimesPlayed = 0;/* talvez isso seja util */
+int gGameOver = 0;/*indica se o jogador perdeu todas as vidas */
 
 PLATAFORMA* gPad = NULL;
 BOLA* gBolas = NULL;
