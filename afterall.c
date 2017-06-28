@@ -88,7 +88,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 			if(ev.type == SDL_QUIT) {
 				gGameStatus = 300;
 				SDL_StopTextInput();
-				//return 1;
+				/*return 1;*/
                 exit(0);
 			}
 			if(ev.type == SDL_KEYDOWN) {
@@ -196,7 +196,7 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 	SDL_StopTextInput(); /*	encerrando a entrada de texto	*/
 
 	if(err){
-		printf("Erro ao renderizar clipboard\n");
+		fprintf(stderr, "Erro ao renderizar clipboard\n");
 		return 0;
 	}
 
@@ -208,8 +208,8 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
 
 void savePlayer(char* pName) {
 
+    SCOREENTRY current;
 	gGameStatus += 1;
-	SCOREENTRY current;
 
 	current.name = pName;
 	current.pts = gPlayer.pontos;
@@ -229,9 +229,7 @@ void savePlayer(char* pName) {
 	 * qnd tiver pronto, tem que alterar pra usar o gPlayers e
 	 * alterar no init() pra carregar o gPlayers */
 
-	//fwrite(gPlayers, 5, sizeof(SCOREENTRY), gRank);
 	writePlayers();
-	//fwrite(&current, 1, sizeof(SCOREENTRY), gRank);	/*	grava o nome do jogador no arquivo apontado por gRank	*/
 
 	gPlayer.vidas = 3;
 	gPlayer.pontos = 0;
@@ -256,7 +254,6 @@ int tryAgain()
   SDL_Rect dstRect;
   char tryAgMessage [] = "Aperte ENTER para retornar ao menu.";
   char qMessage[] = "Aperte Q para sair do jogo.";
-//  char defaultMessage[] = "Por favor,digite uma opção válida";
   int leave = false;
 
   /* Tornando a superfície escura novamente */

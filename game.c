@@ -87,10 +87,6 @@ void moveBall(BOLA* p, double delta) {
 	p->pos.x += p->dir.x*p->spd*delta;
 	p->pos.y += p->dir.y*p->spd*delta;
 
-	//printf("px=%.3lf, py=%.3lf\n", p->prevPos.x, p->prevPos.y);
-	//printf("ox=%.3lf, oy=%.3lf\n\n", p->pos.x, p->pos.y);
-
-
 	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x = p->prevPos.x;
@@ -109,6 +105,7 @@ void moveBall(BOLA* p, double delta) {
 
 		/*cola a bola*/
 		p->colada=true;
+        p->spd = gGameHeight/2.5; /* reseta a vel. */
 		p->pos.x = gPad[0].pos.x + gPad[0].w/2 - p->dim/2;
 		p->pos.y = gPad[0].pos.y - p->dim;
 		p->dir.x = (rand() % 2? -1 : 1);
@@ -223,8 +220,8 @@ int gameLoop(double delta) {
 		switch(gPowerUp.tipo){
 			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
-			case 2: printf("Porra mano parabens isso n faz nada 2\n"); break;
-			case 3: printf("Porra mano parabens isso n faz nada 3\n"); break;
+			case 2: printf("Mano parabens isso n faz nada 2\n"); break;
+			case 3: printf("Mano parabens isso n faz nada 3\n"); break;
 		}
 		
 	}
@@ -232,7 +229,7 @@ int gameLoop(double delta) {
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
 
-			if (gBolas[i].colada) continue; //o movimento dela eh no movePlataforma
+			if (gBolas[i].colada) continue; /* o movimento dela eh no movePlataforma */
 
             moveBall(gBolas+i, delta);
 			if (collBallPlat(gBolas+i, delta)) {
@@ -245,7 +242,7 @@ int gameLoop(double delta) {
 					if (collBallBlock(gBolas+i, gBlocos+j, delta)) {
 						gPlayer.pontos += 100;
 						gAllPts += 100;
-						if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
+						if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; /* menos segfault, mais alegria */
 						if(gAllPts % 10000 == 0)
 						{
 							if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
@@ -422,8 +419,9 @@ int handleInput(SDL_Event* evt){
 	int i;
 	switch (e.type) {
 		case SDL_KEYDOWN:
+            /*REMOVER*/
 			if (e.key.keysym.sym == SDLK_k) {
-				gNumBlocosAlive = 0; //fuk da police
+				gNumBlocosAlive = 0; /* fuk da police */
 			}
 			if (e.key.keysym.sym == SDLK_LEFT) {
 				gLeft = true;
@@ -473,7 +471,7 @@ int handleEvent(SDL_Event* evt) {
 	switch (e.type) {
 		case SDL_QUIT:
 			gGameStatus = 200;
-			//quit = true;
+			/* quit = true; */
             exit(0);
 		break;
 		default:
@@ -488,7 +486,7 @@ int collBallPlat(BOLA* a, double delta){
 	VETOR2D c;
 	int inv = 0;
 
-	if (a->dir.y < 0 || a->colada) { //bola ta indo pra cima ou ta colada, n colide!
+	if (a->dir.y < 0 || a->colada) { /* bola ta indo pra cima ou ta colada, n colide! */
 		return false;
 	}
 
@@ -505,8 +503,6 @@ int collBallPlat(BOLA* a, double delta){
 					gPad->pos.y - raio,
 					gPad->pos.x + gPad->w,
 					gPad->pos.y + gPad->h)) {
-		//a->dir.y = -a->dir.y;
-		//a->pos.y += a->dir.y*a->spd*delta;
 		return true;
 	}
 	else {
@@ -520,10 +516,6 @@ int collBallPlat(BOLA* a, double delta){
 			inv = 1;
 		}
 		if (inv) {
-			//a->dir.x = -a->dir.x;
-			//a->dir.y = -a->dir.y;
-			//a->pos.x += a->dir.x*a->spd*delta;
-			//a->pos.y += a->dir.y*a->spd*delta;
 			return true;
 		}
 	}
@@ -613,9 +605,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		}
 		if (!inv) return false;
 	}
-	printf("Vida --: px=%.8lf py=%.8lf v=%.8lf\n", a->pos.x, a->pos.y, a->spd*delta);
+	/* printf("Vida --: px=%.8f py=%.8f v=%.8f\n", a->pos.x, a->pos.y, a->spd*delta); */
 	if (b->vida-- == 1) {
-        puts("E morreu. o que houve?");
         Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
         
 		if (rand()%4 == 0){
@@ -642,7 +633,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 }
 
 void destroiVizinhos(BLOCO* b){
-	//@Todo
+	/* @Todo */
 	printf("AEEEEEEHOOOOOOOOOOOOOOOOOOOO\n");
 }
 
@@ -677,7 +668,7 @@ int goToNextLevel() {
 	if (gLvlNumber > 0) {
 		gPlayer.pontos += 10000;
 		gAllPts += 10000;
-		if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; //menos segfault, mais alegria
+		if (gPlayer.pontos > 9999999) gPlayer.pontos = 9999999; /* menos segfault, mais alegria */
 		if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4;
 	}
 	else {
@@ -694,16 +685,16 @@ int goToNextLevel() {
 
 
 void platModify(BOLA* b) {
-    double bx = b->pos.x + b->dim/2.0;
     int sig;
+    double bx = b->pos.x + b->dim/2.0;
     double dx = bx - (gPad->pos.x + gPad->w/2.0);
     
     sig =  (dx > 0)? 1 : -1;
     dx = fabs(dx);
     
-    //dx -= gPad->w/3.0;
-    //dx /= gPad->w/2.0;
-    //dx *= GAME_PI/6;
+    /* dx -= gPad->w/3.0;
+       dx /= gPad->w/2.0;
+       dx *= GAME_PI/6; */
     
     dx = GAME_PI*(dx - gPad->w/3.0)/(gPad->w * 3.0);
     
