@@ -28,7 +28,7 @@ int loadMedia() {
 
 	/* CARREGANDO FONTES */
 
-	if (!(gScoreFonte = loadFont("./data/DS-DIGI.TTF", 36))) return false;
+	if (!(gScoreFonte = loadFont("./data/DS-DIGI.TTF", 32))) return false;
 
 	/* FIM CARREGANDO FONTES */
 
@@ -47,11 +47,11 @@ int loadMedia() {
     if ( !(gBallImgs[0] = loadSurface("./data/ball.png")) ) return false;
     colorKey = SDL_MapRGB(gBallImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gBallImgs[0], SDL_TRUE, colorKey);
-    
+
     if ( !(gBallImgs[1] = loadSurface("./data/ballFire1.png")) ) return false;
     colorKey = SDL_MapRGB(gBallImgs[1]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gBallImgs[1], SDL_TRUE, colorKey);
-    
+
     /* Carrega tijolos */
     if ( !(gBlocoImgs[0] = loadSurface("./data/brick0.png")) ) return false;
     if ( !(gBlocoImgs[1] = loadSurface("./data/brick1.png")) ) return false;
@@ -96,16 +96,16 @@ int loadMedia() {
     /* volume do som varia entre 0 e 127 */
     if ( !(gSons[SOUND_PLAT] = loadSound("./data/sound/plat_hit.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_PLAT], 64);
-    
+
     if ( !(gSons[SOUND_WALL] = loadSound("./data/sound/bump.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_WALL], 96);
-    
+
     if ( !(gSons[SOUND_BLOCK_BROKE] = loadSound("./data/sound/block_pop.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_BLOCK_BROKE], 96);
-    
+
     if ( !(gSons[SOUND_LIFE_LOST] = loadSound("./data/sound/death.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_LIFE_LOST], 96);
-    
+
     if ( !(gSons[SOUND_EXPLODE] = loadSound("./data/sound/explosion.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_EXPLODE], 64);
 
@@ -249,7 +249,7 @@ int loadRanking() {
 	}
 
 	readPlayers();
-  
+
 	fclose(gRank);
 	return true;
 }
