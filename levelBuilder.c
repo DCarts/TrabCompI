@@ -447,9 +447,12 @@ int loadBlocosFromFile(char* levelName) {
 		return false;
 	}
 	lc = 0;
-	while(fgets(linha, BLOCKS_W+2, arq) != NULL && lc <= BLOCKS_H) {
+	while(lc <= BLOCKS_H) {
 		VETOR2D pos;
 		char c;
+        if (fgets(linha, BLOCKS_W+2, arq) == NULL) {
+            memset(linha, '-', (BLOCKS_W+1)*sizeof(char));
+        }
 		for (i = 0; i <= BLOCKS_W; i++) {
 			c = linha[i];
 			if (c >= '0' && c <= '9') {
@@ -458,8 +461,14 @@ int loadBlocosFromFile(char* levelName) {
 				gBlocos[gNumBlocos++] =
 				createBloco(pos, c-'0', 32, 16, gBlocoImgs[c-'0']);
 			}
+            else {
+                pos.x = i*(BLOCK_DIST+32)+OFFSET+BLOCK_DIST;
+				pos.y = lc*(BLOCK_DIST+16)+OFFSET+BLOCK_DIST;
+				gBlocos[gNumBlocos++] =
+				createBloco(pos, c-'0', 32, 16, gBlocoImgs[0]);
+                gBlocos[gNumBlocos-1].ativo = false;
+            }
 		}
-		putchar('\n');
 		lc++;
 	}
 	return true;
