@@ -126,17 +126,17 @@ void moveBall(BOLA* p, double delta) {
 }
 
 void movePwp(PWP* p, double delta){
-	
+
 	if (p->ativo){
 		p->prevPos.x = p->pos.x;
 		p->prevPos.y = p->pos.y;
-		
+
 		p->dir.y += 0.0075;
-	
+
 		p->pos.x += p->dir.x*p->spd*delta;
 		p->pos.y += p->dir.y*p->spd*delta;
 	}
-	
+
 	if (p->pos.x + p->dim > gGameWidth-OFFSET) {
 		p->dir.x = -p->dir.x;
 		p->pos.x = gGameWidth-OFFSET-p->dim;
@@ -214,21 +214,21 @@ int gameLoop(double delta) {
 	}
 
 	movePlataforma(gPad, delta);
-	
+
 	movePwp(&gPowerUp, delta);
 	if (gPowerUp.ativo && collPwpPlat(&gPowerUp, gPad, delta)){
-		
+
 		gPowerUp.ativo = false;
-		
+
 		switch(gPowerUp.tipo){
 			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
 			case 2: printf("Porra mano parabens isso n faz nada 2\n"); break;
 			case 3: printf("Porra mano parabens isso n faz nada 3\n"); break;
 		}
-		
+
 	}
-	
+
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
 
@@ -256,6 +256,7 @@ int gameLoop(double delta) {
 		}
 		if(gPlayer.vidas < 0) {
 			gGameStatus = 101;
+			gGameOver = true;
 			SDL_UpdateWindowSurface(gWindow);
 			return true;
 		}
@@ -314,14 +315,14 @@ PWP createPwp(VETOR2D pos, VETOR2D dir, int tipo, int dim, double spd, int ativo
 	pwp.spd = spd;
 	pwp.ativo = ativo;
 	pwp.img = img;
-	
+
 	return pwp;
 }
 
 int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
-	
+
 	gNumBolas = 1;
 
 	if (gBolas) free(gBolas);
@@ -348,7 +349,7 @@ int createNPCs() {
 
 	pos.x = 800;
 	pos.y = 40;
-	
+
 	dir.x = -1;
 	dir.y = 1;
 
@@ -535,10 +536,10 @@ int collPwpPlat(PWP* p, PLATAFORMA* b, double delta){
 
 	p1.x = p->pos.x;
 	p1.y = p->pos.y + p->dim;
-	
+
 	p2.x = p->pos.x + p->dim;
 	p2.y = p->pos.y + p->dim;
-	
+
 	if (isInAABB(p1, b->pos.x, 			b->pos.y,
 					 b->pos.x + b->w, 	b->pos.y + b->h)
 		||  isInAABB(p2, b->pos.x, 		b->pos.y,
@@ -546,7 +547,7 @@ int collPwpPlat(PWP* p, PLATAFORMA* b, double delta){
 	   return true;
    }
 	return false;
-	
+
 }
 
 int collBallBlock(BOLA* a, BLOCO* b, double delta) {
@@ -617,7 +618,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	if (b->vida-- == 1) {
         puts("E morreu. o que houve?");
         Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
-        
+
 		if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
 				int jooj = rand()%4;
@@ -630,7 +631,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 				gPowerUp.dir.y = -2*a->dir.y;
 			}
 		}
-		
+
 		if (b->tipo == 7) {
 			destroiVizinhos(b);
 		}
@@ -697,19 +698,19 @@ void platModify(BOLA* b) {
     double bx = b->pos.x + b->dim/2.0;
     int sig;
     double dx = bx - (gPad->pos.x + gPad->w/2.0);
-    
+
     sig =  (dx > 0)? 1 : -1;
     dx = fabs(dx);
-    
+
     //dx -= gPad->w/3.0;
     //dx /= gPad->w/2.0;
     //dx *= GAME_PI/6;
-    
+
     dx = GAME_PI*(dx - gPad->w/3.0)/(gPad->w * 3.0);
-    
+
     b->dir.x = 1;
     b->dir.y = -1;
-    
+
     turnRad(&b->dir, dx);
     normalize(&b->dir);
     b->dir.x *= sig;
