@@ -79,6 +79,7 @@ extern SDL_Surface* gPadImgs[5];
 extern SDL_Surface* gLed[2];
 
 extern SDL_Surface* gScoreSurface;
+extern SDL_Surface* gLvlNumberSurface;
 extern TTF_Font* gScoreFonte;
 
 extern Mix_Chunk* gSons[11];

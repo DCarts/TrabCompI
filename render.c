@@ -132,9 +132,9 @@ int render() {
 
 	dstRect.x = gPad[0].pos.x;
 	dstRect.y = gPad[0].pos.y;
-	
+
 	srcRect.x = 0;
-	
+
 	/* Ponta da esquerda */
 	if( SDL_BlitSurface( gPad[0].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
@@ -142,24 +142,24 @@ int render() {
 				gGameStatus = -206;
 				err = true;
 	}
-	
+
 	/* Meio (de acordo com a quantidade de pedacos) */
 	for(i = 1; i <= gPad[0].pedacos; i++){
-		
+
 		srcRect.x = 24;
 		dstRect.x = gPad[0].pos.x + 24*i;
-		
+
 		if( SDL_BlitSurface( gPad[0].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
 				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
 				gGameStatus = -206;
 				err = true;
-			}	
+			}
 	}
-	
+
 	dstRect.x = gPad[0].pos.x + 24*i;
 	srcRect.x = 72;
-	
+
 	/* Ponta da direita */
 	if( SDL_BlitSurface( gPad[0].img, &srcRect,
 								gScreenSurface, &dstRect ) < 0 ) {
@@ -167,9 +167,9 @@ int render() {
 				gGameStatus = -206;
 				err = true;
 	}
-	
+
 	srcRect.x = 0; srcRect.y = 0;
-		
+
 	/* Renderiza o powerup */
 	if (gPowerUp.ativo){
 		srcRect.w = gPowerUp.dim;
@@ -198,6 +198,8 @@ int render() {
 int renderScoreboard() {
 	int err = false;
 	static int lastScore = -1;
+	int lastLevel = -1;
+	static char lvlStr[4];
 	/*	static char scoreText[8];	*/
 
 	if (gPlayer.pontos != lastScore) {
@@ -214,6 +216,22 @@ int renderScoreboard() {
 		}
 	}
 
+	if(gLvlNumber != lastLevel)
+	{
+		lastLevel = gLvlNumber;
+		sprintf(lvlStr, "lvl %d", lastLevel);
+
+		SDL_FreeSurface(gLvlNumberSurface);
+		gLvlNumberSurface = NULL;
+
+		if(!(gLvlNumberSurface = TTF_RenderText_Shaded(gScoreFonte, lvlStr, gScoreFontColor, gBgColor))) {
+			fprintf(stderr,"Impossivel renderizar gLvlNumberSurface na superfície! %s\n",TTF_GetError());
+			gGameStatus = -208;
+			err = true;
+		}
+	}
+
+
 	dstRect.x = gScoreOffset;
 	dstRect.y = 16;
 	dstRect.w = 128;
@@ -221,6 +239,17 @@ int renderScoreboard() {
 
 	if (SDL_BlitSurface(gScoreSurface, NULL, gScreenSurface, &dstRect) < 0) {
 		fprintf(stderr,"Impossivel blitar textoB na tela! %s\n",SDL_GetError());
+		gGameStatus = -208;
+		err = true;
+	}
+
+	/*dstRect.x = gScoreOffset;*/
+	dstRect.y += 72;
+	/*dstRect.w = 128;
+	dstRect.h = 48;*/
+
+	if (SDL_BlitSurface(gLvlNumberSurface, NULL, gScreenSurface, &dstRect) < 0) {
+		fprintf(stderr,"Impossivel blitar LVLNUMBER na tela! %s\n",SDL_GetError());
 		gGameStatus = -208;
 		err = true;
 	}

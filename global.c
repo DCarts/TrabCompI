@@ -87,6 +87,7 @@ SDL_Surface* gLed[2];
 Mix_Chunk* gSons[11];
 
 SDL_Surface* gScoreSurface = NULL;
+SDL_Surface* gLvlNumberSurface = NULL;
 TTF_Font* gScoreFonte = NULL;
 
 SCOREENTRY gPlayers[6];

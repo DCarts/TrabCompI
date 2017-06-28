@@ -97,25 +97,25 @@ void moveBall(BOLA* p, double delta) {
 		/*jogador perde pontos*/
 		Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0);
 		gPlayer.pontos -= 1000;
-        
+
 		if(gPlayer.pontos < 0){
 			gPlayer.pontos = 0;
 		}
 
 		/* gPad[0].pos.x = gGameWidth/2 - gPadImgs[0]->w/2; */
-		
+
 		/* Ultima bola(cha) alive */
         if (gNumBolasAlive-- == 1) {
-            
+
             gPlayer.vidas--;
-            
+
             for (i = 0; i < gNumBolas; i++) {
 				gBolas[i].tipo = 1;
 				gBolas[i].img = gBallImgs[0];
 			}
-            
+
             gNumBolasAlive = 1;
-            
+
             /*cola a bola*/
             p->colada=true;
             p->spd = gGameHeight/2.5; /* reseta a vel. */
@@ -233,29 +233,29 @@ int gameLoop(double delta) {
 	if (gPowerUp.ativo && collPwpPlat(&gPowerUp, gPad, delta)){
 
 		gPowerUp.ativo = false;
-		
+
 		gPlayer.pontos += 250;
 
 		switch(gPowerUp.tipo){
-			
+
 			case 0:
 				gPlayer.vidas--;
 				Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0);
 				break;
-				
+
 			case 1:
 				if (++gPlayer.vidas > MAXVIDAS)
 					gPlayer.vidas = 4;
 				break;
-				
+
 			case 2:
 				dupaBalls();
 				break;
-				
+
 			case 3:
 				spdUp = true;
 				break;
-				
+
 			case 4:
 				gPad->pedacos++;
 				gPad->pos.x -= 12;
@@ -263,7 +263,7 @@ int gameLoop(double delta) {
 					gPad->pedacos = 8;
 				gPad->w = 48 + (24 * gPad->pedacos);
 				break;
-				
+
 			case 5:
 				gPad->pedacos--;
 				gPad->pos.x += 12;
@@ -271,15 +271,15 @@ int gameLoop(double delta) {
 					gPad->pedacos = 0;
 				gPad->w = 48 + (24 * gPad->pedacos);
 				break;
-				
+
 			case 6:
 				gPad->dir.x /= 1.75;
 				break;
-				
+
 			case 7:
 				gPad->dir.x *= 1.75;
 				break;
-				
+
 			case 8:
 				/* TODAS AS BOLAS VIRAM BOLAS DE FOGOOOOOOOOOOOOOOOOO
 				 * UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
@@ -296,7 +296,7 @@ int gameLoop(double delta) {
 
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
-			
+
 			if (spdUp){
 				/* printf("spd antes: %f\n", gBolas[i].spd); */
 				gBolas[i].spd *= 1.5;
@@ -333,7 +333,7 @@ int gameLoop(double delta) {
 		}
 	}
     spdUp = false;
-    
+
 	return false;
 }
 
@@ -445,7 +445,7 @@ int createNPCs() {
 	dir.y = 1;
 
 	gPowerUp = createPwp(pos, dir, 0, 24, 50, false, gPWPImgs[0]);
-	
+
 	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
 	pos.y = gGameHeight-56;
 	dir.x = 4;
@@ -694,14 +694,14 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 	}
 	/* printf("Vida --: px=%.8f py=%.8f v=%.8f\n", a->pos.x, a->pos.y, a->spd*delta); */
 	if (b->vida-- == 1 || a->tipo == 2) {
-		
+
 		b->vida = 0;
 		if (a->tipo == 2){
 			Mix_PlayChannel(-1, gSons[SOUND_EXPLODE], 0);
 		}else{
 			Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
 		}
-		
+
 		if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
 				int jooj = rand() % 9;
@@ -718,7 +718,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		if (b->tipo == 7) {
 			destroiVizinhos(b);
 		}
-        
+
         gNumBlocosAlive--;
 
     }
@@ -732,61 +732,61 @@ void destroiVizinhos(BLOCO* b){
 	Mix_PlayChannel(-1, gSons[SOUND_EXPLODE], 0);
 	b->vida = 0;
 	for(i = 0; i < gNumBlocos; i++){
-		
+
 		if (gBlocos[i].vida){
-			
+
 			point.x = b->pos.x + BLOCK_DIST + b->w;
 			point.y = b->pos.y;
-					
+
 			if(gBlocos[i].pos.x == point.x
 			&& gBlocos[i].pos.y == point.y){
-				
+
 				gBlocos[i].vida = 0;
 				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
-				}		
+				}
 			}
-			
+
 			point.x = b->pos.x;
 			point.y = b->pos.y - BLOCK_DIST - b->h;
-			
+
 			if(gBlocos[i].pos.x == point.x
 			&& gBlocos[i].pos.y == point.y){
-				
+
 				gBlocos[i].vida = 0;
 				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
-				}		
+				}
 			}
-			
+
 			point.x = b->pos.x - BLOCK_DIST - b->w;
 			point.y = b->pos.y;
-			
+
 			if(gBlocos[i].pos.x == point.x
 			&& gBlocos[i].pos.y == point.y){
-				
+
 				gBlocos[i].vida = 0;
 				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
-				}		
+				}
 			}
-			
+
 			point.x = b->pos.x;
 			point.y = b->pos.y + BLOCK_DIST + b->h;
-			
+
 			if(gBlocos[i].pos.x == point.x
 			&& gBlocos[i].pos.y == point.y){
-				
+
 				gBlocos[i].vida = 0;
 				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
-				}		
+				}
 			}
-		}	
+		}
 	}
 }
 
@@ -845,11 +845,11 @@ void platModify(BOLA* b) {
 
     sig =  (dx > 0)? 1 : -1;
     dx = fabs(dx);
-    
+
     /* dx -= gPad->w/3.0;
        dx /= gPad->w/2.0;
        dx *= GAME_PI/6; */
-    
+
     dx = GAME_PI*(dx - gPad->w/3.0)/(gPad->w * 3.0);
 
     b->dir.x = 1;
@@ -862,14 +862,14 @@ void platModify(BOLA* b) {
 
 void dupaBalls() {
     int i, j, oNumBalls = gNumBolas;
-    
+
     for (i = 0; i < oNumBalls; i++) {
         if (gNumBolasAlive == MAX_NUM_BOLAS) {
             break;
         }
-        
+
         if (gBolas[i].ativo != true) continue;
-        
+
         for (j = 0; j <= oNumBalls; j++) {
             if (j == oNumBalls) {
                 gBolas[gNumBolas++] = cloneBola(gBolas+i);
