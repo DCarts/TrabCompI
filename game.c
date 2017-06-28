@@ -207,7 +207,7 @@ void movePlataforma (PLATAFORMA* p, double delta) {
 }
 
 int gameLoop(double delta) {
-	int i, j;
+	int i, j, spdUp = false;
 
 	if (gNumBlocosAlive < 1) {
 		goToNextLevel();
@@ -224,13 +224,20 @@ int gameLoop(double delta) {
 			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
 			case 2: printf("Porra mano parabens isso n faz nada 2\n"); break;
-			case 3: printf("Porra mano parabens isso n faz nada 3\n"); break;
+			case 3: printf("Acelera as bolinhas\n"); spdUp = true; break;
 		}
 		
 	}
 	
 	for (i = 0; i < gNumBolas; i++) {
 		if (gBolas[i].ativo){
+			
+			if (spdUp){
+				printf("spd antes: %lf\n", gBolas[i].spd);
+				gBolas[i].spd *= 2;
+				printf("spd depois: %lf\n", gBolas[i].spd);
+				spdUp = false;
+			}
 
 			if (gBolas[i].colada) continue; //o movimento dela eh no movePlataforma
 
@@ -321,7 +328,7 @@ int createNPCs() {
 	VETOR2D pos, dir;
 	int i;
 	
-	gNumBolas = 1;
+	gNumBolas = MAX_NUM_BOLAS;
 
 	if (gBolas) free(gBolas);
 	gBolas = calloc(MAX_NUM_BOLAS, sizeof(BOLA));
@@ -360,6 +367,11 @@ int createNPCs() {
 		dir.y = -1;
 		normalize(&dir);
 		gBolas[i] = createBola(pos, dir, 1, 10, gGameHeight/2.5, gBallImgs[0]);
+		if (!i){
+			gBolas[i].ativo = true;
+		}else{
+			gBolas[i].ativo = false;
+		}
 	}
 
 	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;

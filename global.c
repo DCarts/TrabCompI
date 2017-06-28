@@ -31,7 +31,7 @@ const int OFFSET = 32;
 
 const int PLAT_SPD = 100;
 
-const int MAX_NUM_BOLAS = 50;
+const int MAX_NUM_BOLAS = 8;
 
 const int SOUND_WALL = 0;
 const int SOUND_TETO = 1;
