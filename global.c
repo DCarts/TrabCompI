@@ -92,6 +92,7 @@ TTF_Font* gScoreFonte = NULL;
 SCOREENTRY gPlayers[6];
 
 int gNumBolas;
+int gNumBolasAlive;
 int gNumBlocos;
 int gNumBlocosAlive;
 int gAllPts = 0;

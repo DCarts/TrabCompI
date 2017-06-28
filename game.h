@@ -72,4 +72,10 @@ int collBallPoint(BOLA* a, double dx, double dy, double delta);
 /* modifica a dir. de uma bola qnd colide com a plataforma */
 void platModify(BOLA* b);
 
+/* Duplica as bolas existentes */
+void dupaBalls();
+
+/* Clona uma bola existente */
+BOLA cloneBola(BOLA* orig);
+
 #endif

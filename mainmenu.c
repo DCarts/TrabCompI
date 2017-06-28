@@ -288,8 +288,6 @@ void freeRanking(int i)
 void blitParts()
 {
   SDL_Rect dstRect;
-  SDL_Event event;
-  int leave = false;
 
   if (!(partOneSurface = TTF_RenderText_Shaded(gScoreFonte,partOne,gScoreFontColor,gBgColor))) {
     fprintf(stderr,"Impossivel renderizar partOne na superficie!%s\n",TTF_GetError());

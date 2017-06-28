@@ -86,6 +86,7 @@ extern Mix_Chunk* gSons[11];
 extern SCOREENTRY gPlayers[6];
 
 extern int gNumBolas;
+extern int gNumBolasAlive;
 extern int gNumBlocos;
 extern int gNumBlocosAlive;
 extern int gAllPts;
