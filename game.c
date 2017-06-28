@@ -220,8 +220,12 @@ int gameLoop(double delta) {
 		switch(gPowerUp.tipo){
 			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
-			case 2: printf("Mano parabens isso n faz nada 2\n"); break;
+			case 2: printf("Mano parabens isso era pra duplicar a bola\n"); break;
 			case 3: spdUp = true; break;
+			case 4: printf("Mano parabens isso era pra aumentar a plataforma\n"); break;
+			case 5: printf("Mano parabens isso era pra diminuir a plataforma\n"); break;
+			case 6: gPad->dir.x /= 2; break;
+			case 7: gPad->dir.x *= 2; break;
 		}
 
 	}
@@ -623,7 +627,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 
 		if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
-				int jooj = rand()%4;
+				int jooj = rand()%8;
 				gPowerUp.ativo = true;
 				gPowerUp.img = gPWPImgs[jooj];
 				gPowerUp.tipo = jooj;
