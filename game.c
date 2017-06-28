@@ -647,6 +647,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 void destroiVizinhos(BLOCO* b){
 	int i;
 	VETOR2D point;
+	Mix_PlayChannel(-1, gSons[SOUND_EXPLODE], 0);
 	b->vida = 0;
 	for(i = 0; i < gNumBlocos; i++){
 		
@@ -745,7 +746,7 @@ int goToNextLevel() {
 	}
 
 	createNPCs();
-	loadBlocosFromNumber(gLvlNumber++ % 8);
+	loadBlocosFromNumber(gLvlNumber++ % 9);
 
 	return true;
 }

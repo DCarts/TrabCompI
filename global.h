@@ -47,6 +47,7 @@ extern const int SOUND_LIFE_LOST;
 extern const int SOUND_LIFE_GAIN;
 extern const int SOUND_GAMEOVER;
 extern const int SOUND_GAMESTART;
+extern const int SOUND_EXPLODE;
 
 extern const int MAXVIDAS;
 
@@ -79,7 +80,7 @@ extern SDL_Surface* gLed[2];
 extern SDL_Surface* gScoreSurface;
 extern TTF_Font* gScoreFonte;
 
-extern Mix_Chunk* gSons[10];
+extern Mix_Chunk* gSons[11];
 
 extern SCOREENTRY gPlayers[6];
 

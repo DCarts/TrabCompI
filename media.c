@@ -96,6 +96,9 @@ int loadMedia() {
     
     if ( !(gSons[SOUND_LIFE_LOST] = loadSound("./data/sound/death.wav")) ) return false;
     Mix_VolumeChunk(gSons[SOUND_LIFE_LOST], 96);
+    
+    if ( !(gSons[SOUND_EXPLODE] = loadSound("./data/sound/explosion.wav")) ) return false;
+    Mix_VolumeChunk(gSons[SOUND_EXPLODE], 128);
 
     /* FIM CARREGANDO SONS */
     return true;

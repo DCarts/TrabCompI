@@ -43,6 +43,7 @@ const int SOUND_LIFE_LOST = 6;
 const int SOUND_LIFE_GAIN = 7;
 const int SOUND_GAMEOVER = 8;
 const int SOUND_GAMESTART = 9;
+const int SOUND_EXPLODE = 10;
 
 const int MAXVIDAS = 4;
 
@@ -82,7 +83,7 @@ SDL_Surface* gBallImgs[5];
 SDL_Surface* gPadImgs[5];
 SDL_Surface* gLed[2];
 
-Mix_Chunk* gSons[10];
+Mix_Chunk* gSons[11];
 
 SDL_Surface* gScoreSurface = NULL;
 TTF_Font* gScoreFonte = NULL;
