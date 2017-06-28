@@ -48,6 +48,7 @@ const int SOUND_EXPLODE = 10;
 const int MAXVIDAS = 4;
 
 int flip;
+int shouldBlitNames;
 
 /*
  * < 0 = erro

@@ -54,6 +54,7 @@ extern const int MAXVIDAS;
 /* Variaveis */
 
 extern int flip;
+extern int shouldBlitNames;
 
 extern int gGameStatus;
 extern int gLvlNumber;
