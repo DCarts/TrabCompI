@@ -580,7 +580,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 			a->pos.x = b->pos.x - a->dim-0.125;
 		}
 		a->pos.y = a->prevPos.y;
-		printf("Primeiro if ");
+		/* printf("Primeiro if "); */
 
 	}
 	else if (isInAABB(c, b->pos.x,
@@ -596,7 +596,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 			a->pos.y = b->pos.y - a->dim-0.125;
 		}
 		a->pos.x = a->prevPos.x;
-		printf("Segundo if ");
+		/* printf("Segundo if "); */
 
 	}
 	else {
