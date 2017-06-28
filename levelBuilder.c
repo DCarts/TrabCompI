@@ -106,14 +106,13 @@ void exitGame();
 int main(int argc, char **argv) {
 
 	char arqOrig[64];
+    int quit, startTime, currentTime, lastTime;
+	SDL_Event evt;
 
 	printf("Arquivo de origem:\n");
 	scanf("%s", arqOrig);
 	printf("Arquivo de destino:\n");
 	scanf("%s", gArqAlvo);
-
-	int quit, startTime, currentTime, lastTime;
-	SDL_Event evt;
 
 	if (!init()) {
 		return 1;
