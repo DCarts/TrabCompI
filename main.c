@@ -60,6 +60,8 @@ int main(int argc, char **argv) {
 
     quit = false;
 
+    shouldBlitNames = 0;
+
     /* menu! :D */
     /* aqui, quit significa JOGAR */
     while (!quit) {
@@ -74,12 +76,14 @@ int main(int argc, char **argv) {
                 break;
             case 3:
                 return 0;
-						case 4:
-							blitParts();
-							/*freeMenu();
-							SDL_UpdateWindowSurface(gWindow);
-							SDL_Delay(4000);*/
-							freeParts();
+            case 4:
+                /*blitParts();
+                freeMenu();
+                SDL_UpdateWindowSurface(gWindow);
+                SDL_Delay(4000);
+                freeParts();*/
+                shouldBlitNames = 1 - shouldBlitNames;
+                break;
         }
     }
 

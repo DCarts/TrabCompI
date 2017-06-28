@@ -138,7 +138,7 @@ int menu()
     return 666;
   }
 
-  /*blitParts();*/
+  if(shouldBlitNames) blitParts();
 
   while(!leave)
   {
@@ -166,7 +166,7 @@ int menu()
           }
           if(event.key.keysym.sym == SDLK_4)
           {
-            /*freeMenu();*/
+            freeMenu();
             return 4;
           }
           break;
@@ -187,7 +187,9 @@ void freeMenu()
   SDL_FreeSurface(twoSurface);
   SDL_FreeSurface(threeSurface);
   SDL_FreeSurface(fourSurface);
-  /*freeParts();*/
+  if (!shouldBlitNames) {
+    freeParts();
+  }
 
   /* Tornando a superfície escura novamente */
   SDL_FillRect( gScreenSurface, NULL,
@@ -337,7 +339,7 @@ void blitParts()
     return;
   }
 
-  while(!leave)
+  /*while(!leave)
   {
     while(SDL_PollEvent(&event) != 0)
     {
@@ -345,8 +347,8 @@ void blitParts()
       switch(event.type)
       {
         case SDL_KEYDOWN:
-          if(event.key.keysym.sym == SDLK_ESCAPE ||
-            event.key.keysym.sym == SDLK_RETURN)
+          if(event.key.keysym.sym == SDLK_ESCAPE 
+            || event.key.keysym.sym == SDLK_RETURN)
             {
               leave = true;
               break;
@@ -357,7 +359,7 @@ void blitParts()
           exit(666);
       }
     }
-  }
+  }*/
 }
 
 void freeParts()
