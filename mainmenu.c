@@ -288,8 +288,6 @@ void freeRanking(int i)
 void blitParts()
 {
   SDL_Rect dstRect;
-  SDL_Event event;
-  int leave = false;
 
   if (!(partOneSurface = TTF_RenderText_Shaded(gScoreFonte,partOne,gScoreFontColor,gBgColor))) {
     fprintf(stderr,"Impossivel renderizar partOne na superficie!%s\n",TTF_GetError());
@@ -347,7 +345,7 @@ void blitParts()
       switch(event.type)
       {
         case SDL_KEYDOWN:
-          if(event.key.keysym.sym == SDLK_ESCAPE 
+          if(event.key.keysym.sym == SDLK_ESCAPE
             || event.key.keysym.sym == SDLK_RETURN)
             {
               leave = true;
