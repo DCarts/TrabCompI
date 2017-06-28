@@ -47,7 +47,11 @@ int loadMedia() {
     if ( !(gBallImgs[0] = loadSurface("./data/ball.png")) ) return false;
     colorKey = SDL_MapRGB(gBallImgs[0]->format, 0xFF, 0x00, 0xFF );
     SDL_SetColorKey(gBallImgs[0], SDL_TRUE, colorKey);
-
+    
+    if ( !(gBallImgs[1] = loadSurface("./data/ballFire1.png")) ) return false;
+    colorKey = SDL_MapRGB(gBallImgs[1]->format, 0xFF, 0x00, 0xFF );
+    SDL_SetColorKey(gBallImgs[1], SDL_TRUE, colorKey);
+    
     /* Carrega tijolos */
     if ( !(gBlocoImgs[0] = loadSurface("./data/brick0.png")) ) return false;
     if ( !(gBlocoImgs[1] = loadSurface("./data/brick1.png")) ) return false;
@@ -75,6 +79,7 @@ int loadMedia() {
     if ( !(gPWPImgs[5] = loadSurface("./data/pwpSizeLess.png")) ) return false;
     if ( !(gPWPImgs[6] = loadSurface("./data/pwpSpdLess.png")) ) return false;
     if ( !(gPWPImgs[7] = loadSurface("./data/pwpSpdPlus.png")) ) return false;
+    if ( !(gPWPImgs[8] = loadSurface("./data/pwpFIREBAAAALL.png")) ) return false;
 
     for (i=0; i<10; i++){
 		colorKey = SDL_MapRGB(gBlocoImgs[i]->format, 0xFF, 0x00, 0xFF );

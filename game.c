@@ -80,6 +80,7 @@ int init() {
 }
 
 void moveBall(BOLA* p, double delta) {
+	int i;
 
 	p->prevPos.x = p->pos.x;
 	p->prevPos.y = p->pos.y;
@@ -103,13 +104,15 @@ void moveBall(BOLA* p, double delta) {
 
 		/* gPad[0].pos.x = gGameWidth/2 - gPadImgs[0]->w/2; */
 		
-		gPad[0].dir.x = 4;
-		gPad[0].dir.y = 4;
-		
 		/* Ultima bola(cha) alive */
         if (gNumBolasAlive-- == 1) {
             
             gPlayer.vidas--;
+            
+            for (i = 0; i < gNumBolas; i++) {
+				gBolas[i].tipo = 1;
+				gBolas[i].img = gBallImgs[0];
+			}
             
             gNumBolasAlive = 1;
             
@@ -250,6 +253,16 @@ int gameLoop(double delta) {
 				break;
 			case 6: gPad->dir.x /= 1.5; break;
 			case 7: gPad->dir.x *= 1.5; break;
+			case 8:
+				/* TODAS AS BOLAS VIRAM BOLAS DE FOGOOOOOOOOOOOOOOOOO
+				 * UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+				 * UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+				 * UUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL*/
+				for (i = 0; i < gNumBolas; i++) {
+					gBolas[i].tipo = 2;
+					gBolas[i].img = gBallImgs[1];
+				}
+				break;
 		}
 
 	}
@@ -653,12 +666,18 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		if (!inv) return false;
 	}
 	/* printf("Vida --: px=%.8f py=%.8f v=%.8f\n", a->pos.x, a->pos.y, a->spd*delta); */
-	if (b->vida-- == 1) {
-        Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
-
+	if (b->vida-- == 1 || a->tipo == 2) {
+		
+		b->vida = 0;
+		if (a->tipo == 2){
+			Mix_PlayChannel(-1, gSons[SOUND_EXPLODE], 0);
+		}else{
+			Mix_PlayChannel(-1, gSons[SOUND_BLOCK_BROKE], 0);
+		}
+		
 		if (rand()%4 == 0){
 			if (!gPowerUp.ativo){
-				int jooj = rand()%8;
+				int jooj = rand() % 9;
 				gPowerUp.ativo = true;
 				gPowerUp.img = gPWPImgs[jooj];
 				gPowerUp.tipo = jooj;
