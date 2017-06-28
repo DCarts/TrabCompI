@@ -233,26 +233,53 @@ int gameLoop(double delta) {
 	if (gPowerUp.ativo && collPwpPlat(&gPowerUp, gPad, delta)){
 
 		gPowerUp.ativo = false;
+		
+		gPlayer.pontos += 250;
 
 		switch(gPowerUp.tipo){
-			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
-			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
-			case 2: dupaBalls(); break;
-			case 3: spdUp = true; break;
+			
+			case 0:
+				gPlayer.vidas--;
+				Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0);
+				break;
+				
+			case 1:
+				if (++gPlayer.vidas > MAXVIDAS)
+					gPlayer.vidas = 4;
+				break;
+				
+			case 2:
+				dupaBalls();
+				break;
+				
+			case 3:
+				spdUp = true;
+				break;
+				
 			case 4:
 				gPad->pedacos++;
+				gPad->pos.x -= 12;
 				if (gPad->pedacos > 8)
 					gPad->pedacos = 8;
 				gPad->w = 48 + (24 * gPad->pedacos);
 				break;
+				
 			case 5:
 				gPad->pedacos--;
+				gPad->pos.x += 12;
 				if (gPad->pedacos < 0)
 					gPad->pedacos = 0;
 				gPad->w = 48 + (24 * gPad->pedacos);
 				break;
-			case 6: gPad->dir.x /= 1.5; break;
-			case 7: gPad->dir.x *= 1.5; break;
+				
+			case 6:
+				gPad->dir.x /= 1.75;
+				break;
+				
+			case 7:
+				gPad->dir.x *= 1.75;
+				break;
+				
 			case 8:
 				/* TODAS AS BOLAS VIRAM BOLAS DE FOGOOOOOOOOOOOOOOOOO
 				 * UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
@@ -691,6 +718,7 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 		if (b->tipo == 7) {
 			destroiVizinhos(b);
 		}
+        
         gNumBlocosAlive--;
 
     }
