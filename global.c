@@ -86,7 +86,6 @@ Mix_Chunk* gSons[10];
 
 SDL_Surface* gScoreSurface = NULL;
 TTF_Font* gScoreFonte = NULL;
-TTF_Font* gHiScoreFonte = NULL;
 
 SCOREENTRY gPlayers[6];
 

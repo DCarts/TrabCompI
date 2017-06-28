@@ -417,7 +417,6 @@ void exitGame() {
 	Mix_CloseAudio();
 
 	TTF_CloseFont(gScoreFonte);/*	encerra a utilização da fonte do ttf	*/
-	TTF_CloseFont(gHiScoreFonte);/*	encerra a utilização da fonte do ttf	*/
 
 	TTF_Quit();/*	fecha o SDL_ttf	*/
 	IMG_Quit();

@@ -29,7 +29,6 @@ int loadMedia() {
 	/* CARREGANDO FONTES */
 
 	if (!(gScoreFonte = loadFont("./data/DS-DIGI.TTF", 36))) return false;
-	if (!(gHiScoreFonte = loadFont("./data/DS-DIGI.TTF", 12))) return false;
 
 	/* FIM CARREGANDO FONTES */
 
