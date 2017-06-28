@@ -74,6 +74,12 @@ int main(int argc, char **argv) {
                 break;
             case 3:
                 return 0;
+						case 4:
+							blitParts();
+							/*freeMenu();
+							SDL_UpdateWindowSurface(gWindow);
+							SDL_Delay(4000);*/
+							freeParts();
         }
     }
 
