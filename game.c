@@ -231,6 +231,7 @@ int gameLoop(double delta) {
 
             moveBall(gBolas+i, delta);
 			if (collBallPlat(gBolas+i, delta)) {
+                platModify(gBolas+i);
 				Mix_PlayChannel(-1, gSons[SOUND_PLAT], 0);
 			}
 
@@ -499,8 +500,8 @@ int collBallPlat(BOLA* a, double delta){
 					gPad->pos.y - raio,
 					gPad->pos.x + gPad->w,
 					gPad->pos.y + gPad->h)) {
-		a->dir.y = -a->dir.y;
-		a->pos.y += a->dir.y*a->spd*delta;
+		//a->dir.y = -a->dir.y;
+		//a->pos.y += a->dir.y*a->spd*delta;
 		return true;
 	}
 	else {
@@ -514,10 +515,10 @@ int collBallPlat(BOLA* a, double delta){
 			inv = 1;
 		}
 		if (inv) {
-			a->dir.x = -a->dir.x;
-			a->dir.y = -a->dir.y;
-			a->pos.x += a->dir.x*a->spd*delta;
-			a->pos.y += a->dir.y*a->spd*delta;
+			//a->dir.x = -a->dir.x;
+			//a->dir.y = -a->dir.y;
+			//a->pos.x += a->dir.x*a->spd*delta;
+			//a->pos.y += a->dir.y*a->spd*delta;
 			return true;
 		}
 	}
@@ -687,9 +688,24 @@ int goToNextLevel() {
 }
 
 
-/*void definitions()
-{
-	gGameStatus = 0;
-	gLvlNumber = 1;
-	gScoreOffset = 0;
-}*/
+void platModify(BOLA* b) {
+    double bx = b->pos.x + b->dim/2.0;
+    int sig;
+    double dx = bx - (gPad->pos.x + gPad->w/2.0);
+    
+    sig =  (dx > 0)? 1 : -1;
+    dx = fabs(dx);
+    
+    //dx -= gPad->w/3.0;
+    //dx /= gPad->w/2.0;
+    //dx *= GAME_PI/6;
+    
+    dx = GAME_PI*(dx - gPad->w/3.0)/(gPad->w * 3.0);
+    
+    b->dir.x = 1;
+    b->dir.y = -1;
+    
+    turnRad(&b->dir, dx);
+    normalize(&b->dir);
+    b->dir.x *= sig;
+}

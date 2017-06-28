@@ -12,6 +12,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+/* Macros */
+#define GAME_PI 3.14159265358979323846
+
 /* Structs */
 typedef struct {
 	double x;

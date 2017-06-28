@@ -256,7 +256,7 @@ int tryAgain()
   SDL_Rect dstRect;
   char tryAgMessage [] = "Aperte ENTER para retornar ao menu.";
   char qMessage[] = "Aperte Q para sair do jogo.";
-  char defaultMessage[] = "Por favor,digite uma opção válida";
+//  char defaultMessage[] = "Por favor,digite uma opção válida";
   int leave = false;
 
   /* Tornando a superfície escura novamente */
@@ -328,6 +328,7 @@ int tryAgain()
       }
     }
   }
+  return 8;
 }
 
 

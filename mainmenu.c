@@ -154,6 +154,7 @@ int menu()
       }
     }
   }
+  return 3;
 }
 
 
@@ -205,7 +206,7 @@ int showRanking()
 
   for (i = 0; i < 5; i++) {
     //char txtToRender[12];
-	  sprintf(txtToRender,"%s: %d pts", gPlayers[i].name, gPlayers[i].pts, gPlayers[i].sysTime);
+	  sprintf(txtToRender,"%s: %d pts", gPlayers[i].name, gPlayers[i].pts);
     if((x = renderAndBlit(i)) != 0)
     {
       printf("%d\n",x);
@@ -235,17 +236,7 @@ int showRanking()
     }
   }
 
-  //SDL_Delay(10000);
-  //fclose(gRank);
-
-  /*switch (menu()) {
-		case 2:
-			showRanking();
-			break;
-		case 3:
-			//exitGame();
-            break;
-	}*/
+  return true;
 }
 
 int renderAndBlit(int i)
@@ -266,6 +257,7 @@ int renderAndBlit(int i)
     //gGameStatus = -669;
     return 12;
   }
+  return 0;
 }
 
 void freeRanking(int i)
