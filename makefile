@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS=-g -Wall -D_REENTRANT -pedantic
+CFLAGS=-g -Wall -D_REENTRANT -pedantic -ansi
 
 LINUX_FLAGS=-D_GNU_SOURCE=1
 

@@ -190,10 +190,6 @@ int loadMedia() {
     uint32_t colorKey;
     int i;
 
-    /* Carrega blocos *//* @todo
-    if( !(gBlockImgs[0] = loadSurface("./data/brick.png")) ) return false;
-    SDL_SetColorKey(gBlockImgs[0], SDL_TRUE, colorKey);*/
-
     /* Carrega tijolos */
     if ( !(gBlocoImgs[0] = loadSurface("./data/brick0.png")) ) return false;
     if ( !(gBlocoImgs[1] = loadSurface("./data/brick1.png")) ) return false;
@@ -211,11 +207,6 @@ int loadMedia() {
 		SDL_SetColorKey(gBlocoImgs[i], SDL_TRUE, colorKey);
 	}
 
-    /* CARREGANDO SONS */
-    /* volume do som varia entre 0 e 127 */
-    //if ( !(gSons[0] = loadSound("./data/wall.wav")) ) return false;
-    //Mix_VolumeChunk(gSons[0], 64);
-    /* FIM CARREGANDO SONS */
     return true;
 }
 
@@ -373,7 +364,7 @@ int render() {
 	SDL_Rect srcRect, dstRect;
 	int i, err = false;
 
-	//Fill the surface white
+	/*Fill the surface white*/
 	SDL_FillRect( gScreenSurface, NULL,
 	SDL_MapRGB( gScreenSurface->format,
 				0, 0, 0 ) );
@@ -432,7 +423,7 @@ int render() {
 	SDL_MapRGB( gScreenSurface->format,
 				0xFF, 0xFF, 0xFF ) );
 
-    //Update the surface
+    /*Update the surface*/
     SDL_UpdateWindowSurface( gWindow );
 
 	return err;

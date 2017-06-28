@@ -35,7 +35,7 @@ int loadBlocosFromFile(char* levelName);
 /* Retorna a vida de um bloco */
 int blocoLife(int tipo);
 
-//acessa arquivo de rank
+/* acessa arquivo de rank */
 void readPlayers();
 void writePlayers();
 int loadRanking();

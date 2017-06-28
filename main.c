@@ -77,9 +77,6 @@ int main(int argc, char **argv) {
         }
     }
 
-	//createNPCs();
-	//loadBlocosFromFile("level5");
-
 	gLvlNumber = 0;
 	goToNextLevel();
 
@@ -103,7 +100,7 @@ int main(int argc, char **argv) {
 		currentTime = SDL_GetTicks();
 		delta = (currentTime-lastTime)/1000.0;
 		if (delta > 0.016) delta = 0.016;
-		//printf("%.1f\n",currentTime/1000.0);
+
 		if (countTime < currentTime) {
 			printf("FPS=%d\n", count);
 			flip = 1 - flip;
