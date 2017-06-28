@@ -482,6 +482,9 @@ int handleInput(SDL_Event* evt){
 			if (e.key.keysym.sym == SDLK_k) {
 				gNumBlocosAlive = 0; /* fuk da police */
 			}
+			if (e.key.keysym.sym == SDLK_p) {
+				dupaBalls(); /* dupe dupe dupe */
+			}
 			if (e.key.keysym.sym == SDLK_LEFT) {
 				gLeft = true;
 			}
@@ -707,6 +710,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
@@ -719,6 +723,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
@@ -731,6 +736,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
@@ -743,6 +749,7 @@ void destroiVizinhos(BLOCO* b){
 			&& gBlocos[i].pos.y == point.y){
 				
 				gBlocos[i].vida = 0;
+				gNumBlocosAlive--;
 				if (gBlocos[i].tipo == 7){
 					destroiVizinhos(&gBlocos[i]);
 				}		
