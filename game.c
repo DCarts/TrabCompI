@@ -230,9 +230,9 @@ int gameLoop(double delta) {
 		if (gBolas[i].ativo){
 			
 			if (spdUp){
-				printf("spd antes: %lf\n", gBolas[i].spd);
+				/* printf("spd antes: %f\n", gBolas[i].spd); */
 				gBolas[i].spd *= 2;
-				printf("spd depois: %lf\n", gBolas[i].spd);
+				/* printf("spd depois: %f\n", gBolas[i].spd); */
 				spdUp = false;
 			}
 
