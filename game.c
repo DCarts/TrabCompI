@@ -98,7 +98,7 @@ void moveBall(BOLA* p, double delta) {
 	}
 	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
 		/*jogador perde pontos*/
-
+		Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0);
 		gPlayer.pontos -= 1000;
 		gPlayer.vidas--;
 		if(gPlayer.pontos < 0){
@@ -137,9 +137,14 @@ void movePwp(PWP* p, double delta){
 		p->pos.y += p->dir.y*p->spd*delta;
 	}
 	
-	if (p->pos.x + p->dim > gGameWidth-OFFSET || p->pos.x < OFFSET) {
+	if (p->pos.x + p->dim > gGameWidth-OFFSET) {
 		p->dir.x = -p->dir.x;
-		p->pos.x = p->prevPos.x;
+		p->pos.x = gGameWidth-OFFSET-p->dim;
+		Mix_PlayChannel(-1, gSons[SOUND_WALL], 0);
+	}
+	if (p->pos.x < OFFSET) {
+		p->dir.x = -p->dir.x;
+		p->pos.x = OFFSET;
 		Mix_PlayChannel(-1, gSons[SOUND_WALL], 0);
 	}
 	if (p->pos.y + p->dim > gGameHeight-OFFSET) {
@@ -216,7 +221,7 @@ int gameLoop(double delta) {
 		gPowerUp.ativo = false;
 		
 		switch(gPowerUp.tipo){
-			case 0: gPlayer.vidas--; break;
+			case 0: gPlayer.vidas--; Mix_PlayChannel(-1, gSons[SOUND_LIFE_LOST], 0); break;
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
 			case 2: printf("Porra mano parabens isso n faz nada 2\n"); break;
 			case 3: printf("Porra mano parabens isso n faz nada 3\n"); break;
@@ -341,7 +346,7 @@ int createNPCs() {
 		return false;
 	}
 
-	pos.x = 300;
+	pos.x = 800;
 	pos.y = 40;
 	
 	dir.x = -1;
@@ -621,8 +626,8 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 				gPowerUp.tipo = jooj;
 				gPowerUp.pos.x = a->pos.x;
 				gPowerUp.pos.y = a->pos.y;
-				gPowerUp.dir.x = a->dir.x;
-				gPowerUp.dir.y = -1.5*a->dir.y;
+				gPowerUp.dir.x = 5*a->dir.x;
+				gPowerUp.dir.y = -2*a->dir.y;
 			}
 		}
 		
