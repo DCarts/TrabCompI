@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
 		count++;
 	}
 
-	if(gGameStatus > 0 && gGameStatus < 300 && !setClipboard(gGameStatus == 101)){
+	if(gGameStatus > 0 && gGameStatus < 300 && !setClipboard()){
 		gGameStatus = -666;
 		fprintf(stderr, "Erro ao renderizar clipboard. Verificar função setClipboard.\n");
 	}

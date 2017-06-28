@@ -41,7 +41,7 @@ static SDL_Surface* tryAgSurface2 = NULL;
 static SDL_Event ev;
 static SDL_Rect dstRect;
 
-int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
+int setClipboard() {	/* função para capturar a entrada do nome do player e blitar diamicamente na tela */
 	long countTime, currentTime;
 	int ableRender, sizeText;
 	int leave = false;
@@ -93,17 +93,13 @@ int setClipboard(int gameOver) {	/* função para capturar a entrada do nome do 
                 exit(0);
 			}
 			if(ev.type == SDL_KEYDOWN) {
-				/*if (ev.key.keysym.sym == SDLK_ESCAPE) {
-					gGameStatus = 300;
-					SDL_StopTextInput();
-					return 1;
-				}*/
 				if(ev.key.keysym.sym == SDLK_BACKSPACE && cont > 0) {
 					namae[--cont] = '\0';
 					ableRender = true;
 				}
-				else if(ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_RETURN2) {
-					puts("p");
+				else if(ev.key.keysym.sym == SDLK_RETURN 
+                        || ev.key.keysym.sym == SDLK_RETURN2
+                        || ev.key.keysym.sym == SDLK_ESCAPE) {
 					leave = true;
 				}
 			}

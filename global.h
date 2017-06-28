@@ -78,7 +78,6 @@ extern SDL_Surface* gLed[2];
 
 extern SDL_Surface* gScoreSurface;
 extern TTF_Font* gScoreFonte;
-extern TTF_Font* gHiScoreFonte;
 
 extern Mix_Chunk* gSons[10];
 
