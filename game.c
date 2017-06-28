@@ -645,9 +645,64 @@ int collBallBlock(BOLA* a, BLOCO* b, double delta) {
 }
 
 void destroiVizinhos(BLOCO* b){
-	/* @Todo */
-	printf("AEEEEEEHOOOOOOOOOOOOOOOOOOOO\n");
+	int i;
+	VETOR2D point;
+	b->vida = 0;
+	for(i = 0; i < gNumBlocos; i++){
+		
+		if (gBlocos[i].vida){
+			
+			point.x = b->pos.x + BLOCK_DIST + b->w;
+			point.y = b->pos.y;
+					
+			if(gBlocos[i].pos.x == point.x
+			&& gBlocos[i].pos.y == point.y){
+				
+				gBlocos[i].vida = 0;
+				if (gBlocos[i].tipo == 7){
+					destroiVizinhos(&gBlocos[i]);
+				}		
+			}
+			
+			point.x = b->pos.x;
+			point.y = b->pos.y - BLOCK_DIST - b->h;
+			
+			if(gBlocos[i].pos.x == point.x
+			&& gBlocos[i].pos.y == point.y){
+				
+				gBlocos[i].vida = 0;
+				if (gBlocos[i].tipo == 7){
+					destroiVizinhos(&gBlocos[i]);
+				}		
+			}
+			
+			point.x = b->pos.x - BLOCK_DIST - b->w;
+			point.y = b->pos.y;
+			
+			if(gBlocos[i].pos.x == point.x
+			&& gBlocos[i].pos.y == point.y){
+				
+				gBlocos[i].vida = 0;
+				if (gBlocos[i].tipo == 7){
+					destroiVizinhos(&gBlocos[i]);
+				}		
+			}
+			
+			point.x = b->pos.x;
+			point.y = b->pos.y + BLOCK_DIST + b->h;
+			
+			if(gBlocos[i].pos.x == point.x
+			&& gBlocos[i].pos.y == point.y){
+				
+				gBlocos[i].vida = 0;
+				if (gBlocos[i].tipo == 7){
+					destroiVizinhos(&gBlocos[i]);
+				}		
+			}
+		}	
+	}
 }
+
 
 int collBallPoint(BOLA* a, double dx, double dy, double delta) {
 	if ( (a->dim /2.0 )* (a->dim / 2.0) > (dx*dx)+(dy*dy)) {
