@@ -127,18 +127,48 @@ int render() {
 	}
 
 	/* Renderiza a plataforma */
-	srcRect.w = gPad[0].w;
+	srcRect.w = 24;
 	srcRect.h = gPad[0].h;
 
 	dstRect.x = gPad[0].pos.x;
 	dstRect.y = gPad[0].pos.y;
-
+	
+	srcRect.x = 0;
+	
+	/* Ponta da esquerda */
 	if( SDL_BlitSurface( gPad[0].img, &srcRect,
-							gScreenSurface, &dstRect ) < 0 ) {
-			fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
-			gGameStatus = -206;
-            err = true;
-		}
+								gScreenSurface, &dstRect ) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -206;
+				err = true;
+	}
+	
+	/* Meio (de acordo com a quantidade de pedacos) */
+	for(i = 1; i <= gPad[0].pedacos; i++){
+		
+		srcRect.x = 24;
+		dstRect.x = gPad[0].pos.x + 24*i;
+		
+		if( SDL_BlitSurface( gPad[0].img, &srcRect,
+								gScreenSurface, &dstRect ) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -206;
+				err = true;
+			}	
+	}
+	
+	dstRect.x = gPad[0].pos.x + 24*i;
+	srcRect.x = 72;
+	
+	/* Ponta da direita */
+	if( SDL_BlitSurface( gPad[0].img, &srcRect,
+								gScreenSurface, &dstRect ) < 0 ) {
+				fprintf(stderr, "Erro: SDL nao blitou: %s\n", SDL_GetError() );
+				gGameStatus = -206;
+				err = true;
+	}
+	
+	srcRect.x = 0; srcRect.y = 0;
 		
 	/* Renderiza o powerup */
 	if (gPowerUp.ativo){

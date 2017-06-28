@@ -102,7 +102,10 @@ void moveBall(BOLA* p, double delta) {
 		}
 
 		/* gPad[0].pos.x = gGameWidth/2 - gPadImgs[0]->w/2; */
-
+		
+		gPad[0].dir.x = 4;
+		gPad[0].dir.y = 4;
+		
 		/*cola a bola*/
 		p->colada=true;
         p->spd = gGameHeight/2.5; /* reseta a vel. */
@@ -222,8 +225,18 @@ int gameLoop(double delta) {
 			case 1: if (++gPlayer.vidas > MAXVIDAS) gPlayer.vidas = 4; break;
 			case 2: printf("Mano parabens isso era pra duplicar a bola\n"); break;
 			case 3: spdUp = true; break;
-			case 4: printf("Mano parabens isso era pra aumentar a plataforma\n"); break;
-			case 5: printf("Mano parabens isso era pra diminuir a plataforma\n"); break;
+			case 4:
+				gPad->pedacos++;
+				if (gPad->pedacos > 8)
+					gPad->pedacos = 8;
+				gPad->w = 48 + (24 * gPad->pedacos);
+				break;
+			case 5:
+				gPad->pedacos--;
+				if (gPad->pedacos < 0)
+					gPad->pedacos = 0;
+				gPad->w = 48 + (24 * gPad->pedacos);
+				break;
 			case 6: gPad->dir.x /= 2; break;
 			case 7: gPad->dir.x *= 2; break;
 		}
@@ -304,7 +317,10 @@ PLATAFORMA createPlataforma(VETOR2D pos, VETOR2D step, SDL_Surface* img){
 	PLATAFORMA plat;
 	plat.pos = pos;
 	plat.dir = step;
-	plat.w = 96;
+	plat.pedacos = 2;
+	/* Cada pedaco blitado tera 24 pixels.
+	 * (o "48" representa os pedacos da ponta)*/
+	plat.w = 48 + (24 * plat.pedacos);
 	plat.h = 12;
 	plat.img = img;
 	plat.spd = 0;
@@ -361,10 +377,17 @@ int createNPCs() {
 	dir.x = -1;
 	dir.y = 1;
 
-	gPowerUp = createPwp(pos, dir, 0, 24, 50, 1, gPWPImgs[0]);
+	gPowerUp = createPwp(pos, dir, 0, 24, 50, false, gPWPImgs[0]);
+	
+	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
+	pos.y = gGameHeight-56;
+	dir.x = 4;
+	dir.y = 4;
+
+	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
 
 	for (i = 0; i < gNumBolas; i++) {
-		pos.x = gGameWidth/2 - gBallImgs[0]->w/2;
+		pos.x = gPad->pos.x + gPad->w/2 - gBallImgs[0]->w/2;
 		pos.y = gGameHeight-56 - gBallImgs[0]->h;
 		dir.x = (rand() % 2? -1 : 1);
 		dir.y = -1;
@@ -376,13 +399,6 @@ int createNPCs() {
 			gBolas[i].ativo = false;
 		}
 	}
-
-	pos.x = gGameWidth/2 - gPadImgs[0]->w/2;
-	pos.y = gGameHeight-56;
-	dir.x = 4;
-	dir.y = 4;
-
-	gPad[0] = createPlataforma(pos, dir, gPadImgs[0]);
 
 	return true;
 }

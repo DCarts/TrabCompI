@@ -37,7 +37,7 @@ typedef struct {
 typedef struct {
 	VETOR2D pos;
 	VETOR2D dir;
-	int melhorias[5];
+	int pedacos;
 	int ativo;
 	int w;
 	int h;
